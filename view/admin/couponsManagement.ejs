@@ -1,0 +1,284 @@
+<%- include('../layouts/adminHeader') %>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<style>
+  /* body {
+    background-color: #121212;
+    color: #ffffff;
+    font-family: 'Arial', sans-serif;
+  } */
+  .cm-h1 {
+    font-family: 'Arial', sans-serif;
+    color: #ffffff;
+  }
+  .cm-container {
+    font-family: 'Arial', sans-serif;
+    color: #ffffff;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .cm-header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .cm-card {
+    background-color: #1e1e1e;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  .cm-card-info h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #ffcc00;
+  }
+  .cm-card-info p {
+    margin: 5px 0 0;
+    color: #cccccc;
+  }
+  .cm-card-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .cm-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+  }
+  .cm-btn-edit {
+    background-color: #2196F3;
+    color: #ffffff;
+  }
+  .cm-btn-edit:hover {
+    background-color: #1e88e5;
+  }
+  .cm-btn-delete {
+    background-color: #f44336;
+    color: #ffffff;
+  }
+  .cm-btn-list {
+    background-color: #308f07;
+    color: #ffffff;
+  }
+  .cm-btn-delete:hover {
+    background-color: #e53935;
+  }
+  .cm-no-coupons {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 18px;
+    color: #cccccc;
+  }
+  .addNew{
+    background-color: #1e88e5;
+    border: none;
+  }
+  .delete-coupon-btn-unique{
+    color: red;
+    background-color: transparent;
+    border-color: none;
+   
+   
+  }
+</style>
+
+<body>
+  <div class="container-fluid position-relative d-flex p-0">
+    <!-- Spinner Start -->
+    <div id="spinner" class="show bg-dark position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+      <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+    </div>
+    <!-- Spinner End -->
+
+
+    <!-- Sidebar Start -->
+    <div class="sidebar pe-4 pb-3">
+      <nav class="navbar bg-secondary navbar-dark">
+        <a href="/admin" class="navbar-brand mx-4 mb-3">
+          <h3 class="text-primary"><i class="fa fa-user-edit me-2"></i>Admin</h3>
+        </a>
+        <div class="d-flex align-items-center ms-4 mb-4">
+          <div class="position-relative">
+            <img class="rounded-circle" src="" alt="" style="width: 40px; height: 40px;">
+            <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
+          </div>
+          <div class="ms-3">
+            <h6 class="mb-0"> Doe</h6>
+            <span>Admin</span>
+          </div>
+        </div>
+        <div class="navbar-nav w-100">
+          <a href="/admin" class="nav-item nav-link "><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
+
+          <a href="/admin/user-List" class="nav-item nav-link "><i class="fa fa-users me-2"></i>Users</a>
+          <a href="/admin/category-list" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>Category</a>
+          <a href="/admin/products-list" class="nav-item nav-link"><i class="fa fa-bell me-2"></i>Products</a>
+          <a href="/admin/orderDetails" class="nav-item nav-link"><i class="fa fa-chart-area me-2"></i>Orders</a>
+          <a href="/admin/couponList" class="nav-item nav-link active"><i class="fa fa-chart-bar me-2"></i>Coupons</a>
+          <a href="/admin/salesReport" class="nav-item nav-link"><i class="fa fa-file-invoice-dollar me-2"></i>Sales report</a>
+          <a href="/admin/offers" class="nav-item nav-link"><i class="fa fa-file-invoice-dollar me-2"></i>Offers</a>
+          <a href="/admin/logout" class="nav-item nav-link"> <i class="fa fa-sign-out-alt"></i>Logout</a>
+        </div>
+    </div>
+    </nav>
+  </div>
+  
+  
+  <!-- Sidebar End -->
+
+
+
+  <div class="content">
+    <!-- Navbar Start -->
+    <nav class="navbar navbar-expand bg-secondary navbar-dark sticky-top px-4 py-0">
+      <a href="index.html" class="navbar-brand d-flex d-lg-none me-4">
+        <h2 class="text-primary mb-0"><i class="fa fa-user-edit"></i></h2>
+      </a>
+      <a href="#" class="sidebar-toggler flex-shrink-0">
+        <i class="fa fa-bars"></i>
+      </a>
+      <form class="d-none d-md-flex ms-4">
+        <input class="form-control bg-dark border-0" type="search" placeholder="Search">
+      </form>
+      <div class="navbar-nav align-items-center ms-auto">
+        <div class="nav-item dropdown">
+          <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+            <i class="fa fa-envelope me-lg-2"></i>
+            <span class="d-none d-lg-inline-flex">Message</span>
+          </a>
+          <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
+            <a href="#" class="dropdown-item">
+              <div class="d-flex align-items-center">
+                <img class="rounded-circle" src="/img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                <div class="ms-2">
+                  <h6 class="fw-normal mb-0">Jhon send you a message</h6>
+                  <small>15 minutes ago</small>
+                </div>
+              </div>
+            </a>
+            <hr class="dropdown-divider">
+            <a href="#" class="dropdown-item">
+              <div class="d-flex align-items-center">
+                <img class="rounded-circle" src="/img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                <div class="ms-2">
+                  <h6 class="fw-normal mb-0">Jhon send you a message</h6>
+                  <small>15 minutes ago</small>
+                </div>
+              </div>
+            </a>
+            <hr class="dropdown-divider">
+            <a href="#" class="dropdown-item">
+              <div class="d-flex align-items-center">
+                <img class="rounded-circle" src="/img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                <div class="ms-2">
+                  <h6 class="fw-normal mb-0">Jhon send you a message</h6>
+                  <small>15 minutes ago</small>
+                </div>
+              </div>
+            </a>
+            <hr class="dropdown-divider">
+            <a href="#" class="dropdown-item text-center">See all message</a>
+          </div>
+        </div>
+        <div class="nav-item dropdown">
+          <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+            <i class="fa fa-bell me-lg-2"></i>
+            <span class="d-none d-lg-inline-flex">Notification</span>
+          </a>
+          <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
+            <a href="#" class="dropdown-item">
+              <h6 class="fw-normal mb-0">Profile updated</h6>
+              <small>15 minutes ago</small>
+            </a>
+            <hr class="dropdown-divider">
+            <a href="#" class="dropdown-item">
+              <h6 class="fw-normal mb-0">New user added</h6>
+              <small>15 minutes ago</small>
+            </a>
+            <hr class="dropdown-divider">
+            <a href="#" class="dropdown-item">
+              <h6 class="fw-normal mb-0">Password changed</h6>
+              <small>15 minutes ago</small>
+            </a>
+            <hr class="dropdown-divider">
+            <a href="#" class="dropdown-item text-center">See all notifications</a>
+          </div>
+        </div>
+        <div class="nav-item dropdown">
+          <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+            <img class="rounded-circle me-lg-2" src="/img/user.jpg" alt="" style="width: 40px; height: 40px;">
+            <span class="d-none d-lg-inline-flex">John Doe</span>
+          </a>
+          <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
+            <a href="#" class="dropdown-item">My Profile</a>
+            <a href="#" class="dropdown-item">Settings</a>
+            <a href="#" class="dropdown-item">Log Out</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+   
+  
+
+<!-- !----------------------------------- Coupons -------------------------------------------------- -->
+<div class="cm-header">
+    <h1>Coupon Management</h1>
+  </div>
+  
+  <div class="container cm-container">
+    <div class="d-flex mb-4">
+      <a href="/admin/addCoupon" class="btn btn-primary addNew">+ Add a new coupon</a>
+    </div>
+  
+    <div id="couponList" class="row">
+      <% if(coupons && coupons.length > 0){ %>
+        <% coupons.forEach(coupon => { %>
+      <div class="col-md-4">
+        <div class="cm-card">
+          <div class="cm-card-info">
+            <div class="d-flex justify-content-between">
+              <h3><%= coupon.couponName %></h3>
+              <form class="delete-coupon-form-unique" data-delete-coupon-id="<%= coupon._id %>">
+                <button type="button" class="delete-coupon-btn-unique btn-danger">X</button>
+              </form>
+            </div>
+            <h6><%= coupon.couponCode %></h6>
+            <p>Discount: <%= coupon.discountPercentage %> % off</p>
+            <p>Minimum purchase Amount: <%= coupon.minPurchaseAmount %></p>
+            <p>Max redeem amount: <%= coupon.maxRedeemAmount %></p>
+            <p>Expiry Date: <%= coupon.expiryDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }) %></p>
+          </div>
+          <div class="cm-card-actions">
+            <a href="/admin/editCoupon?couponId=<%= coupon._id %>">
+              <button class="cm-btn cm-btn-edit">Edit</button>
+            </a>
+            <form class="block-product-form-unique" data-block-coupon-id="<%= coupon._id %>">
+              <button type="button" class="cm-btn <%= coupon.listed ? 'cm-btn-delete' : 'cm-btn-list' %> block-product-btn-unique">
+                <%= coupon.listed ? 'Unlist' : 'List' %>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+        <% }); %>
+      <% } else { %>
+      <div class="cm-no-coupons">
+        No coupons found.
+      </div>
+      <% } %>
+    </div>
+  </div>
+  
+
+  
+
+
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+ <script src="/js/adminFunctions/couponList.js"></script>
+<%- include('../layouts/adminfooter') %>

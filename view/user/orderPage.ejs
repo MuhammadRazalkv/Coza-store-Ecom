@@ -1,0 +1,1070 @@
+<%- include('../layouts/header') %>
+
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.11.1/dist/sweetalert2.min.css" rel="stylesheet">
+
+<link rel="stylesheet" href="userProfile/css/swiper10-bundle.min.css">
+
+    <link rel="stylesheet" href="userProfile/css/bootstrap-5.3.2.min.css">
+
+    <link rel="stylesheet" href="userProfile/css/nouislider.min.css">
+
+    <link rel="stylesheet" href="userProfile/css/aos-3.0.0.css">
+
+    <link rel="stylesheet" href="userProfile/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+     <style>
+         .invalid-feedback {
+            display: none;
+            color: red;
+        }
+        .valid-feedback {
+            display: none;
+            color: green;
+        }
+
+        .invalid-feedbackPass {
+            display: none;
+            color: red;
+        }
+        .valid-feedbackPass {
+            display: none;
+            color: green;
+        }
+
+            /* Ensure the modal has the highest priority */
+            .modal {
+            z-index: 1050; /* Higher than typical header z-index */
+        }
+
+        .modal-backdrop {
+            z-index: 1040; /* Slightly lower than the modal */
+        }
+
+        /* Example header style to demonstrate z-index management */
+        header {
+            z-index: 1000;
+            position: relative;
+        }
+         /* Additional styling for better UX */
+         .modal-body .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .modal-content {
+            font-size: 16px; /* Adjust font size */
+            padding: 20px; /* Adjust padding */
+        }
+        .invalid-feedback2 {
+            display: none;
+            color: red;
+        }
+        .toggle-password {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+/* Modal styles */
+/* Modal styles */
+/* #returnModal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+  justify-content: center;
+  align-items: center;
+  display: flex;
+} */
+
+#returnModal {
+  display: none; /* Ensure modal is hidden by default */
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+  /* justify-content: center;
+  align-items: center;
+  display: flex; */
+}
+
+
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 400px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.close {
+  color: #aaa;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+}
+
+select {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+button {
+  background-color: #0307e1;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #1241da;
+}
+
+
+
+     </style>
+
+
+<body class="animsition">
+	
+	<!-- Header -->
+	<header class="header-v4">
+		<!-- Header desktop -->
+		<div class="container-menu-desktop">
+			<!-- Topbar -->
+			<div class="top-bar">
+				<div class="content-topbar flex-sb-m h-full container">
+					<div class="left-top-bar">
+						Free shipping for standard order over $100
+					</div>
+
+					<div class="right-top-bar flex-w h-full">
+						<a href="#" class="flex-c-m trans-04 p-lr-25">
+							Help & FAQs
+						</a>
+
+						<a href="#" class="flex-c-m trans-04 p-lr-25">
+							My Account
+						</a>
+
+						<a href="#" class="flex-c-m trans-04 p-lr-25">
+							EN
+						</a>
+
+						<a href="#" class="flex-c-m trans-04 p-lr-25">
+							USD
+						</a>
+					</div>
+				</div>
+			</div>
+
+			<div class="wrap-menu-desktop how-shadow1">
+				<nav class="limiter-menu-desktop container">
+					
+					<!-- Logo desktop -->		
+					<a href="#" class="logo">
+						<img src="images/icons/logo-01.png" alt="IMG-LOGO">
+					</a>
+
+					<!-- Menu desktop -->
+					<div class="menu-desktop">
+						<ul class="main-menu">
+							<li>
+								<a href="/">Home</a>
+							
+							</li>
+
+							<li>
+								<a href="/shop_products">Shop</a>
+							</li>
+
+							<li class="label1" data-label1="hot">
+								<a href="shoping-cart.html">Features</a>
+							</li>
+
+							<li>
+								<a href="blog.html">Blog</a>
+							</li>
+
+							<li>
+								<a href="about.html">About</a>
+							</li>
+
+							<li>
+								<a href="contact.html">Contact</a>
+							</li>
+						</ul>
+					</div>	
+
+					<!-- Icon header -->
+					<div class="wrap-icon-header flex-w flex-r-m">
+						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
+							<i class="zmdi zmdi-search"></i>
+						</div>
+
+						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" data-notify="2">
+							<i class="zmdi zmdi-shopping-cart"></i>
+						</div>
+
+						<a href="#" class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti" data-notify="0">
+							<i class="zmdi zmdi-favorite-outline"></i>
+						</a>
+					</div>
+				</nav>
+			</div>	
+		</div>
+
+		<!-- Header Mobile -->
+		<div class="wrap-header-mobile">
+			<!-- Logo moblie -->		
+			<div class="logo-mobile">
+				<a href="index.html"><img src="images/icons/logo-01.png" alt="IMG-LOGO"></a>
+			</div>
+
+			<!-- Icon header -->
+			<div class="wrap-icon-header flex-w flex-r-m m-r-15">
+				<div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 js-show-modal-search">
+					<i class="zmdi zmdi-search"></i>
+				</div>
+
+				<div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-show-cart" data-notify="2">
+					<i class="zmdi zmdi-shopping-cart"></i>
+				</div>
+
+				<a href="#" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti" data-notify="0">
+					<i class="zmdi zmdi-favorite-outline"></i>
+				</a>
+			</div>
+
+			<!-- Button show menu -->
+			<div class="btn-show-menu-mobile hamburger hamburger--squeeze">
+				<span class="hamburger-box">
+					<span class="hamburger-inner"></span>
+				</span>
+			</div>
+		</div>
+
+
+		<!-- Menu Mobile -->
+		<div class="menu-mobile">
+			<ul class="topbar-mobile">
+				<li>
+					<div class="left-top-bar">
+						Free shipping for standard order over $100
+					</div>
+				</li>
+
+				<li>
+					<div class="right-top-bar flex-w h-full">
+						<a href="#" class="flex-c-m p-lr-10 trans-04">
+							Help & FAQs
+						</a>
+
+						<a href="#" class="flex-c-m p-lr-10 trans-04">
+							My Account
+						</a>
+
+						<a href="#" class="flex-c-m p-lr-10 trans-04">
+							EN
+						</a>
+
+						<a href="#" class="flex-c-m p-lr-10 trans-04">
+							USD
+						</a>
+					</div>
+				</li>
+			</ul>
+
+			<ul class="main-menu-m">
+				<li>
+					<a href="/">Home</a>
+				
+					<span class="arrow-main-menu-m">
+						<i class="fa fa-angle-right" aria-hidden="true"></i>
+					</span>
+				</li>
+
+				<li>
+					<a href="product.html">Shop</a>
+				</li>
+
+				<li>
+					<a href="shoping-cart.html" class="label1 rs1" data-label1="hot">Features</a>
+				</li>
+
+				<li>
+					<a href="blog.html">Blog</a>
+				</li>
+
+				<li>
+					<a href="about.html">About</a>
+				</li>
+
+				<li>
+					<a href="contact.html">Contact</a>
+				</li>
+			</ul>
+		</div>
+
+		<!-- Modal Search -->
+		<div class="modal-search-header flex-c-m trans-04 js-hide-modal-search">
+			<div class="container-search-header">
+				<button class="flex-c-m btn-hide-modal-search trans-04 js-hide-modal-search">
+					<img src="images/icons/icon-close2.png" alt="CLOSE">
+				</button>
+
+				<form class="wrap-search-header flex-w p-l-15">
+					<button class="flex-c-m trans-04">
+						<i class="zmdi zmdi-search"></i>
+					</button>
+					<input class="plh3" type="text" name="search" placeholder="Search...">
+				</form>
+			</div>
+		</div>
+	</header>
+
+	<!-- Cart -->
+	<div class="wrap-header-cart js-panel-cart">
+		<div class="s-full js-hide-cart"></div>
+
+		<div class="header-cart flex-col-l p-l-65 p-r-25">
+			<div class="header-cart-title flex-w flex-sb-m p-b-8">
+				<span class="mtext-103 cl2">
+					Your Cart
+				</span>
+
+				<div class="fs-35 lh-10 cl2 p-lr-5 pointer hov-cl1 trans-04 js-hide-cart">
+					<i class="zmdi zmdi-close"></i>
+				</div>
+			</div>
+			
+			<div class="header-cart-content flex-w js-pscroll">
+				<ul class="header-cart-wrapitem w-full">
+					<li class="header-cart-item flex-w flex-t m-b-12">
+						<div class="header-cart-item-img">
+							<img src="images/item-cart-01.jpg" alt="IMG">
+						</div>
+
+						<div class="header-cart-item-txt p-t-8">
+							<a href="#" class="header-cart-item-name m-b-18 hov-cl1 trans-04">
+								White Shirt Pleat
+							</a>
+
+							<span class="header-cart-item-info">
+								1 x $19.00
+							</span>
+						</div>
+					</li>
+
+					<li class="header-cart-item flex-w flex-t m-b-12">
+						<div class="header-cart-item-img">
+							<img src="images/item-cart-02.jpg" alt="IMG">
+						</div>
+
+						<div class="header-cart-item-txt p-t-8">
+							<a href="#" class="header-cart-item-name m-b-18 hov-cl1 trans-04">
+								Converse All Star
+							</a>
+
+							<span class="header-cart-item-info">
+								1 x $39.00
+							</span>
+						</div>
+					</li>
+
+					<li class="header-cart-item flex-w flex-t m-b-12">
+						<div class="header-cart-item-img">
+							<img src="images/item-cart-03.jpg" alt="IMG">
+						</div>
+
+						<div class="header-cart-item-txt p-t-8">
+							<a href="#" class="header-cart-item-name m-b-18 hov-cl1 trans-04">
+								Nixon Porter Leather
+							</a>
+
+							<span class="header-cart-item-info">
+								1 x $17.00
+							</span>
+						</div>
+					</li>
+				</ul>
+				
+				<div class="w-full">
+					<div class="header-cart-total w-full p-tb-40">
+						Total: $75.00
+					</div>
+
+					<div class="header-cart-buttons flex-w w-full">
+						<a href="shoping-cart.html" class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-r-8 m-b-10">
+							View Cart
+						</a>
+
+						<a href="shoping-cart.html" class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-b-10">
+							Check Out
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+  
+ 
+
+  
+
+  <div class="container">
+    <div class="main-body">
+    
+<!--* ----------------------------------------User Profile Start --------------------------------------------  -->
+<!-- *--------------------------------------------------------------------------------------------------------------           -->
+         
+ 
+
+
+  <section class="user-profile footer-padding">
+      <div class="container">
+          <div class="user-profile-section">  
+              <!-- <div class="user-dashboard">
+                <div class="nav nav-item nav-pills  me-3" id="v-pills-tab" role="tablist"
+                aria-orientation="vertical"> -->
+
+                <!-- <button class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill"
+                    data-bs-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home"
+                    aria-selected="true">
+                    <span>
+                        <svg width="17" height="17" viewBox="0 0 17 17" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M9.21258 4.98254C9.21258 6.17687 9.20926 7.37119 9.21391 8.56552C9.21723 9.41928 9.69987 9.9079 10.5483 9.90989C12.2512 9.91454 13.9547 9.91454 15.6576 9.90989C16.5007 9.9079 16.9966 9.40799 16.9979 8.56751C16.9999 6.16757 16.9999 3.76763 16.9979 1.36835C16.9973 0.508624 16.4961 0.00340804 15.6423 0.00274416C13.9613 0.000752505 12.2804 0.00141639 10.5994 0.00274416C9.69722 0.00340804 9.2159 0.488044 9.21391 1.40022C9.21059 2.59388 9.21258 3.78821 9.21258 4.98254ZM7.78722 12.0522C7.78722 10.8579 7.78921 9.66359 7.78656 8.46926C7.78456 7.57036 7.31122 7.09104 6.42028 7.08971C4.73933 7.08639 3.05837 7.08705 1.37742 7.08971C0.489805 7.09104 0.00251398 7.57965 0.0018501 8.46395C0.000522332 10.8526 0.000522332 13.2413 0.0018501 15.6299C0.00251398 16.4896 0.503747 16.9969 1.35551 16.9982C3.04775 17.0002 4.73933 17.0002 6.43157 16.9982C7.2913 16.9969 7.78257 16.5036 7.78589 15.6359C7.78988 14.4409 7.78722 13.2466 7.78722 12.0522ZM3.89022 5.66236C4.75261 5.66236 5.61499 5.66767 6.47738 5.66103C7.28665 5.65439 7.77925 5.16444 7.78523 4.35782C7.79253 3.34075 7.79253 2.32302 7.78523 1.30595C7.77925 0.505968 7.27337 0.00473581 6.47339 0.00274416C4.75924 -0.00123915 3.04576 -0.000575264 1.33161 0.00274416C0.519016 0.00407193 0.00516952 0.516591 0.00251398 1.32719C-0.00146932 2.32236 -0.000141552 3.31752 0.00251398 4.31268C0.00450564 5.15648 0.49578 5.65638 1.33626 5.66169C2.18736 5.667 3.03846 5.66236 3.89022 5.66236ZM13.1083 11.3372C12.2459 11.3372 11.3835 11.3319 10.5211 11.3386C9.71248 11.3452 9.21988 11.8358 9.21457 12.6431C9.20793 13.6602 9.20727 14.6779 9.21457 15.695C9.22055 16.493 9.72908 16.9955 10.5271 16.9969C12.2412 17.0008 13.9547 17.0002 15.6689 16.9969C16.4801 16.9955 16.994 16.481 16.9973 15.6704C17.0013 14.6752 16.9999 13.6801 16.9973 12.6849C16.9953 11.8418 16.502 11.3425 15.6622 11.3379C14.8111 11.3333 13.9594 11.3372 13.1083 11.3372Z" />
+                            <path
+                                d="M9.21223 4.98269C9.21223 3.78837 9.21024 2.59404 9.2129 1.39971C9.21489 0.487533 9.69621 0.00289744 10.5984 0.00223355C12.2794 0.000905786 13.9603 0.000241902 15.6413 0.00223355C16.495 0.00356132 16.9963 0.508777 16.9969 1.36784C16.9983 3.76778 16.9989 6.16773 16.9969 8.567C16.9963 9.40748 16.5004 9.90739 15.6566 9.90938C13.9537 9.91402 12.2502 9.91402 10.5473 9.90938C9.69886 9.90672 9.21622 9.41877 9.2129 8.56501C9.20891 7.37135 9.21223 6.17702 9.21223 4.98269Z" />
+                            <path
+                                d="M7.78832 12.0524C7.78832 13.2467 7.79098 14.441 7.78699 15.6353C7.78434 16.503 7.2924 16.9963 6.43267 16.9976C4.74043 16.9996 3.04885 16.9996 1.35661 16.9976C0.504845 16.9963 0.00361284 16.4891 0.00294895 15.6294C0.00162118 13.2407 0.00162118 10.8521 0.00294895 8.4634C0.00361284 7.57911 0.490904 7.09115 1.37852 7.08916C3.05947 7.08651 4.74043 7.08584 6.42138 7.08916C7.31231 7.09115 7.785 7.56981 7.78766 8.46871C7.79031 9.6637 7.78832 10.858 7.78832 12.0524Z" />
+                            <path
+                                d="M3.89062 5.6621C3.03952 5.6621 2.18775 5.66609 1.33665 5.66077C0.496177 5.65613 0.00490302 5.15622 0.00224748 4.31243C-0.000408054 3.31726 -0.00107194 2.3221 0.00224748 1.32694C0.0055669 0.516336 0.519413 0.00381733 1.33201 0.00248957C3.04616 -0.000829855 4.75964 -0.000829855 6.47379 0.00248957C7.27311 0.00448122 7.77965 0.50505 7.78563 1.30569C7.79293 2.32276 7.79293 3.3405 7.78563 4.35757C7.77965 5.16485 7.28771 5.6548 6.47777 5.66077C5.61539 5.66741 4.753 5.6621 3.89062 5.6621Z" />
+                            <path
+                                d="M13.1081 11.3378C13.9592 11.3378 14.811 11.3338 15.6621 11.3391C16.5019 11.3444 16.9952 11.843 16.9972 12.6862C16.9998 13.6813 17.0005 14.6765 16.9972 15.6716C16.9939 16.4822 16.48 16.9968 15.6687 16.9981C13.9546 17.0014 12.2411 17.0014 10.527 16.9981C9.72831 16.9961 9.21977 16.4935 9.21446 15.6962C9.20716 14.6791 9.20716 13.6614 9.21446 12.6443C9.21977 11.837 9.71237 11.3464 10.521 11.3398C11.3834 11.3325 12.2458 11.3378 13.1081 11.3378Z" />
+                        </svg>
+                    </span>
+                    <span class="text">Dashboard</span>
+                </button>
+             -->
+                  <!-- <div class="nav nav-item nav-pills  me-3" id="v-pills-tab" role="tablist"
+                      aria-orientation="vertical">
+                      <button class="nav-link" id="v-pills-order-tab" data-bs-toggle="pill"
+                          data-bs-target="#v-pills-order" type="button" role="tab" aria-controls="v-pills-order"
+                          aria-selected="false">
+                          <span>
+                              <svg width="15" height="18" viewBox="0 0 15 18" fill="none"
+                                  xmlns="http://www.w3.org/2000/svg">
+                                  <path
+                                      d="M10.9643 15.8454C10.8728 15.8399 10.8054 15.8331 10.7381 15.8331C9.37517 15.8324 8.01229 15.8324 6.60539 15.8324C6.85294 16.5145 6.77799 17.099 6.11648 17.4676C5.68672 17.7076 5.24457 17.6615 4.86018 17.3562C4.36027 16.9594 4.3087 16.4409 4.56175 15.8317C3.82667 15.8317 3.13285 15.8406 2.43903 15.8296C1.53136 15.8152 0.910425 14.8958 1.25974 14.0638C1.34845 13.852 1.51898 13.6581 1.69295 13.502C2.43628 12.8384 3.19199 12.1872 3.95182 11.5429C4.11204 11.4075 4.16499 11.2816 4.11479 11.074C3.36389 7.96037 2.61506 4.8454 1.87999 1.72768C1.82085 1.476 1.71564 1.42512 1.48597 1.432C0.997754 1.44712 0.507472 1.43681 0 1.43681C0 1.06824 0 0.741614 0 0.390921C0.782525 0.390921 1.54786 0.377856 2.31182 0.397798C2.58825 0.405362 2.70308 0.630905 2.76772 0.885329C3.01389 1.86177 3.27725 2.83339 3.5138 3.81189C3.57775 4.07732 3.68846 4.22034 3.96901 4.19971C3.98001 4.19903 3.9917 4.20315 4.00339 4.20315C4.60369 4.21003 4.95026 4.4507 5.25488 5.03863C6.60195 7.64613 10.1907 7.96587 12.0686 5.68981C12.2206 5.50622 12.3512 5.44639 12.585 5.4904C13.0911 5.58529 13.6027 5.64855 14.1136 5.71801C14.333 5.74826 14.4306 5.85416 14.4251 6.08314C14.3839 7.93906 14.3461 9.79498 14.3144 11.6509C14.3089 11.9816 14.0937 11.9665 13.8661 11.9665C11.0819 11.9651 8.29697 11.9693 5.51274 11.9596C5.2425 11.959 5.03897 12.0291 4.8368 12.2072C4.05428 12.8962 3.25525 13.5659 2.47135 14.2536C2.37095 14.3416 2.32488 14.4908 2.25337 14.6111C2.38264 14.6552 2.51192 14.737 2.64119 14.737C6.60608 14.7439 10.571 14.7425 14.5358 14.7425C14.6823 14.7425 14.8288 14.7425 15 14.7425C15 15.1152 15 15.4514 15 15.8193C14.3426 15.8193 13.6935 15.8193 13.0127 15.8193C13.25 16.4568 13.2156 17.0055 12.6442 17.4064C12.2536 17.68 11.7406 17.6814 11.3521 17.4091C10.78 17.011 10.7339 16.4636 10.9643 15.8454Z" />
+                                  <path
+                                      d="M8.8449 6.1337C7.15883 6.12476 5.787 4.74744 5.78906 3.06549C5.79113 1.37254 7.18564 -0.00685072 8.88753 2.55979e-05C10.5702 0.00690192 11.9413 1.38835 11.9392 3.07374C11.9372 4.77563 10.555 6.14264 8.8449 6.1337ZM9.94924 1.61802C9.38194 2.22039 8.85178 2.78287 8.31199 3.35636C8.11326 3.12806 7.94342 2.93278 7.76394 2.72786C7.48201 2.96853 7.22553 3.1872 6.95735 3.41618C7.28191 3.80125 7.57484 4.16708 7.8884 4.51502C8.10157 4.75225 8.43232 4.77082 8.65236 4.54458C9.33656 3.83907 10.0042 3.11775 10.6382 2.44593C10.4031 2.16332 10.1858 1.9027 9.94924 1.61802Z" />
+                              </svg>
+                          </span>
+                          <span class="text">
+                              Order
+                          </span>
+                      </button> -->
+                     
+               
+                  
+                
+                     
+<!--                      
+                      <div class="nav-link">
+                          <a href="/">
+                              <span>
+                                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
+                                      xmlns="http://www.w3.org/2000/svg">
+                                      <g clip-path="url(#clip0_113_3043)">
+                                          <path
+                                              d="M7.50224 15.7537C7.50224 16.0247 7.50895 16.2465 7.5 16.4683C7.4597 17.5682 6.52164 18.2515 5.4806 17.9155C4.00075 17.4383 2.52761 16.9387 1.05448 16.4392C0.380597 16.2107 0 15.6641 0 14.9405C0 10.4892 0 6.03569 0.00223881 1.58218C0.00223881 0.627852 0.629104 0.00955666 1.59403 0.00731646C4.28731 0.00283606 6.98284 -0.00164434 9.67612 0.000595862C11.0104 0.00283606 11.9798 0.961641 12 2.29904C12.0112 2.99126 12.0067 3.68124 12 4.37347C11.9955 4.90439 11.6933 5.25162 11.2478 5.25162C10.8022 5.25386 10.4955 4.90663 10.491 4.37571C10.4843 3.69693 10.4933 3.0159 10.4888 2.33712C10.4843 1.79276 10.209 1.50153 9.67388 1.49705C8.72463 1.48585 7.77761 1.49481 6.82836 1.49481C6.72313 1.49481 6.61791 1.49481 6.46791 1.49481C6.51492 1.55081 6.53284 1.59114 6.56418 1.60682C7.24254 1.91597 7.51119 2.46481 7.51119 3.1884C7.50672 6.72791 7.50895 10.2674 7.50895 13.8069C7.50895 13.9436 7.50895 14.0802 7.50895 14.2415C8.32164 14.2415 9.09179 14.2662 9.8597 14.2303C10.2649 14.2124 10.4888 13.8898 10.491 13.4396C10.4978 12.5031 10.4955 11.5645 10.4933 10.6259C10.4933 10.2854 10.594 10.0008 10.9119 9.83507C11.3888 9.58865 11.9754 9.89332 11.9888 10.4511C12.0179 11.5511 12.0493 12.6577 11.9664 13.7532C11.8746 14.9494 10.9052 15.7447 9.69403 15.7514C8.97537 15.7559 8.26343 15.7537 7.50224 15.7537Z" />
+                                          <path
+                                              d="M13.4942 6.75005C13.4942 6.02423 13.5009 5.33425 13.492 4.64651C13.4875 4.27463 13.5927 3.96997 13.9532 3.81539C14.3136 3.66082 14.6046 3.79523 14.8688 4.06181C15.8002 5.0027 16.7405 5.93462 17.674 6.87326C18.1061 7.30786 18.1129 7.69094 17.6897 8.11882C16.7494 9.06642 15.8024 10.0073 14.8599 10.9549C14.6091 11.2058 14.327 11.3402 13.9755 11.1946C13.6129 11.0445 13.492 10.7533 13.4964 10.3769C13.5032 9.68695 13.4987 8.99473 13.4987 8.24875C13.3576 8.24875 13.2345 8.24875 13.1114 8.24875C12.2808 8.24875 11.4479 8.25099 10.6173 8.24651C10.0711 8.24427 9.75315 7.962 9.75987 7.4938C9.76435 7.03456 10.0912 6.75453 10.6352 6.75229C11.5666 6.75005 12.5024 6.75005 13.4942 6.75005Z" />
+                                      </g>
+                                      <defs>
+                                          <clipPath id="clip0_113_3043">
+                                              <rect width="18" height="18" fill="white" />
+                                          </clipPath>
+                                      </defs>
+                                  </svg>
+                              </span>
+                              <span class="text">
+                                  Logout
+                              </span>
+                          </a>
+                      </div>
+                  </div> -->
+
+</div>
+
+<!-- !------------------------------------- Orders  ---------------------------------------------------------------------  -->
+
+                      <div class="tab-pane fade show active" id="v-pills-order" role="tabpanel"
+                          aria-labelledby="v-pills-order-tab" tabindex="0">
+                          <div class="cart-section">
+                            <table>
+                              <tbody>
+                                <tr class="table-row table-top-row">
+                                  <td class="table-wrapper wrapper-product">
+                                    <h5 class="table-heading">PRODUCT</h5>
+                                  </td>
+                                  <td class="table-wrapper">
+                                    <div class="table-wrapper-center">
+                                      <h5 class="table-heading">PRICE</h5>
+                                    </div>
+                                  </td>
+                                  <td class="table-wrapper">
+                                    <div class="table-wrapper-center">
+                                      <h5 class="table-heading">QUANTITY</h5>
+                                    </div>
+                                  </td>
+                                  <td class="table-wrapper wrapper-total">
+                                    <div class="table-wrapper-center">
+                                      <h5 class="table-heading">TOTAL</h5>
+                                    </div>
+                                  </td>
+                                  <td class="table-wrapper wrapper-total">
+                                    <div class="table-wrapper-center">
+                                      <h5 class="table-heading">Payment Method</h5>
+                                    </div>
+                                  </td>
+                                  <td class="table-wrapper wrapper-total">
+                                    <div class="table-wrapper-center">
+                                      <h5 class="table-heading">Status</h5>
+                                    </div>
+                                  </td>
+                                  <td class="table-wrapper">
+                                    <div class="table-wrapper-center">
+                                      <h5 class="table-heading">ACTION</h5>
+                                    </div>
+                                  </td>
+                                  <td class="table-wrapper">
+                                    <div class="table-wrapper-center">
+                                      <h5 class="table-heading">View</h5>
+                                    </div>
+                                  </td>
+                                </tr>
+                                <% if (orders && orders.length > 0) { %>
+                                  <% orders.forEach(order => { %>
+                                    <% order.orderItems.forEach(variant => { %>
+                                      <tr class="table-row ticket-row">
+                                        <td class="table-wrapper wrapper-product">
+                                          <div class="wrapper">
+                                            <div class="wrapper-img">
+                                              <% if (variant.variantId && variant.variantId.variantImg && variant.variantId.variantImg.length > 0) { %>
+                                                <img src="/assets/productImages/<%= variant.variantId.variantImg[0] %>" alt="img">
+                                              <% } else { %>
+                                                <img src="/assets/productImages/default.jpg" alt="img">
+                                              <% } %>
+                                            </div>
+                                            <div class="wrapper-content">
+                                              <h5 class="heading"><%= variant.variantName %></h5>
+                                            </div>
+                                          </div>
+                                        </td>
+                                        <td class="table-wrapper">
+                                          <div class="table-wrapper-center">
+                                            <h5 class="heading"><%= variant.variantPrice %></h5>
+                                          </div>
+                                        </td>
+                                        <td class="table-wrapper wrapper-total">
+                                          <div class="table-wrapper-center">
+                                            <h5 class="heading"><%= variant.quantity %></h5>
+                                          </div>
+                                        </td>
+                                        <td class="table-wrapper wrapper-total">
+                                          <div class="table-wrapper-center">
+                                            <h5 class="heading"><%= (variant.variantPrice * variant.quantity) %></h5>
+                                          </div>
+                                        </td>
+                                        <td class="table-wrapper wrapper-total">
+                                          <div class="table-wrapper-center">
+                                            <h5 class="heading"><%= order.paymentMethod %></h5>
+                                          </div>
+                                        </td>
+                                        <td class="table-wrapper wrapper-total">
+                                          <div class="table-wrapper-center">
+                                            <h5 class="heading"><%= variant.orderStatus %></h5>
+                                          </div>
+                                        </td>
+                                        <td class="table-wrapper">
+                                          <div class="table-wrapper-center">
+                                            <% if (variant.orderStatus == 'Processing') { %>
+                                              <button class="btn btn-danger btn-sm" onclick="cancelOrderItem('<%= order._id %>', '<%= variant._id %>')">
+                                                <h5 class="heading" style="color: white;">Cancel</h5>
+                                              </button>
+                                            <% } else if (variant.orderStatus == 'Delivered') { %>
+                                              <button class="btn btn-danger btn-sm" onclick="requestReturn('<%= order._id %>', '<%= variant._id %>')">
+                                                Request return
+                                              </button>
+                                              <!-- <button class="btn btn-primary btn-sm" onclick="downloadInvoice('<%= order._id %>')"> -->
+                                              <a href="downloadInvoice?orderId=<%= order._id %>">
+                                              <button class="btn btn-primary btn-sm"> 
+                                                Download invoice
+                                              </button>
+                                              </a>
+                                              <% } else if (variant.orderStatus == 'Pending') { %>
+                                                <button class="btn btn-primary btn-sm" onclick="rePayment('<%= order._id %>')">
+                                                  Re pay
+                                                </button>
+                                            <% } else { %>
+                                              <span><%= variant.orderStatus %></span>
+                                            <% } %>
+                                          </div>
+                                          
+                                        </td>
+                                        <td>
+                                        <a  onclick="viewOrderDetails('<%= order._id %>')"><i class="zmdi zmdi-eye"></i>
+                                        </a>
+                                        
+                                        </td>
+                                      </tr>
+                                    <% }) %>
+                                  <% }) %>
+
+                                  <!-- pagination  -->
+
+                                  <nav aria-label="Page navigation example" class="d-flex justify-content-end">
+                                    <ul class="pagination">
+                                        <% if (page > 1) { %>
+                                            <li class="page-item">
+                                                <a class="page-link" href="/orders?page=<%= page - 1 %>" tabindex="-1" aria-label="Previous">
+                                                    <span aria-hidden="true"><i class="fas fa-chevron-left"></i></span>
+                                                </a>
+                                            </li>
+                                        <% } else { %>
+                                            <li class="page-item disabled">
+                                                <a class="page-link" href="" tabindex="-1" aria-label="Previous">
+                                                    <span aria-hidden="true"><i class="fas fa-chevron-left"></i></span>
+                                                </a>
+                                            </li>
+                                        <% } %>
+                                
+                                        <% for (let i = 1; i <= totalPages; i++) { %>
+                                            <li class="page-item <%= i === page ? 'active' : '' %>">
+                                                <a class="page-link" href="/orders?page=<%= i %>"><%= i %></a>
+                                            </li>
+                                        <% } %>
+                                
+                                        <% if (page < totalPages) { %>
+                                            <li class="page-item">
+                                                <a class="page-link" href="/orders?page=<%= page + 1 %>" aria-label="Next">
+                                                    <span aria-hidden="true"><i class="fas fa-chevron-right"></i></span>
+                                                </a>
+                                            </li>
+                                        <% } else { %>
+                                            <li class="page-item disabled">
+                                                <a class="page-link" href="" tabindex="-1" aria-label="Next">
+                                                    <span aria-hidden="true"><i class="fas fa-chevron-right"></i></span>
+                                                </a>
+                                            </li>
+                                        <% } %>
+                                    </ul>
+                                </nav>
+
+
+
+
+
+                                <% } else { %>
+                                  <tr>
+                                    <td colspan="7">
+                                      <div class="row">
+                                        <div class="col-md-3">
+                                          <h5 class="heading">No orders found</h5>
+                                        </div>
+                                        <div class="col-md-3">
+                                          <img src="/assets/productImages/Noorders.webp" alt="No Orders found">
+                                        </div>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                <% } %>
+                              </tbody>
+                            </table>
+                            
+                          </div>
+                      </div>
+                                          </div>
+                                     
+                                      </div>
+                                  </div>
+
+                              </div>
+                              
+                          </div>
+                      </div>
+                  </div>
+              </div>
+         </div>
+      </div>
+  </section>
+</div>
+</div>
+
+<!-- Modal for return request -->
+<div id="returnModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h4>Request Return</h4>
+      <span class="close" onclick="closeModal()">&times;</span>
+    </div>
+    <form id="returnForm">
+      <input type="hidden" id="orderId" name="orderId">
+      <input type="hidden" id="variantId" name="variantId">
+      <label for="returnReason">Reason for return:</label>
+      <select id="returnReason" name="returnReason" required>
+        <option value="" disabled selected>Select a reason</option>
+        <option value="Wrong item received">Wrong item received</option>
+        <option value="Item damaged or defective">Item damaged or defective</option>
+        <option value="Item not as described">Item not as described</option>
+        <option value="Changed my mind">Changed my mind</option>
+        <option value="Other">Other</option>
+      </select>
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+</div>
+
+
+  <!-- Footer -->
+  <footer class="bg3 p-t-75 p-b-32">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-6 col-lg-3 p-b-50">
+          <h4 class="stext-301 cl0 p-b-30">Categories</h4>
+
+          <ul>
+            <li class="p-b-10">
+              <a href="#" class="stext-107 cl7 hov-cl1 trans-04"> Women </a>
+            </li>
+
+            <li class="p-b-10">
+              <a href="#" class="stext-107 cl7 hov-cl1 trans-04"> Men </a>
+            </li>
+
+            <li class="p-b-10">
+              <a href="#" class="stext-107 cl7 hov-cl1 trans-04"> Shoes </a>
+            </li>
+
+            <li class="p-b-10">
+              <a href="#" class="stext-107 cl7 hov-cl1 trans-04"> Watches </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="col-sm-6 col-lg-3 p-b-50">
+          <h4 class="stext-301 cl0 p-b-30">Help</h4>
+
+          <ul>
+            <li class="p-b-10">
+              <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
+                Track Order
+              </a>
+            </li>
+
+            <li class="p-b-10">
+              <a href="#" class="stext-107 cl7 hov-cl1 trans-04"> Returns </a>
+            </li>
+
+            <li class="p-b-10">
+              <a href="#" class="stext-107 cl7 hov-cl1 trans-04"> Shipping </a>
+            </li>
+
+            <li class="p-b-10">
+              <a href="#" class="stext-107 cl7 hov-cl1 trans-04"> FAQs </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="col-sm-6 col-lg-3 p-b-50">
+          <h4 class="stext-301 cl0 p-b-30">GET IN TOUCH</h4>
+
+          <p class="stext-107 cl7 size-201">
+            Any questions? Let us know in store at 8th floor, 379 Hudson St, New
+            York, NY 10018 or call us on (+1) 96 716 6879
+          </p>
+
+          <div class="p-t-27">
+            <a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+              <i class="fa fa-facebook"></i>
+            </a>
+
+            <a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+              <i class="fa fa-instagram"></i>
+            </a>
+
+            <a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+              <i class="fa fa-pinterest-p"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3 p-b-50">
+          <h4 class="stext-301 cl0 p-b-30">Newsletter</h4>
+
+          <form>
+            <div class="wrap-input1 w-full p-b-4">
+              <input class="input1 bg-none plh1 stext-107 cl7" type="text" name="email" placeholder="email@example.com" />
+              <div class="focus-input1 trans-04"></div>
+            </div>
+
+            <div class="p-t-18">
+              <button class="flex-c-m stext-101 cl0 size-103 bg1 bor1 hov-btn2 p-lr-15 trans-04">
+                Subscribe
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="p-t-40">
+        <div class="flex-c-m flex-w p-b-18">
+          <a href="#" class="m-all-1">
+            <img src="images/icons/icon-pay-01.png" alt="ICON-PAY" />
+          </a>
+
+          <a href="#" class="m-all-1">
+            <img src="images/icons/icon-pay-02.png" alt="ICON-PAY" />
+          </a>
+
+          <a href="#" class="m-all-1">
+            <img src="images/icons/icon-pay-03.png" alt="ICON-PAY" />
+          </a>
+
+          <a href="#" class="m-all-1">
+            <img src="images/icons/icon-pay-04.png" alt="ICON-PAY" />
+          </a>
+
+          <a href="#" class="m-all-1">
+            <img src="images/icons/icon-pay-05.png" alt="ICON-PAY" />
+          </a>
+        </div>
+
+        <p class="stext-107 cl6 txt-center">
+          <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+          Copyright &copy;
+          <script>
+            document.write(new Date().getFullYear())
+          </script>
+          All rights reserved | Made with
+          <i class="fa fa-heart-o" aria-hidden="true"></i> by
+          <a href="https://colorlib.com" target="_blank">Colorlib</a> &amp;
+          distributed by
+          <a href="https://themewagon.com" target="_blank">ThemeWagon</a>
+          <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to top -->
+  <div class="btn-back-to-top" id="myBtn">
+    <span class="symbol-btn-back-to-top">
+      <i class="zmdi zmdi-chevron-up"></i>
+    </span>
+  </div>
+
+  <!-- Modal1 -->
+  <div class="wrap-modal1 js-modal1 p-t-60 p-b-20">
+    <div class="overlay-modal1 js-hide-modal1"></div>
+
+    <div class="container">
+      <div class="bg0 p-t-60 p-b-30 p-lr-15-lg how-pos3-parent">
+        <button class="how-pos3 hov3 trans-04 js-hide-modal1">
+          <img src="images/icons/icon-close.png" alt="CLOSE" />
+        </button>
+
+        <div class="row">
+          <div class="col-md-6 col-lg-7 p-b-30">
+            <div class="p-l-25 p-r-30 p-lr-0-lg">
+              <div class="wrap-slick3 flex-sb flex-w">
+                <div class="wrap-slick3-dots"></div>
+                <div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
+
+                <div class="slick3 gallery-lb">
+                  <div class="item-slick3" data-thumb="images/product-detail-01.jpg">
+                    <div class="wrap-pic-w pos-relative">
+                      <img src="images/product-detail-01.jpg" alt="IMG-PRODUCT" />
+
+                      <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="images/product-detail-01.jpg">
+                        <i class="fa fa-expand"></i>
+                      </a>
+                    </div>
+                  </div>
+
+                  <div class="item-slick3" data-thumb="images/product-detail-02.jpg">
+                    <div class="wrap-pic-w pos-relative">
+                      <img src="images/product-detail-02.jpg" alt="IMG-PRODUCT" />
+
+                      <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="images/product-detail-02.jpg">
+                        <i class="fa fa-expand"></i>
+                      </a>
+                    </div>
+                  </div>
+
+                  <div class="item-slick3" data-thumb="images/product-detail-03.jpg">
+                    <div class="wrap-pic-w pos-relative">
+                      <img src="images/product-detail-03.jpg" alt="IMG-PRODUCT" />
+
+                      <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="images/product-detail-03.jpg">
+                        <i class="fa fa-expand"></i>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-5 p-b-30">
+            <div class="p-r-50 p-t-5 p-lr-0-lg">
+              <h4 class="mtext-105 cl2 js-name-detail p-b-14">
+                Lightweight Jacket
+              </h4>
+
+              <span class="mtext-106 cl2"> $58.79 </span>
+
+              <p class="stext-102 cl3 p-t-23">
+                Nulla eget sem vitae eros pharetra viverra. Nam vitae luctus
+                ligula. Mauris consequat ornare feugiat.
+              </p>
+
+              <!--  -->
+              <div class="p-t-33">
+                <div class="flex-w flex-r-m p-b-10">
+                  <div class="size-203 flex-c-m respon6">Size</div>
+
+                  <div class="size-204 respon6-next">
+                    <div class="rs1-select2 bor8 bg0">
+                      <select class="js-select2" name="time">
+                        <option>Choose an option</option>
+                        <option>Size S</option>
+                        <option>Size M</option>
+                        <option>Size L</option>
+                        <option>Size XL</option>
+                      </select>
+                      <div class="dropDownSelect2"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex-w flex-r-m p-b-10">
+                  <div class="size-203 flex-c-m respon6">Color</div>
+
+                  <div class="size-204 respon6-next">
+                    <div class="rs1-select2 bor8 bg0">
+                      <select class="js-select2" name="time">
+                        <option>Choose an option</option>
+                        <option>Red</option>
+                        <option>Blue</option>
+                        <option>White</option>
+                        <option>Grey</option>
+                      </select>
+                      <div class="dropDownSelect2"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex-w flex-r-m p-b-10">
+                  <div class="size-204 flex-w flex-m respon6-next">
+                    <div class="wrap-num-product flex-w m-r-20 m-tb-10">
+                      <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
+                        <i class="fs-16 zmdi zmdi-minus"></i>
+                      </div>
+
+                      <input class="mtext-104 cl3 txt-center num-product" type="number" name="num-product" value="1" />
+
+                      <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
+                        <i class="fs-16 zmdi zmdi-plus"></i>
+                      </div>
+                    </div>
+
+                    <button class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
+                      Add to cart
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!--  -->
+              <div class="flex-w flex-m p-l-100 p-t-40 respon7">
+                <div class="flex-m bor9 p-r-10 m-r-11">
+                  <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 js-addwish-detail tooltip100" data-tooltip="Add to Wishlist">
+                    <i class="zmdi zmdi-favorite"></i>
+                  </a>
+                </div>
+
+                <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100" data-tooltip="Facebook">
+                  <i class="fa fa-facebook"></i>
+                </a>
+
+                <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100" data-tooltip="Twitter">
+                  <i class="fa fa-twitter"></i>
+                </a>
+
+                <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100" data-tooltip="Google Plus">
+                  <i class="fa fa-google-plus"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.11.1/dist/sweetalert2.all.min.js"></script>
+  
+  <script src="/js/userFunctions/orderPage.js"></script>
+
+
+    <script src="userProfile/js/jquery_3.7.1.min.js"></script>
+
+    <script src="userProfile/js/bootstrap_5.3.2.bundle.min.js"></script>
+
+    <script src="userProfile/js/nouislider.min.js"></script>
+
+    <script src="userProfile/js/aos-3.0.0.js"></script>
+
+    <script src="userProfile/js/swiper10-bundle.min.js"></script>
+
+    <script src="userProfile/js/shopus.js"></script>
+ 
+<%- include('../layouts/footer') %>  

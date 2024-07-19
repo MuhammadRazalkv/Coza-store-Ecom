@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register</title>
+    <link rel="stylesheet" href="/css/register.css" />
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"> -->
+  </head>
+  <body>
+    <!-- <div id="main">
+
+   
+		<div class="wrapper">
+			<div class="inner">
+				<form action="" method="post">
+					<h3>Registration Form</h3>
+				
+						<div class="form-wrapper">
+						<div class="form-wrapper">
+								
+								<p style="color: red;margin-top: 10px; "></p>
+								 <br>
+							
+							<label >User Name</label>
+							<input type="text" class="form-control" name="name"  required>
+						</div>
+						
+					</div>
+					<div class="form-wrapper">
+						<label for="">Email</label>
+						<input type="email" class="form-control" name="email" required>
+					</div>
+					<div class="form-wrapper">
+						<label for="">Phone Number</label>
+						<input type="number" class="form-control" name="phone" required>
+					</div>
+					<div class="form-wrapper">
+						<label for="">Password</label>
+						<input type="password" class="form-control" name="password" required>
+					</div>
+					<div class="checkbox">
+						
+						
+                         Already an user
+						<a href="/login">Click here</a>
+					</div>
+					<button type="submit">Register Now</button>
+				</form>
+			</div>
+		</div>
+    </div> -->
+
+    <div id="main">
+		<div class="wrapper">
+		  <div class="inner">
+			<form action="" method="post" onsubmit="return validateForm()">
+			  <h3>Registration Form</h3>
+			  <div class="form-wrapper">
+				<% if (typeof message !== 'undefined') { %>
+				<p style="color: red; margin-top: 10px"><%= message %></p>
+				<br />
+				<% } %>
+				<!-- Placeholder for the error message -->
+				<p id="error-message" style="color: red; margin-top: 10px"></p>
+				<label>User Name</label>
+				<input
+				  type="text"
+				  class="form-control"
+				  name="name"
+				  id="name"
+				  pattern="^[a-zA-Z\s]+$"
+				  title="Only letters and whitespace is allowed"
+				  required
+				/>
+			  </div>
+			  <div class="form-wrapper">
+				<label for="">Email</label>
+				<input type="email" class="form-control" name="email" required />
+			  </div>
+			  <div class="form-wrapper">
+				<label for="">Phone Number</label>
+				<input type="number" class="form-control" name="phone" required />
+			  </div>
+			  <div class="form-wrapper">
+				<label for="">Password</label>
+				<input
+				  type="password"
+				  class="form-control"
+				  name="password"
+				  id="password"
+				  minlength="4"
+				  title="Password must be at least 4 characters"
+				  required
+				/>
+			  </div>
+			  <div class="checkbox">
+				Already a user?
+				<a href="/login">Click here</a>
+			  </div>
+			  <button type="submit">Register Now</button>
+			</form>
+		  </div>
+		</div>
+	  </div>
+	  
+	  <script>
+		  function validateForm() {
+    // Get form values
+    var name = document.getElementById('name').value;
+    var password = document.getElementById('password').value;
+    var errorMessage = document.getElementById('error-message');
+    var namePattern = /^[a-zA-Z\s]+$/; // Updated regex to allow only alphabets and spaces
+
+    // Check for invalid characters in the username
+    if (!namePattern.test(name)) {
+      errorMessage.textContent = 'Username must contain only alphabets and spaces.';
+      return false;
+    } else {
+      errorMessage.textContent = ''; // Clear any previous error message
+    }
+
+    // Check password length
+    if (password.length < 4) {
+      errorMessage.textContent = 'Password must be at least 4 characters long.';
+      return false;
+    }
+
+    // Form is valid
+    return true;
+  }
+	  </script>
+	  
+
+    
+  </body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Download</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<style>
+  body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 20px;
+}
+
+.invoice-container {
+    max-width: 800px;
+    margin: auto;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    overflow: hidden;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2em;
+    color: #333;
+}
+
+header .date {
+    font-size: 1em;
+    color: #777;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+table thead {
+    background-color: #007bff;
+    color: #fff;
+}
+
+th, td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #007bff;
+    color: white;
+}
+
+footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+footer .total-amount {
+    font-size: 1.2em;
+    color: #333;
+}
+
+footer button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+footer button:hover {
+    background-color: #0056b3;
+}
+
+</style>
+<body>
+    <div class="invoice-container">
+        <header>
+            <h1>Invoice</h1>
+            <div class="date">Date: <span id="invoice-date"></span></div>
+        </header>
+        <table id="invoice-table">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Discount</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Invoice items will be inserted here dynamically -->
+            </tbody>
+        </table>
+        <footer>
+            <div class="total-amount">
+                <strong>Total Amount:</strong> <span id="total-amount"></span>
+            </div>
+            <button onclick="downloadInvoice()">Download PDF</button>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="scripts.js"></script>
+
+    <script>
+        const { jsPDF } = window.jspdf;
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    const items = [
+        { item: 'Product 1', quantity: 2, price: 10, discount: 1 },
+        { item: 'Product 2', quantity: 1, price: 20, discount: 2 },
+        { item: 'Product 3', quantity: 3, price: 15, discount: 3 }
+    ];
+
+    const tbody = document.querySelector('#invoice-table tbody');
+    let totalAmount = 0;
+
+    items.forEach(item => {
+        const row = document.createElement('tr');
+        const total = (item.price - item.discount) * item.quantity;
+
+        row.innerHTML = `
+            <td>${item.item}</td>
+            <td>${item.quantity}</td>
+            <td>${item.price.toFixed(2)}</td>
+            <td>${item.discount.toFixed(2)}</td>
+            <td>${total.toFixed(2)}</td>
+        `;
+
+        tbody.appendChild(row);
+        totalAmount += total;
+    });
+
+    document.getElementById('invoice-date').textContent = new Date().toLocaleDateString();
+    document.getElementById('total-amount').textContent = totalAmount.toFixed(2);
+});
+
+function downloadInvoice() {
+    const doc = new jsPDF();
+
+    doc.text('Invoice', 105, 10, null, null, 'center');
+    doc.text(`Date: ${new Date().toLocaleDateString()}`, 14, 20);
+
+    doc.autoTable({
+        head: [['Item', 'Quantity', 'Price', 'Discount', 'Total']],
+        body: Array.from(document.querySelectorAll('#invoice-table tbody tr')).map(row => Array.from(row.cells).map(cell => cell.innerText)),
+        startY: 30
+    });
+
+    doc.text(`Total Amount: ${document.getElementById('total-amount').textContent}`, 14, doc.lastAutoTable.finalY + 10);
+
+    doc.save('invoice.pdf');
+}
+
+    </script>
+</body>
+</html>

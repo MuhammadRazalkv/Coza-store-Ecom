@@ -1,0 +1,430 @@
+<%- include('../layouts/adminHeader') %>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<link rel="stylesheet" href="/css/userSideCSS/ToastMessage.css">
+<style>
+/* body {
+    background-color: #121212;
+    color: #ffffff;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 20px;
+  } */
+  /* .ac-header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .ac-container {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .ac-card {
+    background-color: #1e1e1e;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+  .ac-card h2 {
+    color: #bdbdae;
+    margin-bottom: 20px;
+    font-size: 24px;
+    text-align: center;
+  }
+  .ac-form-group label {
+    color: #bdbdae;
+    font-weight: bold;
+  }
+  .ac-form-group input,
+  .ac-form-group select {
+    background-color: #2e2e2e;
+    color: #bdbdae;
+    border: 1px solid #444444;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 15px;
+    width: 100%;
+  }
+  .ac-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  .ac-btn-submit {
+    background-color: #2196F3;
+    color: #ffffff;
+  }
+  .ac-btn-submit:hover {
+    background-color: #1e88e5;
+  }
+  .ac-btn-cancel {
+    background-color: #e82e21;
+    color: #ffffff;
+  }
+  .ac-btn-cancel:hover {
+    background-color: #e53935;
+  }
+  #alertMessage{
+    display: none;
+  } */
+  .ac-header {
+  text-align: center;
+  margin-bottom: 10px; /* Reduced margin */
+}
+
+.ac-container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.ac-card {
+  background-color: #191c24;
+  padding: 20px; /* Reduced padding */
+  border-radius: 15px;
+  margin-top: 30px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.ac-card h2 {
+  color: #bdbdae;
+  margin-bottom: 15px; /* Reduced margin */
+  font-size: 24px;
+  text-align: center;
+}
+
+.ac-form-group label {
+  color: #bdbdae;
+  font-weight: bold;
+}
+
+.ac-form-group input,
+.ac-form-group select {
+  background-color: #2e2e2e;
+  color: #bdbdae;
+  border: 1px solid #444444;
+  border-radius: 5px;
+  padding: 8px; /* Reduced padding */
+  margin-bottom: 10px; /* Reduced margin */
+  width: 100%;
+}
+
+.ac-btn {
+  padding: 8px 15px; /* Reduced padding */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.ac-btn-submit {
+  background-color: #2196F3;
+  color: #ffffff;
+}
+
+.ac-btn-submit:hover {
+  background-color: #1e88e5;
+}
+
+.ac-btn-cancel {
+  background-color: #e82e21;
+  color: #ffffff;
+}
+
+.ac-btn-cancel:hover {
+  background-color: #e53935;
+}
+
+#alertMessage {
+  display: none;
+}
+
+</style>
+
+<body>
+  <div class="container-fluid position-relative d-flex p-0">
+    <!-- Spinner Start -->
+    <div id="spinner" class="show bg-dark position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+      <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+    </div>
+    <!-- Spinner End -->
+
+
+    <!-- Sidebar Start -->
+    <div class="sidebar pe-4 pb-3">
+      <nav class="navbar bg-secondary navbar-dark">
+        <a href="/admin" class="navbar-brand mx-4 mb-3">
+          <h3 class="text-primary"><i class="fa fa-user-edit me-2"></i>Admin</h3>
+        </a>
+        <div class="d-flex align-items-center ms-4 mb-4">
+          <div class="position-relative">
+            <img class="rounded-circle" src="" alt="" style="width: 40px; height: 40px;">
+            <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
+          </div>
+          <div class="ms-3">
+            <h6 class="mb-0"> Doe</h6>
+            <span>Admin</span>
+          </div>
+        </div>
+        <div class="navbar-nav w-100">
+          <a href="/admin" class="nav-item nav-link "><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
+
+          <a href="/admin/user-List" class="nav-item nav-link "><i class="fa fa-users me-2"></i>Users</a>
+          <a href="/admin/category-list" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>Category</a>
+          <a href="/admin/products-list" class="nav-item nav-link"><i class="fa fa-bell me-2"></i>Products</a>
+          <a href="/admin/orderDetails" class="nav-item nav-link"><i class="fa fa-chart-area me-2"></i>Orders</a>
+          <a href="/admin/couponList" class="nav-item nav-link "><i class="fa fa-chart-bar me-2"></i>Coupons</a>
+          <a href="/admin/offers" class="nav-item nav-link active"><i class="fa fa-file-invoice-dollar me-2"></i>Offers</a>
+
+          <a href="/admin/logout" class="nav-item nav-link"> <i class="fa fa-sign-out-alt"></i>Logout</a>
+        </div>
+    </div>
+    </nav>
+  </div>
+  
+  
+  <!-- Sidebar End -->
+
+
+
+  <div class="content">
+    <!-- Navbar Start -->
+    <nav class="navbar navbar-expand bg-secondary navbar-dark sticky-top px-4 py-0">
+      <a href="index.html" class="navbar-brand d-flex d-lg-none me-4">
+        <h2 class="text-primary mb-0"><i class="fa fa-user-edit"></i></h2>
+      </a>
+      <a href="#" class="sidebar-toggler flex-shrink-0">
+        <i class="fa fa-bars"></i>
+      </a>
+      <form class="d-none d-md-flex ms-4">
+        <input class="form-control bg-dark border-0" type="search" placeholder="Search">
+      </form>
+      <div class="navbar-nav align-items-center ms-auto">
+        <div class="nav-item dropdown">
+          <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+            <i class="fa fa-envelope me-lg-2"></i>
+            <span class="d-none d-lg-inline-flex">Message</span>
+          </a>
+          <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
+            <a href="#" class="dropdown-item">
+              <div class="d-flex align-items-center">
+                <img class="rounded-circle" src="/img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                <div class="ms-2">
+                  <h6 class="fw-normal mb-0">Jhon send you a message</h6>
+                  <small>15 minutes ago</small>
+                </div>
+              </div>
+            </a>
+            <hr class="dropdown-divider">
+            <a href="#" class="dropdown-item">
+              <div class="d-flex align-items-center">
+                <img class="rounded-circle" src="/img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                <div class="ms-2">
+                  <h6 class="fw-normal mb-0">Jhon send you a message</h6>
+                  <small>15 minutes ago</small>
+                </div>
+              </div>
+            </a>
+            <hr class="dropdown-divider">
+            <a href="#" class="dropdown-item">
+              <div class="d-flex align-items-center">
+                <img class="rounded-circle" src="/img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                <div class="ms-2">
+                  <h6 class="fw-normal mb-0">Jhon send you a message</h6>
+                  <small>15 minutes ago</small>
+                </div>
+              </div>
+            </a>
+            <hr class="dropdown-divider">
+            <a href="#" class="dropdown-item text-center">See all message</a>
+          </div>
+        </div>
+        <div class="nav-item dropdown">
+          <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+            <i class="fa fa-bell me-lg-2"></i>
+            <span class="d-none d-lg-inline-flex">Notification</span>
+          </a>
+          <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
+            <a href="#" class="dropdown-item">
+              <h6 class="fw-normal mb-0">Profile updated</h6>
+              <small>15 minutes ago</small>
+            </a>
+            <hr class="dropdown-divider">
+            <a href="#" class="dropdown-item">
+              <h6 class="fw-normal mb-0">New user added</h6>
+              <small>15 minutes ago</small>
+            </a>
+            <hr class="dropdown-divider">
+            <a href="#" class="dropdown-item">
+              <h6 class="fw-normal mb-0">Password changed</h6>
+              <small>15 minutes ago</small>
+            </a>
+            <hr class="dropdown-divider">
+            <a href="#" class="dropdown-item text-center">See all notifications</a>
+          </div>
+        </div>
+        <div class="nav-item dropdown">
+          <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+            <img class="rounded-circle me-lg-2" src="/img/user.jpg" alt="" style="width: 40px; height: 40px;">
+            <span class="d-none d-lg-inline-flex">John Doe</span>
+          </a>
+          <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
+            <a href="#" class="dropdown-item">My Profile</a>
+            <a href="#" class="dropdown-item">Settings</a>
+            <a href="#" class="dropdown-item">Log Out</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+   
+    
+
+
+  <div class="container ac-container">
+    <div class="ac-card">
+      <h2>Edit offer </h2>
+      <form id="editOffer">
+        <input type="hidden" id="offerId" value="<%= offer._id %>">
+
+        <div class="alert alert-danger" role="alert" id="alertMessage">
+          This is alert message
+        </div>
+
+        <div class="form-group ac-form-group">
+          <label for="couponCode">Offer Name</label>
+          <input type="text" class="form-control" id="offerName" placeholder="Enter offer name" value="<%= offer.offerName %>">
+        </div>
+
+        <div class="form-group ac-form-group">
+            <label for="couponCode">Offer Type</label>
+            <input type="text" class="form-control" value="<%= offer.offerType %>" disabled>
+          </div>
+    
+
+          
+          <div class="form-group ac-form-group">
+            <label for="discountPercentage">Discount Percentage</label>
+            <input type="number" class="form-control numberVal" id="discountPercentage" placeholder="Enter discount percentage" min="0" value="<%= offer.discountPercentage %>">
+          </div>
+          
+         
+        <div class="form-group ac-form-group">
+          <label for="expiryDate">Expiry Date</label>
+          <input type="date" class="form-control" id="expiryDate" value="<%= offer.expiryDate %>">
+        </div>
+        
+        <button type="submit" class="ac-btn ac-btn-submit">Edit offer</button>
+        <a href="/admin/offers"><button  type="button" class="ac-btn ac-btn-cancel">Cancel</button></a>
+      </form>
+    </div>
+  </div>
+  
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+     const numberInputs = document.querySelectorAll('.numberVal')
+
+numberInputs.forEach(input => {
+  input.addEventListener('input', function () {
+    
+    if (this.value < 0) {
+      this.value = 0
+    }
+  })
+})
+
+document
+  .getElementById('editOffer')
+  .addEventListener('submit', async function (e) {
+    e.preventDefault()
+    const alert = document.getElementById('alertMessage')
+    const offerName = document.getElementById('offerName').value
+    // const selectType = document.getElementById('selectType').value
+    // const productId = document.getElementById('productSelect').value
+    // const categoryId = document.getElementById('categorySelect').value
+    const discountPercentage = document.getElementById('discountPercentage').value
+    const offerId = document.getElementById('offerId').value
+
+    const expiryDate = document.getElementById('expiryDate').value
+    const currentDate = new Date()
+    const inputDate = new Date(expiryDate)
+    
+      
+    if ( offerName == '' ||   discountPercentage =='' ) {
+      alert.innerText = 'Please fill out all the columns'
+      alert.style.display = 'block';
+      return
+     }
+
+    if (discountPercentage < 1 || discountPercentage > 90) {
+      alert.innerText = 'Please select the discount percentage between 1-90'
+      alert.style.display = 'block';
+      return
+    }
+
+    if (expiryDate == '' || inputDate < currentDate) {
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'bottom',
+        iconColor: 'white',
+        customClass: {
+          popup: 'colored-toast'
+        },
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true
+      })
+
+      Toast.fire({
+        icon: 'error',
+        title: `Please choose a future date for expiry`
+      })
+      // this.value = '';
+      return
+    }
+    
+
+   const response = await fetch('/admin/offers/editOffer',{
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body:JSON.stringify({
+        offerId,
+        offerName,
+        discountPercentage,
+        expiryDate
+    })
+   })
+   
+   const data = await response.json()
+   if (response.ok) {
+    Swal.fire({
+        icon: "success",
+        title: data.message,
+        showConfirmButton: true,
+        
+    }).then(()=>{
+      window.location.href = '/admin/offers'
+    })
+} else {
+    Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: data.message,
+    });
+}
+
+})
+
+</script>
+<%- include('../layouts/adminfooter') %>

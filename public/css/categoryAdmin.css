@@ -1,0 +1,27 @@
+body {
+    background-color: #343a40;
+    color: white;
+}
+.table-dark {
+    background-color: #343a40;
+}
+.table-dark th, .table-dark td {
+    border-color: #454d55;
+}
+.btn-blue {
+    background-color: blue;
+    color: white;
+}
+.btn-green {
+    background-color: green;
+    color: white;
+}
+.add-category-btn {
+    background-color: #6c757d;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-align: center;
+    display: inline-block;
+    margin-top: 20px;
+}

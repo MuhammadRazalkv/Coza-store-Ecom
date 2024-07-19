@@ -1,0 +1,578 @@
+<%- include('../layouts/adminHeader') %>
+
+<style>
+    /* Reset some default styles */
+ h1, table {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+
+.container {
+ 
+  color: #ffffff;
+  width: 90%;
+  max-width: 1200px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  background-color: #1e1e1e;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+thead {
+  background-color: #333;
+}
+
+th, td {
+  padding: 15px;
+  text-align: left;
+}
+
+th {
+  background-color: #444;
+  font-size: medium;
+}
+
+tr:nth-child(even) {
+  background-color: #2a2a2a;
+}
+
+tr:nth-child(odd) {
+  background-color: #1e1e1e;
+}
+
+tr:hover {
+  background-color: #555;
+}
+
+td {
+  border-bottom: 1px solid #444;
+  font-size: small;
+}
+
+ 
+.filters-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.filters {
+  display: flex;
+  align-items: center;
+}
+
+.filters label {
+  margin-right: 10px;
+}
+
+.filters select,
+.filters input[type="date"] {
+  padding: 6px;
+  font-size: 14px;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-download {
+  padding: 8px 16px;
+  font-size: 14px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-download:hover {
+  background-color: #0056b3;
+}
+
+</style>
+<body>
+    <div class="container-fluid position-relative d-flex p-0">
+        <!-- Spinner Start -->
+        <div id="spinner" class="show bg-dark position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
+
+
+        <!-- Sidebar Start -->
+        <div class="sidebar pe-4 pb-3">
+            <nav class="navbar bg-secondary navbar-dark">
+                <a href="/admin" class="navbar-brand mx-4 mb-3">
+                    <h3 class="text-primary"><i class="fa fa-user-edit me-2"></i>Admin</h3>
+                </a>
+                <div class="d-flex align-items-center ms-4 mb-4">
+                    <div class="position-relative">
+                        <img class="rounded-circle" src="" alt="" style="width: 40px; height: 40px;">
+                        <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
+                    </div>
+                    <div class="ms-3">
+                        <h6 class="mb-0"> Doe</h6>
+                        <span>Admin</span>
+                    </div>
+                </div>
+                <div class="navbar-nav w-100">
+                    <a href="/admin" class="nav-item nav-link "><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
+                    
+                    <a href="/admin/user-List" class="nav-item nav-link "><i class="fa fa-users me-2"></i>Users</a>
+                    <a href="/admin/category-list" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>Category</a>
+                    <a href="/admin/products-list" class="nav-item nav-link"><i class="fa fa-bell me-2"></i>Products</a>
+                    <a href="/admin/orderDetails" class="nav-item nav-link"><i class="fa fa-chart-area me-2"></i>Orders</a>
+                    <a href="/admin/couponList" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Coupons</a>
+                    <a href="/admin/salesReport" class="nav-item nav-link active"><i class="fa fa-file-invoice-dollar me-2"></i>Sales report</a>
+                   
+                    <a href="/admin/offers" class="nav-item nav-link "><i class="fa fa-file-invoice-dollar me-2"></i>Offers</a>
+                    <a href="/admin/logout" class="nav-item nav-link"> <i class="fa fa-sign-out-alt"></i>Logout</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <!-- Sidebar End -->
+
+
+       
+        <div class="content">
+            <!-- Navbar Start -->
+            <nav class="navbar navbar-expand bg-secondary navbar-dark sticky-top px-4 py-0">
+                <a href="index.html" class="navbar-brand d-flex d-lg-none me-4">
+                    <h2 class="text-primary mb-0"><i class="fa fa-user-edit"></i></h2>
+                </a>
+                <a href="#" class="sidebar-toggler flex-shrink-0">
+                    <i class="fa fa-bars"></i>
+                </a>
+                <form class="d-none d-md-flex ms-4">
+                    <input class="form-control bg-dark border-0" type="search" placeholder="Search">
+                </form>
+                <div class="navbar-nav align-items-center ms-auto">
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fa fa-envelope me-lg-2"></i>
+                            <span class="d-none d-lg-inline-flex">Message</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
+                            <a href="#" class="dropdown-item">
+                                <div class="d-flex align-items-center">
+                                    <img class="rounded-circle" src="/img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                                    <div class="ms-2">
+                                        <h6 class="fw-normal mb-0">Jhon send you a message</h6>
+                                        <small>15 minutes ago</small>
+                                    </div>
+                                </div>
+                            </a>
+                            <hr class="dropdown-divider">
+                            <a href="#" class="dropdown-item">
+                                <div class="d-flex align-items-center">
+                                    <img class="rounded-circle" src="/img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                                    <div class="ms-2">
+                                        <h6 class="fw-normal mb-0">Jhon send you a message</h6>
+                                        <small>15 minutes ago</small>
+                                    </div>
+                                </div>
+                            </a>
+                            <hr class="dropdown-divider">
+                            <a href="#" class="dropdown-item">
+                                <div class="d-flex align-items-center">
+                                    <img class="rounded-circle" src="/img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                                    <div class="ms-2">
+                                        <h6 class="fw-normal mb-0">Jhon send you a message</h6>
+                                        <small>15 minutes ago</small>
+                                    </div>
+                                </div>
+                            </a>
+                            <hr class="dropdown-divider">
+                            <a href="#" class="dropdown-item text-center">See all message</a>
+                        </div>
+                    </div>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fa fa-bell me-lg-2"></i>
+                            <span class="d-none d-lg-inline-flex">Notificatin</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
+                            <a href="#" class="dropdown-item">
+                                <h6 class="fw-normal mb-0">Profile updated</h6>
+                                <small>15 minutes ago</small>
+                            </a>
+                            <hr class="dropdown-divider">
+                            <a href="#" class="dropdown-item">
+                                <h6 class="fw-normal mb-0">New user added</h6>
+                                <small>15 minutes ago</small>
+                            </a>
+                            <hr class="dropdown-divider">
+                            <a href="#" class="dropdown-item">
+                                <h6 class="fw-normal mb-0">Password changed</h6>
+                                <small>15 minutes ago</small>
+                            </a>
+                            <hr class="dropdown-divider">
+                            <a href="#" class="dropdown-item text-center">See all notifications</a>
+                        </div>
+                    </div>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                            <img class="rounded-circle me-lg-2" src="/img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                            <span class="d-none d-lg-inline-flex">John Doe</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
+                            <a href="#" class="dropdown-item">My Profile</a>
+                            <a href="#" class="dropdown-item">Settings</a>
+                            <a href="#" class="dropdown-item">Log Out</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            <!-- Navbar End -->
+
+
+
+
+
+
+  <!-- Filter Options -->
+  
+
+
+
+            <div class="container">
+                <h1>Delivered Orders</h1>
+                <div class="filters-container">
+                    <div class="filters d-flex">
+                      <label for="filterType">Filter by:</label>
+                      <select id="filterType">
+                        <option value="All" selected>All</option>
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="yearly">Yearly</option>
+                        <option value="custom">Custom</option>
+                      </select>
+                  
+                      <div id="customDateRange" style="display: none;">
+                        <label for="startDate">Start Date:</label>
+                        <input type="date" id="startDate">
+                        <label for="endDate">End Date:</label>
+                        <input type="date" id="endDate">
+                      </div>
+                    </div>
+                  
+                    <div class="download-buttons d-flex">
+                      <button class="btn-download" onclick="downloadPDFReport()">Download PDF</button>
+                      <button class="btn-download" onclick="downloadExcelReport()">Download Excel</button>
+                    </div>
+                  </div>
+                  
+
+                  <div id="salesReportTable">
+                <% if (completedOrder && completedOrder.length > 0) { %>
+               
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Order ID</th>
+                        <th>User</th>
+                        <th>Payment Method</th>
+                        <th>Sub Total</th>
+                        <th>Grand Total</th>
+                        <th>Delivery Charge</th>
+                        <th>Coupon Discount</th>
+                        <th>Delivered Item</th>
+                        <th>Item Price</th>
+                        <th>Item offer applied</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% completedOrder.forEach(order => { %>
+                        <tr>
+                          
+                            <td><%= String(order._id).slice(-4) %></td>
+
+                          <td><%= order.shippingAddress.name %></td>
+                          <td><%= order.paymentMethod %></td>
+                          <td><%= order.subTotal %></td>
+                          <td><%= order.grandTotal %></td>
+                          <td><%= order.deliveryCharge %></td>
+                          <td>
+                            <% if (order.couponDetails && order.couponDetails.claimedAmount > 0) { %>
+                              <%= order.couponDetails.claimedAmount %>
+                            <% } else { %>
+                              None
+                            <% } %>
+                          </td>
+                          <td><%= order.deliveredItem.variantName %></td>
+                          <td><%= order.deliveredItem.variantPrice %></td>
+                          <td><%= order.deliveredItem.offerDiscount %></td>
+                        </tr>
+                      <% }); %>
+                    </tbody>
+                  </table>
+               
+                  <p id="totalCount">Total Orders:  <%=  totalCount%></p>
+                  <p id="totalAmount">Total Amount: <%= totalAmount.toFixed(2) %></p>
+                     
+  
+                  <!-- pagination  -->
+
+                  <nav aria-label="Page navigation example" class="d-flex justify-content-end">
+                    <ul class="pagination">
+                        <% if (page > 1) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="/admin/salesReport?page=<%= page - 1 %>" tabindex="-1" aria-label="Previous">
+                                    <span aria-hidden="true"><i class="fas fa-chevron-left"></i></span>
+                                </a>
+                            </li>
+                        <% } else { %>
+                            <li class="page-item disabled">
+                                <a class="page-link" href="" tabindex="-1" aria-label="Previous">
+                                    <span aria-hidden="true"><i class="fas fa-chevron-left"></i></span>
+                                </a>
+                            </li>
+                        <% } %>
+                
+                        <% for (let i = 1; i <= totalPages; i++) { %>
+                            <li class="page-item <%= i === page ? 'active' : '' %>">
+                                <a class="page-link" href="/admin/salesReport?page=<%= i %>"><%= i %></a>
+                            </li>
+                        <% } %>
+                
+                        <% if (page < totalPages) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="/admin/salesReport?page=<%= page + 1 %>" aria-label="Next">
+                                    <span aria-hidden="true"><i class="fas fa-chevron-right"></i></span>
+                                </a>
+                            </li>
+                        <% } else { %>
+                            <li class="page-item disabled">
+                                <a class="page-link" href="" tabindex="-1" aria-label="Next">
+                                    <span aria-hidden="true"><i class="fas fa-chevron-right"></i></span>
+                                </a>
+                            </li>
+                        <% } %>
+                    </ul>
+                </nav>
+            
+                  
+                  <!--  -->
+                <% }else{ %>
+                    <p>No items found</p>
+                <% } %>
+             </div>              
+            </div>
+
+
+
+
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.0/jspdf.umd.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.21/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+          
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+  const filterSelect = document.getElementById('filterType');
+  const customDateRange = document.getElementById('customDateRange');
+  const startDateInput = document.getElementById('startDate');
+  const endDateInput = document.getElementById('endDate');
+  const salesReportTable = document.getElementById('salesReportTable');
+
+  // Event listener for filter selection change
+  filterSelect.addEventListener('change', async function() {
+    const filter = filterSelect.value;
+    if (filter === 'custom') {
+      customDateRange.style.display = 'flex'; // Show custom date range inputs
+    } else {
+      customDateRange.style.display = 'none'; // Hide custom date range inputs
+      await fetchAndDisplayData(`/admin/salesReport?filter=${filter}`);
+    }
+  });
+
+  // Event listeners for custom date range inputs
+  [startDateInput, endDateInput].forEach(input => {
+    input.addEventListener('change', async function() {
+      const filter = filterSelect.value;
+      if (filter === 'custom') {
+        const startDate = startDateInput.value;
+        const endDate = endDateInput.value;
+        if (startDate && endDate) {
+          await fetchAndDisplayData(`/admin/salesReport?filter=${filter}&startDate=${startDate}&endDate=${endDate}`);
+        }
+      }
+    });
+  });
+
+  // Function to fetch and display data
+  async function fetchAndDisplayData(url) {
+  try {
+   
+    const response = await fetch(url, { headers: { 'Accept': 'application/json' } });
+    const data = await response.json();
+    updateTable(data.completedOrder, data.totalCount, data.totalAmount);
+  } catch (error) {
+    console.error('Error fetching sales report:', error);
+    salesReportTable.innerHTML = '<p>Error fetching data</p>';
+  }
+}
+
+// Function to update the table with new data
+function updateTable(orders, totalCount, totalAmount) {
+  if (!orders || orders.length === 0) {
+    salesReportTable.innerHTML = '<p>No items found</p>';
+    return;
+  }
+
+  let html = `
+    <table>
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>User</th>
+          <th>Payment Method</th>
+          <th>Sub Total</th>
+          <th>Grand Total</th>
+          <th>Delivery Charge</th>
+          <th>Coupon Discount</th>
+          <th>Delivered Item</th>
+          <th>Item Price</th>
+          <th>Item offer applied</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  orders.forEach(order => {
+    html += `
+      <tr>
+        <td>${String(order._id).slice(-4)}</td>
+        <td>${order.shippingAddress.name}</td>
+        <td>${order.paymentMethod}</td>
+        <td>${order.subTotal}</td>
+        <td>${order.grandTotal}</td>
+        <td>${order.deliveryCharge}</td>
+        <td>${order.couponDetails?.claimedAmount ?? 'None'}</td>
+        <td>${order.deliveredItem.variantName}</td>
+        <td>${order.deliveredItem.variantPrice}</td>
+          <td>${order.deliveredItem.offerDiscount } </td>
+      </tr>
+    `;
+  });
+
+  html += `
+      </tbody>
+    </table>
+    <p>Total Orders: ${totalCount}</p>
+    <p>Total Amount: ${totalAmount.toFixed(2)}</p>
+  `;
+
+  salesReportTable.innerHTML = html;
+}
+
+});
+
+
+
+
+
+window.downloadPDFReport = function() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      // Add a heading
+      doc.setFontSize(18);
+      doc.text('CozaStore Sales Report', 14, 22);
+      doc.setFontSize(12); // Reset font size for the table
+
+      // Generate table data
+      let data = [];
+      document.querySelectorAll('#salesReportTable tbody tr').forEach(row => {
+        let rowData = [];
+        row.querySelectorAll('td').forEach(cell => {
+          rowData.push(cell.textContent);
+        });
+        data.push(rowData);
+      });
+      const totalCount =document.getElementById('totalCount').textContent
+      const totalAmount =document.getElementById('totalAmount').textContent
+
+      data.push(["", "", "", "", "", "", "", "", totalCount]);
+      data.push(["", "", "", "", "", "", "", "", totalAmount]);
+
+      // Define the columns and rows for the table
+      const columns = [
+        "Order ID", "User", "Payment Method", "Sub Total", "Grand Total", "Delivery Charge", "Coupon Discount", "Delivered Item", "Item Price"
+      ];
+
+      // Add autoTable
+      doc.autoTable({
+        head: [columns],
+        body: data,
+        startY: 30, // Space for the heading
+        theme: 'striped', // Table theme
+        styles: {
+          cellPadding: 1,
+          fontSize: 10,
+          halign: 'center', // Horizontal alignment
+          valign: 'middle'  // Vertical alignment
+        },
+        headStyles: {
+          fillColor: [22, 160, 133], // Header color
+          textColor: [255, 255, 255], // Header text color
+          fontStyle: 'bold'
+        }
+      });
+
+      // Save the PDF
+      doc.save('sales_report.pdf');
+    };
+
+    window.downloadExcelReport = function() {
+      // Gather data from the table
+      let data = [];
+      document.querySelectorAll('#salesReportTable tbody tr').forEach(row => {
+        let rowData = [];
+        row.querySelectorAll('td').forEach(cell => {
+          rowData.push(cell.textContent);
+        });
+        data.push(rowData);
+      });
+
+      // Add column headers
+      const columns = [
+        "Order ID", "User", "Payment Method", "Sub Total", "Grand Total", "Delivery Charge", "Coupon Discount", "Delivered Item", "Item Price"
+      ];
+      data.unshift(columns);
+
+      // Create a new workbook and worksheet
+      let wb = XLSX.utils.book_new();
+      let ws = XLSX.utils.aoa_to_sheet(data);
+
+      // Append the worksheet to the workbook
+      XLSX.utils.book_append_sheet(wb, ws, 'Sales Report');
+
+      // Save the Excel file
+      XLSX.writeFile(wb, 'sales_report.xlsx');
+    };
+
+
+    </script>
+    <%- include('../layouts/adminfooter') %>

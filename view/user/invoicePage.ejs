@@ -1,0 +1,745 @@
+<%- include('../layouts/header') %>
+<style>
+ 
+  .empty-cart-container {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+  
+  }
+
+  .empty-cart-image {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .empty-cart-heading {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #343a40;
+  }
+
+  .empty-cart-text {
+    font-size: 1rem;
+    color: #6c757d;
+    margin-bottom: 20px;
+  }
+</style>
+<!-- Include jsPDF library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<body class="animsition">
+  <!-- Header -->
+  <header>
+    <!-- Header desktop -->
+    <div class="container-menu-desktop">
+      <!-- Topbar -->
+      <div class="top-bar">
+        <div class="content-topbar flex-sb-m h-full container">
+          <div class="left-top-bar">
+            Free shipping for standard order over $100
+          </div>
+
+          <div class="right-top-bar flex-w h-full">
+            <a href="#" class="flex-c-m trans-04 p-lr-25"> Help & FAQs </a>
+            <% if (user) { %>
+            <a href="/myAccount" class="flex-c-m trans-04 p-lr-25"> My Account </a>
+            <a href="/logout" class="flex-c-m trans-04 p-lr-25">Logout</a>
+            <% } else { %>
+            <a href="/login" class="flex-c-m trans-04 p-lr-25"> Login </a>
+
+            <a href="/register" class="flex-c-m trans-04 p-lr-25">Register</a>
+            <% } %>
+            <a href="#" class="flex-c-m trans-04 p-lr-25"> EN </a>
+
+            <a href="#" class="flex-c-m trans-04 p-lr-25"> USD </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="wrap-menu-desktop">
+        <nav class="limiter-menu-desktop container">
+          <!-- Logo desktop -->
+          <a href="/home" class="logo">
+            <img src="/images/icons/logo-01.png" alt="IMG-LOGO" />
+          </a>
+
+          <!-- Menu desktop -->
+          <div class="menu-desktop">
+            <ul class="main-menu">
+              <li class="active-menu">
+                <a href="/home">Home</a>
+                <!-- <ul class="sub-menu">
+                  <li><a href="index.html">Homepage 1</a></li>
+                  <li><a href="home-02.html">Homepage 2</a></li>
+                  <li><a href="home-03.html">Homepage 3</a></li>
+                </ul> -->
+              </li>
+
+              <li>
+                <a href="/shop_products">Shop</a>
+              </li>
+
+              <!-- <li class="label1" data-label1="hot">
+                <a href="shoping-cart.html">Features</a>
+              </li> -->
+
+              <!-- <li>
+                <a href="blog.html">Blog</a>
+              </li> -->
+
+              <li>
+                <a href="/about">About</a>
+              </li>
+
+              <li>
+                <a href="/contact">Contact</a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Icon header -->
+          <div class="wrap-icon-header flex-w flex-r-m">
+            <div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
+              <i class="zmdi zmdi-search"></i>
+            </div>
+
+            <div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" data-notify="2">
+              <i class="zmdi zmdi-shopping-cart"></i>
+            </div>
+
+            <a href="/wishlist" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti" data-notify="0">
+              <i class="zmdi zmdi-favorite-outline"></i>
+            </a>
+          </div>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Header Mobile -->
+    <div class="wrap-header-mobile">
+      <!-- Logo moblie -->
+      <div class="logo-mobile">
+        <a href="/home"><img src="/images/icons/logo-01.png" alt="IMG-LOGO" /></a>
+      </div>
+
+      <!-- Icon header -->
+      <div class="wrap-icon-header flex-w flex-r-m m-r-15">
+        <div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 js-show-modal-search">
+          <i class="zmdi zmdi-search"></i>
+        </div>
+
+        <div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-show-cart" data-notify="2">
+          <i class="zmdi zmdi-shopping-cart"></i>
+        </div>
+
+        <a href="#" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti" data-notify="0">
+          <i class="zmdi zmdi-favorite-outline"></i>
+        </a>
+
+      </div>
+
+      <!-- Button show menu -->
+      <div class="btn-show-menu-mobile hamburger hamburger--squeeze">
+        <span class="hamburger-box">
+          <span class="hamburger-inner"></span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Menu Mobile -->
+    <div class="menu-mobile">
+      <ul class="topbar-mobile">
+        <li>
+          <div class="left-top-bar">
+            Free shipping for standard order over $100
+          </div>
+        </li>
+
+        <li>
+          <div class="right-top-bar flex-w h-full">
+            <a href="#" class="flex-c-m p-lr-10 trans-04"> Help & FAQs </a>
+
+            <a href="#" class="flex-c-m p-lr-10 trans-04"> My Account </a>
+
+            <a href="#" class="flex-c-m p-lr-10 trans-04"> EN </a>
+
+            <a href="#" class="flex-c-m p-lr-10 trans-04"> USD </a>
+          </div>
+        </li>
+      </ul>
+
+      <ul class="main-menu-m">
+        <li>
+          <a href="/home">Home</a>
+          <!-- <ul class="sub-menu-m">
+            <li><a href="/home">Homepage 1</a></li>
+            <li><a href="home-02.html">Homepage 2</a></li>
+            <li><a href="home-03.html">Homepage 3</a></li>
+          </ul> -->
+          <span class="arrow-main-menu-m">
+            <i class="fa fa-angle-right" aria-hidden="true"></i>
+          </span>
+        </li>
+
+        <li>
+          <a href="/shop_products">Shop</a>
+        </li>
+
+
+        <li>
+          <a href="/about">About</a>
+        </li>
+
+        <li>
+          <a href="/contact">Contact</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Modal Search -->
+    <div class="modal-search-header flex-c-m trans-04 js-hide-modal-search">
+      <div class="container-search-header">
+        <button class="flex-c-m btn-hide-modal-search trans-04 js-hide-modal-search">
+          <img src="/images/icons/icon-close2.png" alt="CLOSE" />
+        </button>
+
+        <form class="wrap-search-header flex-w p-l-15">
+          <button class="flex-c-m trans-04">
+            <i class="zmdi zmdi-search"></i>
+          </button>
+          <input class="plh3" type="text" name="search" placeholder="Search..." />
+        </form>
+      </div>
+    </div>
+  </header>
+
+  <!-- Cart -->
+  <div class="wrap-header-cart js-panel-cart">
+    <div class="s-full js-hide-cart"></div>
+
+    <div class="header-cart flex-col-l p-l-65 p-r-25">
+      <div class="header-cart-title flex-w flex-sb-m p-b-8">
+        <span class="mtext-103 cl2"> Your Cart </span>
+
+        <div class="fs-35 lh-10 cl2 p-lr-5 pointer hov-cl1 trans-04 js-hide-cart">
+          <i class="zmdi zmdi-close"></i>
+        </div>
+      </div>
+
+      <div class="header-cart-content flex-w js-pscroll">
+
+        <div class="w-full">
+          <!-- <div class="header-cart-total w-full p-tb-40">Total: $75.00</div> -->
+
+          <div class="header-cart-buttons flex-w w-full">
+            <a href="/cart" class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-r-8 m-b-10">
+              View Cart
+            </a>
+
+            <a href="/cart" class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-b-10">
+              Check Out
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="container mt-5">
+    <div class="card">
+      <div class="card-header text-center">
+        <h1>Invoice</h1>
+        <% if(orders){ %>
+        <div class="date">
+          Date: <span> <%= currentDate.toLocaleDateString('en-US', { weekday: 'short' ,month: 'short' , day: 'numeric' , year:'numeric'})  %></span>
+        </div>
+      </div>
+      <div class="d-flex justify-content-between">
+        <div class="address-details">
+          <h6>Shipping Address</h6>
+          <p>
+            <% Object.entries(orders.shippingAddress).forEach(([key, value]) => { %>
+            <strong><%= key.charAt(0).toUpperCase() + key.slice(1) %>:</strong> <%= value %><br>
+            <% }); %>
+          </p>
+        </div>
+
+        <div>
+          <p><strong>Order Date</strong> <%= orders.orderDate.toLocaleDateString('en-US', { weekday: 'short' ,month: 'short' , day: 'numeric' , year:'numeric'}) %></p>
+        </div>
+      </div>
+
+
+      <div class="card-body">
+        <table class="table table-striped invoiceTable">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Quantity</th>
+              <th>Price</th>
+              <th>Offer Discount</th>
+              <th>Coupon Discount</th>
+              <th>Status</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+           
+
+            <% completedOrder.forEach((item)=>{ %>
+         
+
+            <tr>
+              <td><%= item.orderItems.variantName %></td>
+              <td><%= item.orderItems.quantity %></td>
+              <td><%= item.orderItems.variantPrice %></td>
+              <td><%= item.orderItems.offerDiscount %></td>
+              <td><%= couponAppliedForEachProduct %></td>
+              <td><%= item.orderStatus %></td>
+              <td><%= item.orderItems.variantPrice -item.orderItems.offerDiscount - couponAppliedForEachProduct %></td>
+            </tr>
+            <% }) %>
+
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card-footer text-right">
+        <div class="total-amount mb-3">
+
+          <div>
+            <p id="subTotal"><strong>Sub Total : </strong><%= subTotal %></p>
+            <p id="deliveryCharge"><strong>Delivery charge : </strong><%= orders.deliveryCharge %></p>
+            <p id="totalOfferDiscount"><strong>Total offer discount : </strong><%= totalOfferDiscount %></p>
+            <p id="couponDis"><strong>Coupon discount : </strong>
+              <% if (couponDis > 0) { %>
+              <%= couponDis %>
+              <% } else { %>
+              None
+              <% } %>
+            </p>
+            <p id="grandTotal"><strong> Grand Total : </strong><%= grandTotal %></p>
+          </div>
+
+          <button class="btn btn-primary" onclick="downloadInvoice()">Download PDF</button>
+
+        </div>
+      </div>
+  </div>
+  </div>
+
+  <% } else { %>
+  <div class="empty-cart-container d-flex flex-column align-items-center justify-content-center text-center mt-5 py-5 bg-light rounded shadow-sm">
+    <img src="/images/icons/white_frowning_face.png" alt="No order " class="empty-cart-image mb-4" style="width: 150px; height: 150px;">
+    <h4 class="empty-cart-heading">No order found !</h4>
+    <p class="empty-cart-text"></p>
+    <a href="/orders" class="btn btn-primary mt-3 px-4 py-2">Back to orders </a>
+  </div>
+
+  <% } %>
+ </div>
+</div>
+
+
+
+
+  <!-- Footer -->
+  <footer class="bg3 p-t-75 p-b-32">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-6 col-lg-3 p-b-50">
+          <h4 class="stext-301 cl0 p-b-30">Categories</h4>
+
+          <ul>
+            <li class="p-b-10">
+              <a href="#" class="stext-107 cl7 hov-cl1 trans-04"> Women </a>
+            </li>
+
+            <li class="p-b-10">
+              <a href="#" class="stext-107 cl7 hov-cl1 trans-04"> Men </a>
+            </li>
+
+            <li class="p-b-10">
+              <a href="#" class="stext-107 cl7 hov-cl1 trans-04"> Shoes </a>
+            </li>
+
+            <li class="p-b-10">
+              <a href="#" class="stext-107 cl7 hov-cl1 trans-04"> Watches </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="col-sm-6 col-lg-3 p-b-50">
+          <h4 class="stext-301 cl0 p-b-30">Help</h4>
+
+          <ul>
+            <li class="p-b-10">
+              <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
+                Track Order
+              </a>
+            </li>
+
+            <li class="p-b-10">
+              <a href="#" class="stext-107 cl7 hov-cl1 trans-04"> Returns </a>
+            </li>
+
+            <li class="p-b-10">
+              <a href="#" class="stext-107 cl7 hov-cl1 trans-04"> Shipping </a>
+            </li>
+
+            <li class="p-b-10">
+              <a href="#" class="stext-107 cl7 hov-cl1 trans-04"> FAQs </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="col-sm-6 col-lg-3 p-b-50">
+          <h4 class="stext-301 cl0 p-b-30">GET IN TOUCH</h4>
+
+          <p class="stext-107 cl7 size-201">
+            Any questions? Let us know in store at 8th floor, 379 Hudson St, New
+            York, NY 10018 or call us on (+1) 96 716 6879
+          </p>
+
+          <div class="p-t-27">
+            <a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+              <i class="fa fa-facebook"></i>
+            </a>
+
+            <a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+              <i class="fa fa-instagram"></i>
+            </a>
+
+            <a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+              <i class="fa fa-pinterest-p"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3 p-b-50">
+          <h4 class="stext-301 cl0 p-b-30">Newsletter</h4>
+
+          <form>
+            <div class="wrap-input1 w-full p-b-4">
+              <input class="input1 bg-none plh1 stext-107 cl7" type="text" name="email" placeholder="email@example.com" />
+              <div class="focus-input1 trans-04"></div>
+            </div>
+
+            <div class="p-t-18">
+              <button class="flex-c-m stext-101 cl0 size-103 bg1 bor1 hov-btn2 p-lr-15 trans-04">
+                Subscribe
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="p-t-40">
+        <div class="flex-c-m flex-w p-b-18">
+          <a href="#" class="m-all-1">
+            <img src="images/icons/icon-pay-01.png" alt="ICON-PAY" />
+          </a>
+
+          <a href="#" class="m-all-1">
+            <img src="images/icons/icon-pay-02.png" alt="ICON-PAY" />
+          </a>
+
+          <a href="#" class="m-all-1">
+            <img src="images/icons/icon-pay-03.png" alt="ICON-PAY" />
+          </a>
+
+          <a href="#" class="m-all-1">
+            <img src="images/icons/icon-pay-04.png" alt="ICON-PAY" />
+          </a>
+
+          <a href="#" class="m-all-1">
+            <img src="images/icons/icon-pay-05.png" alt="ICON-PAY" />
+          </a>
+        </div>
+
+        <p class="stext-107 cl6 txt-center">
+          <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+          Copyright &copy;
+          <script>
+            document.write(new Date().getFullYear())
+          </script>
+          All rights reserved | Made with
+          <i class="fa fa-heart-o" aria-hidden="true"></i> by
+          <a href="https://colorlib.com" target="_blank">Colorlib</a> &amp;
+          distributed by
+          <a href="https://themewagon.com" target="_blank">ThemeWagon</a>
+          <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to top -->
+  <div class="btn-back-to-top" id="myBtn">
+    <span class="symbol-btn-back-to-top">
+      <i class="zmdi zmdi-chevron-up"></i>
+    </span>
+  </div>
+
+  <!-- Modal1 -->
+  <div class="wrap-modal1 js-modal1 p-t-60 p-b-20">
+    <div class="overlay-modal1 js-hide-modal1"></div>
+
+    <div class="container">
+      <div class="bg0 p-t-60 p-b-30 p-lr-15-lg how-pos3-parent">
+        <button class="how-pos3 hov3 trans-04 js-hide-modal1">
+          <img src="images/icons/icon-close.png" alt="CLOSE" />
+        </button>
+
+        <div class="row">
+          <div class="col-md-6 col-lg-7 p-b-30">
+            <div class="p-l-25 p-r-30 p-lr-0-lg">
+              <div class="wrap-slick3 flex-sb flex-w">
+                <div class="wrap-slick3-dots"></div>
+                <div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
+
+                <div class="slick3 gallery-lb">
+                  <div class="item-slick3" data-thumb="images/product-detail-01.jpg">
+                    <div class="wrap-pic-w pos-relative">
+                      <img src="images/product-detail-01.jpg" alt="IMG-PRODUCT" />
+
+                      <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="images/product-detail-01.jpg">
+                        <i class="fa fa-expand"></i>
+                      </a>
+                    </div>
+                  </div>
+
+                  <div class="item-slick3" data-thumb="images/product-detail-02.jpg">
+                    <div class="wrap-pic-w pos-relative">
+                      <img src="images/product-detail-02.jpg" alt="IMG-PRODUCT" />
+
+                      <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="images/product-detail-02.jpg">
+                        <i class="fa fa-expand"></i>
+                      </a>
+                    </div>
+                  </div>
+
+                  <div class="item-slick3" data-thumb="images/product-detail-03.jpg">
+                    <div class="wrap-pic-w pos-relative">
+                      <img src="images/product-detail-03.jpg" alt="IMG-PRODUCT" />
+
+                      <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="images/product-detail-03.jpg">
+                        <i class="fa fa-expand"></i>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-5 p-b-30">
+            <div class="p-r-50 p-t-5 p-lr-0-lg">
+              <h4 class="mtext-105 cl2 js-name-detail p-b-14">
+                Lightweight Jacket
+              </h4>
+
+              <span class="mtext-106 cl2"> $58.79 </span>
+
+              <p class="stext-102 cl3 p-t-23">
+                Nulla eget sem vitae eros pharetra viverra. Nam vitae luctus
+                ligula. Mauris consequat ornare feugiat.
+              </p>
+
+              <!--  -->
+              <div class="p-t-33">
+                <div class="flex-w flex-r-m p-b-10">
+                  <div class="size-203 flex-c-m respon6">Size</div>
+
+                  <div class="size-204 respon6-next">
+                    <div class="rs1-select2 bor8 bg0">
+                      <select class="js-select2" name="time">
+                        <option>Choose an option</option>
+                        <option>Size S</option>
+                        <option>Size M</option>
+                        <option>Size L</option>
+                        <option>Size XL</option>
+                      </select>
+                      <div class="dropDownSelect2"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex-w flex-r-m p-b-10">
+                  <div class="size-203 flex-c-m respon6">Color</div>
+
+                  <div class="size-204 respon6-next">
+                    <div class="rs1-select2 bor8 bg0">
+                      <select class="js-select2" name="time">
+                        <option>Choose an option</option>
+                        <option>Red</option>
+                        <option>Blue</option>
+                        <option>White</option>
+                        <option>Grey</option>
+                      </select>
+                      <div class="dropDownSelect2"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex-w flex-r-m p-b-10">
+                  <div class="size-204 flex-w flex-m respon6-next">
+                    <div class="wrap-num-product flex-w m-r-20 m-tb-10">
+                      <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
+                        <i class="fs-16 zmdi zmdi-minus"></i>
+                      </div>
+
+                      <input class="mtext-104 cl3 txt-center num-product" type="number" name="num-product" value="1" />
+
+                      <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
+                        <i class="fs-16 zmdi zmdi-plus"></i>
+                      </div>
+                    </div>
+
+                    <button class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
+                      Add to cart
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!--  -->
+              <div class="flex-w flex-m p-l-100 p-t-40 respon7">
+                <div class="flex-m bor9 p-r-10 m-r-11">
+                  <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 js-addwish-detail tooltip100" data-tooltip="Add to Wishlist">
+                    <i class="zmdi zmdi-favorite"></i>
+                  </a>
+                </div>
+
+                <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100" data-tooltip="Facebook">
+                  <i class="fa fa-facebook"></i>
+                </a>
+
+                <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100" data-tooltip="Twitter">
+                  <i class="fa fa-twitter"></i>
+                </a>
+
+                <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100" data-tooltip="Google Plus">
+                  <i class="fa fa-google-plus"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+ 
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.21/jspdf.plugin.autotable.min.js"></script>
+  <script>
+    let data = [];
+    let orders = <%- JSON.stringify(orders) %>;
+
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log('DOM content loaded');
+        document.querySelectorAll('.invoiceTable tbody tr').forEach(row => {
+            console.log('Inside the loop');
+            let rowData = [];
+            row.querySelectorAll('td').forEach(cell => {
+                rowData.push(cell.textContent.trim());
+            });
+            data.push(rowData);
+        });
+        console.log('data: ', data);
+    });
+
+    window.downloadInvoice = function () {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Define margin and initial Y position
+        const margin = 14;
+        let yPos = margin;
+
+        // Title and Company Information
+        doc.setFontSize(18);
+        doc.text('CozaStore Invoice', margin, yPos);
+        doc.setFontSize(10);
+        yPos += 10;
+        doc.text('CozaStore', margin, yPos);
+        doc.text('1234 Main Street', margin, yPos + 5);
+        doc.text('City, State, ZIP', margin, yPos + 10);
+        doc.text('Phone: (123) 456-7890', margin, yPos + 15);
+        yPos += 25;
+
+        // Shipping Address and Order Date
+        doc.setFontSize(10);
+        const shippingAddress = [
+            'Shipping Address:',
+            ...Object.entries(orders.shippingAddress).map(([key, value]) => `${key.charAt(0).toUpperCase() + key.slice(1)}: ${value}`)
+        ].join('\n');
+        doc.text(shippingAddress, margin, yPos);
+
+        const orderDate = `Order Date: ${new Date(orders.orderDate).toLocaleDateString('en-US', {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+        })}`;
+        doc.text(orderDate, margin + 100, yPos);
+        yPos += 30;
+
+        // Order Summary
+        const orderSummaryYPos = yPos; // Store the Y position for order summary
+
+        // Order summary on the right
+        doc.setFontSize(10);
+        const orderSummary = [
+            `Sub Total: ${document.getElementById('subTotal').textContent.split(':')[1].trim()}`,
+            `Delivery Charge: ${document.getElementById('deliveryCharge').textContent.split(':')[1].trim()}`,
+            `Total Offer Discount: ${document.getElementById('totalOfferDiscount').textContent.split(':')[1].trim()}`,
+            `Coupon Discount: ${document.getElementById('couponDis').textContent.split(':')[1].trim()}`,
+            `Grand Total: ${document.getElementById('grandTotal').textContent.split(':')[1].trim()}`
+        ];
+
+        orderSummary.forEach((detail, index) => {
+            doc.text(detail, margin + 100, orderSummaryYPos + (index * 6));
+        });
+
+        yPos += Math.max(orderSummary.length * 6, 30); // Ensure enough space between sections
+
+        // Itemized Table
+        const columns = [
+            'Item', 'Quantity', 'Price', 'Offer Discount', 'Coupon Discount', 'Status', 'Total'
+        ];
+
+        doc.autoTable({
+            head: [columns],
+            body: data,
+            startY: yPos,
+            theme: 'striped',
+            styles: {
+                cellPadding: 1,
+                fontSize: 10,
+                halign: 'center',
+                valign: 'middle'
+            },
+            headStyles: {
+                fillColor: [22, 160, 133],
+                textColor: [255, 255, 255],
+                fontStyle: 'bold'
+            },
+            margin: { top: yPos }
+        });
+
+        
+        yPos = doc.previousAutoTable.finalY + 10;
+        doc.setFontSize(8);
+        doc.text('Thank you for your business!', margin, yPos);
+        doc.text('If you have any questions, feel free to contact us at support@cozastore.com', margin, yPos + 5);
+
+        doc.save('invoice.pdf');
+    };
+</script>
+
+  <%- include('../layouts/footer') %>
