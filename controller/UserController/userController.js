@@ -93,7 +93,7 @@ const otpPage = async (req, res) => {
     throw error
   }
 }
-
+  
 const resendOtp = async (req, res) => {
   try {
     const email = req.query.email
@@ -124,8 +124,9 @@ const resendOtp = async (req, res) => {
 
 const verifyOTP = async (req, res) => {
   try {
-    const { otp1, otp2, otp3, otp4 } = req.body
-    const otp = otp1 + otp2 + otp3 + otp4
+    // const { otp1, otp2, otp3, otp4 } = req.body
+    // const otp = otp1 + otp2 + otp3 + otp4
+    const {otp} = req.body
     const { email } = req.query
 
     const pendingUser = await PendingUser.findOne({ email: email })

@@ -31,16 +31,16 @@
 
 						<div class="otp-h">
 						<div class="form-wrapper otp-h"> 
-							<input name="otp1" type="text" class="form-control otp-v " id="otp1" min='0'max='9' maxlength ='1' required>
-                            <input name="otp2" type="text" class="form-control otp-v " id="otp2" min='0'max='9' maxlength ='1' required>
+							<input name="otp" type="number" class="form-control " id="otp1"   required>
+                            <!-- <input name="otp2" type="text" class="form-control otp-v " id="otp2" min='0'max='9' maxlength ='1' required>
                             <input name="otp3" type="text" class="form-control otp-v " id="otp3" min='0'max='9' maxlength ='1' required>
-                            <input name="otp4" type="text" class="form-control otp-v " id="otp4" min='0'max='9' maxlength ='1' required>
+                            <input name="otp4" type="text" class="form-control otp-v " id="otp4" min='0'max='9' maxlength ='1' required> -->
 						</div>
 
 					</div>
                    Didn`t received the code <a href="/resend-otp?email=<%= email %>"  id="resend-message">resend</a>
 				
-					<button type="submit">Verify</button>
+					<button type="submit" id="submit-btn">Verify</button>
 				</form>
 			</div>
 		</div>
@@ -48,23 +48,25 @@
 
 
     <script>
-        const otpValues = document.querySelectorAll('.otp-v');
+        // const otpValues = document.querySelectorAll('.otp-v');
     
-        otpValues.forEach((input, index, array) => {
-            input.addEventListener('input', function() {
-                if (this.value.length > 1) {
-                    const nextIndex = index + 1;
-                    if (nextIndex < array.length) {
-                        array[nextIndex].focus();
-                        array[nextIndex].value = this.value.slice(-1);
-                        this.value = this.value.slice(0, -1); 
-                    }
-                }
-                if (parseInt(this.value) < 0) {
-                    this.value = ''; 
-                }
-            });
-        });
+        // otpValues.forEach((input, index, array) => {
+        //     input.addEventListener('input', function() {
+        //         if (this.value.length > 1) {
+        //             const nextIndex = index + 1;
+        //             if (nextIndex < array.length) {
+        //                 array[nextIndex].focus();
+        //                 array[nextIndex].value = this.value.slice(-1);
+        //                 this.value = this.value.slice(0, -1); 
+        //             }
+        //         }
+        //         if (parseInt(this.value) < 0) {
+        //             this.value = ''; 
+        //         }
+        //     });
+        // });
+
+
 
         //timer Settings
 

@@ -1,15 +1,23 @@
 // Mongoose connection
-const mongoose = require('mongoose')
-mongoose.connect('mongodb://127.0.0.1:27017/First_project')
-
 require('dotenv').config();
+const mongoose = require('mongoose')
+// mongoose.connect('mongodb://127.0.0.1:27017/First_project')
+mongoose.connect(process.env.MONGO_CONNECT)
+  .then(() => console.log('Connected to MongoDB Atlas'))
+  .catch((error) => console.error('Error connecting to MongoDB Atlas:', error));
 
+
+console.log('e',process.env.MONGO_CONNECT);
 
 const express = require('express')
 const app = express()
 const path = require('path')
 const session = require('express-session')
+
 const nocache = require('nocache')
+
+app.use(nocache())
+
 
 app.use(session({
   resave:false,
@@ -17,7 +25,7 @@ app.use(session({
   secret:process.env.SESSION_SECRET
 }))
 
-app.use(nocache())
+
 
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, '/public')))
