@@ -26,11 +26,11 @@ const errorPage = async (req,res)=>{
   }
 }
 
-const registerPage = async (req, res) => {
+const registerPage = async (req, res,next) => {
   try {
     res.render('register')
   } catch (error) {
-    throw error
+    next(error)
   }
 }
 
@@ -53,7 +53,7 @@ const generateOTP = () => {
   })
 }
 
-const insertUser = async (req, res) => {
+const insertUser = async (req, res,next) => {
   try {
     const sPassword = await securePassword(req.body.password)
     const { name, email, phone } = req.body
@@ -64,7 +64,7 @@ const insertUser = async (req, res) => {
     }
 
     const otp = generateOTP()
-    console.log('new otp', otp)
+   
 
     const pendingUser = new PendingUser({
       name: name.trim(),
@@ -80,21 +80,20 @@ const insertUser = async (req, res) => {
 
     return res.redirect(`/otpVerification?email=${email}`)
   } catch (error) {
-    console.log('Error while registering user', error)
-    return res.status(500).send('Internal server error')
+    next(error)
   }
 }
 
-const otpPage = async (req, res) => {
+const otpPage = async (req, res,next) => {
   try {
     const { email } = req.query
     res.render('otp', { email: email })
   } catch (error) {
-    throw error
+    next(error)
   }
 }
   
-const resendOtp = async (req, res) => {
+const resendOtp = async (req, res,next) => {
   try {
     const email = req.query.email
     if (!email) {
@@ -107,7 +106,7 @@ const resendOtp = async (req, res) => {
     }
 
     const otp = generateOTP()
-    console.log('resend otp', otp)
+   
 
     pendingUser.otp = otp
     pendingUser.otpExpires = Date.now() + 1 * 60 * 1000 // Reset OTP expiry time
@@ -117,12 +116,11 @@ const resendOtp = async (req, res) => {
 
     return res.redirect(`/otpVerification?email=${email}`)
   } catch (error) {
-    console.log('Error while resending OTP', error)
-    return res.status(500).send('Internal server error')
+    next(error)
   }
 }
 
-const verifyOTP = async (req, res) => {
+const verifyOTP = async (req, res,next) => {
   try {
     // const { otp1, otp2, otp3, otp4 } = req.body
     // const otp = otp1 + otp2 + otp3 + otp4
@@ -156,21 +154,19 @@ const verifyOTP = async (req, res) => {
       return res.render('otp', { success: false, message: 'Invalid OTP' })
     }
   } catch (error) {
-    console.error('Error while verifying OTP:', error)
-    return res.status(500).send('Internal server error')
+    next(error)
   }
 }
 
-const loginPage = async (req, res) => {
+const loginPage = async (req, res,next) => {
   try {
     res.render('login')
   } catch (error) {
-    console.error('Error rendering login page:', error.message)
-    res.status(500).send('Internal server error')
+    next(error)
   }
 }
 
-const verifyLogin = async (req, res) => {
+const verifyLogin = async (req, res,next) => {
   try {
     const { email, password } = req.body
     //  console.log('pass',password);
@@ -200,19 +196,18 @@ const verifyLogin = async (req, res) => {
      return res.status(200).json({ message: 'Login successful' })
    // return res.redirect('/')
   } catch (error) {
-    console.error('Error occurred while verifying login', error)
-    return res.status(500).send('Internal server error')
+    next(error)
   }
 }
 
-const googleAuth = async (req, res) => {
+const googleAuth = async (req, res,next) => {
   try {
     if (req.user) {
       const existingUser = await User.findOne({ email: req.user.email })
 
       if (existingUser) {
         req.session.user_id = existingUser._id
-        return res.redirect('/')
+        return res.redirect('/home')
       } else {
         const user = new User({
           name: req.user.displayName,
@@ -221,44 +216,40 @@ const googleAuth = async (req, res) => {
         })
         req.session.user_id = user._id
         await user.save()
-        return res.status(200).redirect('/')
+        return res.status(200).redirect('/home')
       }
     }
   } catch (error) {
-    console.log('error while googleAuth', error)
+    next(error)
   }
 }
 
-const googleFail = async (req, res) => {
+const googleFail = async (req, res,next) => {
   try {
     res.render('login', { message: 'Google authentication failed' })
   } catch (error) {
-    console.log('error while google fail', error)
+    next(error)
   }
 }
 
-const logout = async (req, res) => {
+const logout = async (req, res,next) => {
   try {
-    req.session.destroy(err => {
-      if (err) {
+    req.session.destroy(error => {
+      if (error) {
         console.error('Error destroying session:', err)
-        return res.status(500).send('Internal server error')
+        next(error)
       }
       res.redirect('/')
     })
   } catch (error) {
-    console.error('Error in logout:', error)
-    res.status(500).send('Internal server error')
+    next(error)
   }
 }
 
 // Home page
-const loadHome = async (req, res) => {
+const loadHome = async (req, res,next) => {
   try {
-    // const products = await productDB
-    //   .find({ listed: true })
-    //   .populate('variant')
-    //   .populate('categoryId')
+   
     const products = await productDB.find({ listed: true })
     .populate({
         path: 'variant',
@@ -269,12 +260,11 @@ const loadHome = async (req, res) => {
 
     res.render('index', { products })
   } catch (error) {
-    console.error('Error loading home:', error)
-    res.status(500).json({ message: 'Internal server error' })
+    next(error)
   }
 }
  
-const productDetail = async (req, res) => {
+const productDetail = async (req, res,next) => {
   try {
     const id = req.query.id    
     const variantId = req.query.variantId
@@ -308,15 +298,14 @@ const productDetail = async (req, res) => {
     res.render('product-detail', { variant, product , otherProducts })
 
   } catch (error) {
-    console.error('Error fetching product details:', error)
-    res.status(500).json({ message: 'Internal server error' })
+    next(error)
   }
 }
 
 
 
 
-const shopPage = async (req, res) => {
+const shopPage = async (req, res,next) => {
   try {
     const search = req.query.search || '';
     const sortBy = req.query.sortBy || 'Default';
@@ -379,30 +368,29 @@ const shopPage = async (req, res) => {
       res.render('shop', { products: filteredProducts, categoryList });
     }
   } catch (error) {
-    console.error('Error in shopPage:', error);
-    res.status(500).send('Internal Server Error');
+    next(error)
   }
 };
 
 
-const myAccount = async (req, res) => {
+const myAccount = async (req, res,next) => {
   try {
     const userId = req.session.user_id;
     const user = await User.findById(userId).populate('address');
   
     if (!user) {
-      console.log('User not found');
+   
       return res.status(404).redirect('/home');
     }
-   // console.log('user ',user);
+  
   
     res.render('accountDetails', { user, message: undefined });
   } catch (error) {
-    console.log(error);
+    next(error)
   }
 }
 
-const editProfile = async (req, res) => {
+const editProfile = async (req, res,next) => {
   try {
     const id = req.params.id
     const { name, phone } = req.body
@@ -420,11 +408,11 @@ const editProfile = async (req, res) => {
 
     res.status(200).json({ message: 'Profile updated successfully' })
   } catch (error) {
-    throw error
+    next(error)
   }
 }
 
-const saveAddress = async (req, res) => {
+const saveAddress = async (req, res,next) => {
   try {
     // const userId = req.params.id;
     const userId = req.session.user_id
@@ -466,14 +454,13 @@ const saveAddress = async (req, res) => {
 
     res.status(200).json({ success: true, message: 'Address added successfully' });
   } catch (error) {
-    console.log('Error in saveAddress:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    next(error)
   }
 };
 
 
 
-const deleteAddress = async (req, res) => {
+const deleteAddress = async (req, res,next) => {
   try {
       const { userId, addressId } = req.params;
 
@@ -504,13 +491,12 @@ const deleteAddress = async (req, res) => {
       res.status(200).json({ success: true, message: 'Address deleted successfully' });
 
   } catch (error) {
-      console.log('Error in deleteAddress:', error);
-      res.status(500).json({ message: 'Internal server error' });
+    next(error)
   }
 };
 
 
-const editAddress = async (req, res) => {
+const editAddress = async (req, res,next) => {
   try {
     const { userId, addressId } = req.params;
     const {
@@ -550,13 +536,12 @@ const editAddress = async (req, res) => {
 
     res.status(200).json({ success: true, message: 'Address updated successfully', data: result });
   } catch (error) {
-    console.log('Error in edit address:', error);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    next(error)
   }
 };
 
 
-const changePassword = async (req, res) => {
+const changePassword = async (req, res,next) => {
   try {
     const userId = req.params.userId;
     const user = await User.findById(userId);
@@ -583,27 +568,26 @@ const changePassword = async (req, res) => {
     return res.status(200).json({ success: true, message: 'Password updated successfully' });
 
   } catch (error) {
-    console.log('err in changePassword', error);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    next(error)
   }
 };
 
 
 
 
-const aboutPage = async (req, res) => {
+const aboutPage = async (req, res,next) => {
   try {
     res.render('about')
   } catch (error) {
-    throw error
+    next(error)
   }
 }
 
-const contactPage = async (req, res) => {
+const contactPage = async (req, res,next) => {
   try {
     res.render('contact')
   } catch (error) {
-    throw error
+    next(error)
   }
 }
 

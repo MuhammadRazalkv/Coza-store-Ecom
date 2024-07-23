@@ -19,7 +19,7 @@ function isValidObjectId (id) {
 }
 
 
-const loadCheckOutPage = async (req, res) => {
+const loadCheckOutPage = async (req, res,next) => {
   try {
     const userId = req.session.user_id
 
@@ -87,8 +87,7 @@ const loadCheckOutPage = async (req, res) => {
 
     grandTotal -= offerDiscount
 
-    console.log('Grand Total:', grandTotal)
-    console.log('Offer Discount:', offerDiscount)
+   
 
     res.render('checkout', {
       cart,
@@ -101,14 +100,11 @@ const loadCheckOutPage = async (req, res) => {
       message: undefined
     })
   } catch (error) {
-    console.log('Error in loadCheckOutPage:', error)
-    return res
-      .status(500)
-      .json({ success: false, message: 'Internal server error' })
+    next(error)
   }
 }
 
-const applyCoupon = async (req, res) => {
+const applyCoupon = async (req, res,error) => {
   try {
     const { couponCode, cartSubTotal } = req.body
 
@@ -144,12 +140,11 @@ const applyCoupon = async (req, res) => {
       })
     }
   } catch (error) {
-    console.log('Error in apply coupon:', error)
-    res.status(500).json({ success: false, message: 'Internal server error' })
+    next(error)
   }
 }
 
-const placeOrder = async (req, res) => {
+const placeOrder = async (req, res,next) => {
   const userId = req.session.user_id
   const { selectedOption, addressId, appliedCoupon } = req.body
 
@@ -364,9 +359,7 @@ const placeOrder = async (req, res) => {
         receipt: orderId.toString(),
         payment_capture: 1
       })
-      // console.log('order', order);
-      // console.log('place', placedOrder);
-
+     
       return res.json({
         order,
         placedOrder,
@@ -375,14 +368,11 @@ const placeOrder = async (req, res) => {
       })
     }
   } catch (error) {
-    console.log('Error in placeOrder:', error)
-    return res
-      .status(500)
-      .json({ success: false, message: 'Internal server error' })
+    next(error)
   }
 }
 
-const verifyPayment = async (req, res) => {
+const verifyPayment = async (req, res,next) => {
   try {
     console.log('inside the verify payment ')
     const {
@@ -415,14 +405,11 @@ const verifyPayment = async (req, res) => {
       return res.status(400).json({ message: 'Failed' })
     }
   } catch (error) {
-    console.log('err in verify payment', error)
-    return res
-      .status(500)
-      .json({ success: false, message: 'Internal server error' })
+    next(error)
   }
 }
 
-const loadOrderPage = async (req, res) => {
+const loadOrderPage = async (req, res,next) => {
   try {
     const limit = 3;
     const page = Math.max(1, parseInt(req.query.page)) || 1;
@@ -445,12 +432,12 @@ const loadOrderPage = async (req, res) => {
 
     res.render('orderPage', { orders, message: undefined , page, totalPages})
   } catch (error) {
-    console.log('Error in loadOrderPage:', error)
+    next(error)
   }
 }
 
 
-const cancelOrder = async (req, res) => {
+const cancelOrder = async (req, res,next) => {
   try {
     const userId = req.session.user_id
     const { orderId, variantObjectId } = req.body
@@ -745,14 +732,11 @@ const cancelOrder = async (req, res) => {
       }
     }
   } catch (error) {
-    console.log('error in cancel order ', error)
-    return res
-      .status(500)
-      .json({ success: false, message: 'Internal server error' })
+    next(error)
   }
 }
 
-const loadOrderTrackingPage = async (req, res) => {
+const loadOrderTrackingPage = async (req, res,next) => {
   try {
     const orderId = req.query.orderId
     
@@ -779,12 +763,11 @@ const loadOrderTrackingPage = async (req, res) => {
 
     return res.render('orderTracking', { message: undefined, order })
   } catch (error) {
-    console.error('Error track order:', error)
-    res.status(500).json({ message: 'Internal server error', success: false })
+    next(error)
   }
 }
 
-const loadWalletPage = async (req, res) => {
+const loadWalletPage = async (req, res,next) => {
   try {
     const limit = 5;
     const page = Math.max(1, parseInt(req.query.page)) || 1;
@@ -802,12 +785,11 @@ const loadWalletPage = async (req, res) => {
 
     res.render('wallet', { wallet, message: undefined , page , totalPages})
   } catch (error) {
-    console.log('err in loadWallet Page', error)
-    res.send('internal server error')
+    next(error)
   }
 }
 
-const loadWishList = async (req, res) => {
+const loadWishList = async (req, res,next) => {
   try {
 
     const limit = 5;
@@ -830,11 +812,11 @@ const loadWishList = async (req, res) => {
       totalPages
     })
   } catch (error) {
-    console.log('error in loadWishList', error)
+    next(error)
   }
 }
 
-const addToWishlist = async (req, res) => {
+const addToWishlist = async (req, res,next) => {
   try {
     const userId = req.session.user_id
     const { variantId, selectedSize } = req.body
@@ -891,27 +873,16 @@ const addToWishlist = async (req, res) => {
       message: 'Product added to wishlist successfully '
     })
   } catch (error) {
-    console.log('error in addToWishlist ', error)
-    return res
-      .status(500)
-      .json({ success: false, message: 'Internal server error ' })
+    next(error)
   }
 }
 
-const removeFromWishlist = async (req, res) => {
+const removeFromWishlist = async (req, res,next) => {
   try {
     const userId = req.session.user_id
     const { variantId, selectedSize } = req.params
 
-    //  const variant = await variantDB.findOne({userId:userId},{'variant._id':variantId})
-
-    //   if (!variant) {
-    //     return res.status(400).json({success:false,message:'Product not found'})
-    //   }else{
-    //     await variantDB.updateOne({userId:userId,'variant._id':variantId},{
-    //       $pull:{variantId}
-    //     })
-    //   }
+ 
 
     const updateData = await WishlistDB.findOneAndUpdate(
       { userId: userId },
@@ -923,7 +894,7 @@ const removeFromWishlist = async (req, res) => {
       { new: true }
     )
 
-    console.log('up', updateData)
+  
     if (updateData) {
       return res
         .status(200)
@@ -934,14 +905,11 @@ const removeFromWishlist = async (req, res) => {
         .json({ success: false, message: 'Product not found' })
     }
   } catch (error) {
-    console.log('err in removeWishlist', error)
-    return res
-      .status(500)
-      .json({ success: false, message: 'Internal server error' })
+    next(error)
   }
 }
 
-const requestReturn = async (req, res) => {
+const requestReturn = async (req, res,next) => {
   try {
     const { orderId, variantId, returnReason } = req.body
     const order = await OrderDB.findOneAndUpdate(
@@ -963,12 +931,11 @@ const requestReturn = async (req, res) => {
       .status(200)
       .json({ success: true, message: 'Return requested successfully' })
   } catch (error) {
-    console.log('err in requestReturn ', error)
-    return res.status(500).json({ message: 'Internal server error ' })
+    next(error)
   }
 }
 
-const rePayment = async (req, res) => {
+const rePayment = async (req, res,next) => {
   try {
     const { orderId } = req.body
     console.log('orderId', orderId)
@@ -1001,12 +968,11 @@ const rePayment = async (req, res) => {
       orderId
     })
   } catch (error) {
-    console.log('err in rePayment', error)
-    res.status(500).json({ message: 'Internal server error' })
+    next(error)
   }
 }
 
-const downloadInvoice = async (req, res) => {
+const downloadInvoice = async (req, res,next) => {
   try {
     const userId = req.session.user_id
     const orderId = req.query.orderId
@@ -1090,8 +1056,7 @@ const downloadInvoice = async (req, res) => {
     const currentDate = new Date()
     return res.status(200).render('invoicePage', { orders,completedOrder, currentDate ,subTotal,totalOfferDiscount,couponAppliedForEachProduct,couponDis,grandTotal})
   } catch (error) {
-    console.log('err in downloadInvoice', error)
-    return res.status(500).json({ message: 'Internal server error ' })
+    next(error)
   }
 }
 

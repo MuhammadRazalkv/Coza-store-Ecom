@@ -44,8 +44,7 @@ app.use('/admin', adminRoute)
 
 
 
-const errorHandlingMiddleware = require('./middleware/errorHandling')
-app.use(errorHandlingMiddleware)
+
 
 app.all('*',(req,res)=>{
   res.render('404error',{message:undefined})

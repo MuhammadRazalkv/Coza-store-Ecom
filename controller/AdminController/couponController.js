@@ -5,23 +5,23 @@ const Category = require('../../model/categoryModel')
 const Products = require('../../model/productModel')
 const CouponDB = require('../../model/couponModal')
 
-const loadCouponPage = async (req,res)=>{
+const loadCouponPage = async (req,res,next)=>{
     try {
         const coupons = await CouponDB.find().sort({createdAt:-1})
 
         res.render('couponsManagement',{coupons})
     } catch (error) {
-        console.log('error in loadCouponPage');
+        next(error)
     }
 }
 
-const loadAddCoupon = async (req,res)=>{
+const loadAddCoupon = async (req,res,next)=>{
     try {
 
         res.render('addCoupon')
         
     } catch (error) {
-        console.log('error in loadAddCoupon');
+        next(error)
     }
 }
 
@@ -72,7 +72,7 @@ const loadAddCoupon = async (req,res)=>{
 //     }
 // }
 
-const addCoupon = async (req, res) => {
+const addCoupon = async (req, res,next) => {
     try {
         const {
             couponName,
@@ -115,29 +115,28 @@ const addCoupon = async (req, res) => {
         }
 
     } catch (error) {
-        console.log('error in add Coupon', error);
-        res.status(500).json({ success: false, message: "Internal server error" });
+        next(error)
     }
 };
 
 
-const loadEditCoupon = async (req,res)=>{
+const loadEditCoupon = async (req,res , next)=>{
     try {
         const couponId = req.query.couponId
         const coupon = await CouponDB.findById(couponId)
 
         if (!coupon) {
-            return res.status(400).json({success:false,message:"Coupon not found"})
+           return res.redirect('/couponList')
         }
       
 
         res.render('editCoupon',{coupon})
     } catch (error) {
-        console.log('error in loadEditCoupon',error);
+        next(error)
     }
 }
 
-const editCoupon = async (req, res) => {
+const editCoupon = async (req, res,next) => {
     try {
         const {
             couponId,
@@ -188,13 +187,12 @@ const editCoupon = async (req, res) => {
             }
         }
     } catch (error) {
-        console.log('err in editCoupon', error);
-        return res.status(500).json({ success: false, message: "Internal server error" });
+        next(error)
     }
 };
 
 
-const deleteCoupon = async (req,res)=>{
+const deleteCoupon = async (req,res,next)=>{
     try {
         const {couponId} = req.body
         if(!couponId){
@@ -212,12 +210,11 @@ const deleteCoupon = async (req,res)=>{
 
 
     } catch (error) {
-        console.log('err on deleteCoupon',error);
-        return res.status(500).json({success:false,message:'Internal server error '})
+        next(error)
     }
 }
 
-const updateStatus = async (req,res)=>{
+const updateStatus = async (req,res,next)=>{
     try {
         const {couponId} = req.body
         if(!couponId){
@@ -238,8 +235,7 @@ const updateStatus = async (req,res)=>{
 
 
     } catch (error) {
-        console.log('error in update coupon status',error);
-        res.status(500).json({success:false,message:'Internal server error'})
+        next(error)
     }
 }
 

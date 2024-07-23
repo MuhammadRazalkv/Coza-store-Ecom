@@ -8,7 +8,7 @@ const OrderDB = require('../../model/orderModal')
 const WalletDB = require('../../model/walletModel')
 const OfferDB = require('../../model/offerModel')
 
-const loadOfferPage = async (req,res)=>{
+const loadOfferPage = async (req,res,next)=>{
     try {
      const offers = await OfferDB.find()
   
@@ -17,12 +17,12 @@ const loadOfferPage = async (req,res)=>{
     return res.render('offerManagement',{offers,message:undefined})
   
     } catch (error) {
-      console.log('err in loadOfferPage',error);
+      next(error)
     }
   }
   
 
-const loadAddOffer = async (req,res)=>{
+const loadAddOffer = async (req,res,next)=>{
   try {
     const products = await productDB.find()
     const categories = await CategoryDB.find()
@@ -31,11 +31,11 @@ const loadAddOffer = async (req,res)=>{
   res.render('addOffer',{products,categories})
 
   } catch (error) {
-    console.log('err in loadAddOffer');
+    next(error)
   }
 }
 
-const addOffer = async(req,res)=>{
+const addOffer = async(req,res,next)=>{
   try {
     const {offerName,
       selectType,
@@ -156,15 +156,14 @@ const addOffer = async(req,res)=>{
 
     
   } catch (error) {
-    console.log('err in addOffer',error);
-    return res.status(500).json({message:"Internal server error"})
+    next(error)
   }
 }
 
-const changeOfferStatus = async (req, res) => {
+const changeOfferStatus = async (req, res,next) => {
   try {
     const { offerId } = req.body;
-    console.log('offerID', offerId);
+   
 
     if (!offerId) {
       return res.status(400).json({ success: false, message: 'Offer not found' });
@@ -194,12 +193,11 @@ const changeOfferStatus = async (req, res) => {
 
     return res.status(200).json({ success: true, message: 'Offer status updated successfully', listed: newStatus });
   } catch (error) {
-    console.log('error in changeOfferStatus', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    next(error)
   }
 };
 
-const loadEditOffer = async (req,res)=>{
+const loadEditOffer = async (req,res,next)=>{
   try {
     const offerId = req.query.offerId
     if (!offerId) {
@@ -213,11 +211,11 @@ const loadEditOffer = async (req,res)=>{
     res.render('editOffer',{offer})
     
   } catch (error) {
-    console.log('err in loadEditOffer',error);
+    next(error)
   }
 }
 
-const editOffer = async (req, res) => {
+const editOffer = async (req, res,next) => {
   try {
     const { offerId, offerName, discountPercentage, expiryDate } = req.body;
 
@@ -275,11 +273,10 @@ const editOffer = async (req, res) => {
     return res.status(200).json({ message: 'Offer updated successfully' });
 
   } catch (error) {
-    console.error('Error in editOffer:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    next(error)
   }
 };
-const deleteOffer = async (req, res) => {
+const deleteOffer = async (req, res,next) => {
   try {
     const { offerId } = req.body;
     if (!offerId) {
@@ -311,8 +308,7 @@ const deleteOffer = async (req, res) => {
 
     return res.status(200).json({ success: true, message: 'Offer deleted successfully', updateResult });
   } catch (error) {
-    console.log('Error on deleteOffer:', error);
-    return res.status(500).json({ success: false, message: 'Internal server error' });
+    next(error)
   }
 };
 

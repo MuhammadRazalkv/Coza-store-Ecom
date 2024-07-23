@@ -11,7 +11,7 @@ const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
 
-const loadOrderPage = async (req, res) => {
+const loadOrderPage = async (req, res,next) => {
   try {
     const limit = 8;
     const page = Math.max(1, parseInt(req.query.page)) || 1;
@@ -27,16 +27,13 @@ const loadOrderPage = async (req, res) => {
 
     res.render('orderPageAdmin', { orders, message: undefined , totalPages , page })
   } catch (error) {
-    console.log('err in loadOrderPage admin', error)
-    return res
-      .status(500)
-      .json({ success: false, message: 'Internal server error ' })
+    next(error)
   }
 }
 
 
 
-const loadOrderDetailsPage = async (req, res) => {
+const loadOrderDetailsPage = async (req, res,next) => {
   try {
     const orderId = req.params.orderId
     if (!orderId) {
@@ -74,14 +71,13 @@ const loadOrderDetailsPage = async (req, res) => {
       message: undefined
     })
   } catch (error) {
-    console.log('err in loadOrderDetails', error)
-    res.status(500).json({ success: false, message: 'Internal server error' })
+   next(error)
   }
 }
 
 
 
-const changeOrderStatus = async (req, res) => {
+const changeOrderStatus = async (req, res,next) => {
   try {
     const orderId = req.params.orderId;
     const { status, variantId } = req.body;
@@ -466,8 +462,7 @@ const changeOrderStatus = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log('err in changeOrderStatus', error);
-    return res.status(500).json({ success: false, message: 'Internal server error' });
+    next(error)
   }
 };
 
@@ -561,7 +556,7 @@ const changeOrderStatus = async (req, res) => {
 
 
 
-const loadSalesReport = async (req, res) => { 
+const loadSalesReport = async (req, res,next) => { 
   try {
     
     const limit = 10;
@@ -678,8 +673,7 @@ const loadSalesReport = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log('err in loadSalesReport', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    next(error)
   }
 };
 

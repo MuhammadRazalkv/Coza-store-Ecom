@@ -6,7 +6,7 @@ const AddressDB = require('../../model/addressModal')
 const CartDB = require('../../model/cartModel')
 
 
-const loadCartPage = async (req, res) => {
+const loadCartPage = async (req, res,next) => {
   try {
     const userId = req.session.user_id
     if (!userId) {
@@ -45,13 +45,12 @@ const loadCartPage = async (req, res) => {
       message: undefined
     })
   } catch (error) {
-    console.error('Error loading cart page:', error)
-    res.status(500).json({ success: false, message: 'Internal server error' })
+    next(error)
   }
 }
 
 
-const addToCart = async (req, res) => {
+const addToCart = async (req, res,next) => {
   try {
     const { variantId, selectedSize } = req.body
     const userId = req.session.user_id
@@ -136,8 +135,7 @@ const addToCart = async (req, res) => {
       .status(200)
       .json({ success: true, message: 'Product added to cart successfully' })
   } catch (error) {
-    console.log('Error in addToCart', error)
-    res.status(500).json({ success: false, message: 'Internal server error' })
+    next(error)
   }
 }
 
@@ -208,8 +206,7 @@ const editCart = async (req, res) => {
       }
     }
   } catch (error) {
-    console.log('Error in edit cart:', error)
-    res.status(500).json({ success: false, message: 'Internal server error' })
+    next(error)
   }
 }
 
@@ -250,12 +247,7 @@ const deleteCartItem = async (req, res) => {
         message: 'Product successfully removed from the cart'
       })
   } catch (error) {
-    console.log('err in delete cart ', error)
-
-    console.log('Response being sent:', JSON.stringify(error))
-    return res
-      .status(500)
-      .json({ success: false, message: 'Internal server error' })
+    next(error)
   }
 }
 

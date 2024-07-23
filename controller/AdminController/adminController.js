@@ -5,16 +5,17 @@ const Category = require('../../model/categoryModel')
 const Products = require('../../model/productModel')
 const OrderDB = require('../../model/orderModal')
 
-const registerPage = async (req, res) => {
+const registerPage = async (req, res,next) => {
   try {
     res.render('adminLogin')
   } catch (error) {
-    console.error('Error loading register page:', error)
-    res.status(500).send('Server Error')
+    // console.error('Error loading register page:', error)
+    // res.status(500).send('Server Error')
+    next(error)
   }
 }
 
-const verifyLogin = async (req, res) => {
+const verifyLogin = async (req, res,next) => {
   try {
     const { email, password } = req.body
 
@@ -37,21 +38,21 @@ const verifyLogin = async (req, res) => {
 
     return res.redirect('/admin/home')
   } catch (error) {
-    console.log('error while verifying Admin', error)
+  
+    next(error)
   }
 }
 
-const logout = async (req, res) => {
+const logout = async (req, res,next) => {
   try {
     req.session.destroy()
     return res.redirect('/admin')
   } catch (error) {
-    console.log('err logout admin', error)
-    throw error
+   next(error)
   }
 }
 
-const loadHome = async (req, res) => {
+const loadHome = async (req, res,next) => {
   try {
     const filter = req.query.filter || 'All'
 
@@ -184,12 +185,11 @@ const loadHome = async (req, res) => {
       })
     }
   } catch (error) {
-    console.error('Error loading home page:', error)
-    res.status(500).json({ error: 'Server Error' })
+   next(error)
   }
 }
 
-const userManagement = async (req, res) => {
+const userManagement = async (req, res,next) => {
   try {
     const limit = 10
     const page = Math.max(1, parseInt(req.query.page)) || 1
@@ -206,12 +206,11 @@ const userManagement = async (req, res) => {
       totalPages
     })
   } catch (error) {
-    console.error('Error loading user management page:', error)
-    res.status(500).send('Server Error')
+  next(error)
   }
 }
 
-const blockUnblock = async (req, res) => {
+const blockUnblock = async (req, res,next) => {
   const { id } = req.body
 
   try {
@@ -241,32 +240,29 @@ const blockUnblock = async (req, res) => {
       listed: updatedStatus
     })
   } catch (error) {
-    console.error('Error updating user status:', error)
-    res.status(500).send('Server Error')
+ next(error)
   }
 }
 
-const categoryManagement = async (req, res) => {
+const categoryManagement = async (req, res,next) => {
   try {
     const categories = await Category.find({})
 
     res.render('categoryManagement', { categories })
   } catch (error) {
-    console.error('Error loading category management page:', error)
-    res.status(500).send('Server Error')
+    next(error)
   }
 }
 
-const loadAddCategory = async (req, res) => {
+const loadAddCategory = async (req, res,next) => {
   try {
     res.render('addCategory')
   } catch (error) {
-    console.log('error loadAddCategory', error)
-    res.status(500).send('Server Error')
+    next(error)
   }
 }
 
-const addCategory = async (req, res) => {
+const addCategory = async (req, res , next) => {
   try {
     const { name, description } = req.body
     const categories = await Category.find({ name: name })
@@ -279,12 +275,11 @@ const addCategory = async (req, res) => {
     await newCategory.save()
     res.redirect('/admin/category-list')
   } catch (error) {
-    console.log('error while addCategory', error)
-    res.status(500).send('Server Error')
+    next(error)
   }
 }
 
-const loadEditCategory = async (req, res) => {
+const loadEditCategory = async (req, res ,next) => {
   try {
     const id = req.query.id
 
@@ -292,12 +287,11 @@ const loadEditCategory = async (req, res) => {
 
     res.render('editCategory', { categories })
   } catch (error) {
-    console.log('err loadEditCategory ', error)
-    res.status(500).send('Server Error')
+    next(error)
   }
 }
 
-const editCategory = async (req, res) => {
+const editCategory = async (req, res,next) => {
   try {
     const { id, name, description } = req.body
 
@@ -324,12 +318,11 @@ const editCategory = async (req, res) => {
     )
     return res.status(200).json({message:'Category updated successfully'})
   } catch (error) {
-    console.log('err while edit Category', error)
-    res.status(500).send('Server Error')
+    next(error)
   }
 }
 
-const softDeleteCategory = async (req, res) => {
+const softDeleteCategory = async (req, res , next) => {
   try {
     const { id } = req.body
 
@@ -360,8 +353,7 @@ const softDeleteCategory = async (req, res) => {
       listed: updatedStatus
     })
   } catch (error) {
-    console.log('err softDeleteCategory', error)
-    res.status(500).json({ message: 'Server Error' })
+    next(error)
   }
 }
 

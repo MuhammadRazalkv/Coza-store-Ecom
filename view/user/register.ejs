@@ -51,7 +51,7 @@
 		</div>
     </div> -->
 
-    <div id="main">
+	<div id="main">
 		<div class="wrapper">
 		  <div class="inner">
 			<form action="" method="post" onsubmit="return validateForm()">
@@ -76,11 +76,11 @@
 			  </div>
 			  <div class="form-wrapper">
 				<label for="">Email</label>
-				<input type="email" class="form-control" name="email" required />
+				<input type="email" class="form-control" name="email" id="email" required />
 			  </div>
 			  <div class="form-wrapper">
 				<label for="">Phone Number</label>
-				<input type="number" class="form-control" name="phone" required />
+				<input type="tel" class="form-control" name="phone" id="phone" pattern="^\d{10}$" title="Phone number must be 10 digits" required />
 			  </div>
 			  <div class="form-wrapper">
 				<label for="">Password</label>
@@ -105,32 +105,50 @@
 	  </div>
 	  
 	  <script>
-		  function validateForm() {
-    // Get form values
-    var name = document.getElementById('name').value;
-    var password = document.getElementById('password').value;
-    var errorMessage = document.getElementById('error-message');
-    var namePattern = /^[a-zA-Z\s]+$/; // Updated regex to allow only alphabets and spaces
-
-    // Check for invalid characters in the username
-    if (!namePattern.test(name)) {
-      errorMessage.textContent = 'Username must contain only alphabets and spaces.';
-      return false;
-    } else {
-      errorMessage.textContent = ''; // Clear any previous error message
-    }
-
-    // Check password length
-    if (password.length < 4) {
-      errorMessage.textContent = 'Password must be at least 4 characters long.';
-      return false;
-    }
-
-    // Form is valid
-    return true;
-  }
-	  </script>
+		function validateForm() {
+		  var name = document.getElementById('name').value;
+		  var email = document.getElementById('email').value;
+		  var phone = document.getElementById('phone').value;
+		  var password = document.getElementById('password').value;
+		  var errorMessage = document.getElementById('error-message');
+		  var namePattern = /^[a-zA-Z\s]+$/;
+		  var phonePattern = /^\d{10}$/;
+		  var passwordPattern = /^(?=.*[a-zA-Z]).{5,}$/;
 	  
+		  // Check for invalid characters in the username
+		  if (!namePattern.test(name)) {
+			errorMessage.textContent = 'Username must contain only alphabets and spaces.';
+			return false;
+		  }
+	  
+		  // Check for valid email format
+		  if (!validateEmail(email)) {
+			errorMessage.textContent = 'Please enter a valid email address.';
+			return false;
+		  }
+	  
+		  // Check for valid phone number
+		  if (!phonePattern.test(phone)) {
+			errorMessage.textContent = 'Phone number must be 10 digits.';
+			return false;
+		  }
+	  
+		  // Check password length and if it contains at least one alphabet
+		  if (!passwordPattern.test(password)) {
+			errorMessage.textContent = 'Password must be at least 5 characters long and contain at least one alphabet.';
+			return false;
+		  }
+	  
+		  // Form is valid
+		  errorMessage.textContent = '';
+		  return true;
+		}
+	  
+		function validateEmail(email) {
+		  var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		  return emailPattern.test(email);
+		}
+	  </script>
 
     
   </body>

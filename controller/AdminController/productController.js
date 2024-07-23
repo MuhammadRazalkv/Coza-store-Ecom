@@ -6,7 +6,7 @@ const Products = require('../../model/productModel')
 const Variants = require('../../model/variantModel')
 const { name } = require('ejs')
 
-const loadProductPage = async (req, res) => {
+const loadProductPage = async (req, res,next) => {
   try {
 
     const limit = 6;
@@ -20,20 +20,20 @@ const loadProductPage = async (req, res) => {
 
     res.render('productList', { products: products , page , totalPages })
   } catch (error) {
-    console.log('err in loadProductPage ', error)
+    next(error)
   }
 }
 
-const loadAddProduct = async (req, res) => {
+const loadAddProduct = async (req, res , next) => {
   try {
     const categories = await Category.find()
     res.render('addProduct', { categories, message: undefined })
   } catch (error) {
-    console.log('err loadAddProduct', error)
+    next(error)
   }
 }
 
-const addProduct = async (req, res) => {
+const addProduct = async (req, res,next) => {
   try {
 
     
@@ -67,15 +67,12 @@ const addProduct = async (req, res) => {
     await product.save()
     return res.status(201).json({ message: 'Product added successfully' })
   } catch (error) {
-    console.log('Error in addProduct:', error)
-    return res
-      .status(500)
-      .json({ message: 'An error occurred while adding the product.' })
+    next(error)
   }
 }
 
 
-const blockProduct = async (req, res) => {
+const blockProduct = async (req, res,next) => {
   try {
     const { id } = req.body
     if (!id) {
@@ -95,12 +92,11 @@ const blockProduct = async (req, res) => {
       listed: updatedStatus
     })
   } catch (error) {
-    console.log('err in blocking product ', error)
-    throw error
+    next(error)
   }
 }
 
-const loadEditProduct = async (req, res) => {
+const loadEditProduct = async (req, res,next) => {
   try {
     const categories = await Category.find({})
     const id = req.query.id
@@ -109,13 +105,11 @@ const loadEditProduct = async (req, res) => {
 
     res.render('editProduct', { categories, product })
   } catch (error) {
-    console.log('err in editProduct ', error)
-    res.status(500).send('Server Error')
-    throw error
+    next(error)
   }
 }
 
-const editProduct = async (req, res) => {
+const editProduct = async (req, res,next) => {
   try {
     const {
       id,
@@ -147,13 +141,12 @@ const editProduct = async (req, res) => {
    
     res.redirect('/admin/products-list')
   } catch (error) {
-    console.log('err on editProduct', error)
-    throw error
+    next(error)
   }
 }
 
 
-const loadProductDetails = async (req, res) => {
+const loadProductDetails = async (req, res,next) => {
   try {
     const id = req.query.id
     const product = await Products.findById(id).populate('categoryId')
@@ -161,12 +154,11 @@ const loadProductDetails = async (req, res) => {
    
     res.render('productDetails', { product, variant, message: undefined })
   } catch (error) {
-    res.status(400).json(error)
-    console.log('err on loadProductDetail', error)
+    next(error)
   }
 }
 
-const loadAddVariant = async (req, res) => {
+const loadAddVariant = async (req, res,next) => {
   try {
     const id = req.query.id
     const product = await Products.findById(id)
@@ -182,12 +174,11 @@ const loadAddVariant = async (req, res) => {
       message: undefined
     })
   } catch (error) {
-    res.status(500).json(error)
-    console.log('Error in loadAddVariant:', error)
+    next(error)
   }
 }
 
-const addVariant = async (req, res) => {
+const addVariant = async (req, res,next) => {
   try {
     const {
       productName,
@@ -267,38 +258,33 @@ const addVariant = async (req, res) => {
 
     return res.status(200).json({ message: 'Variant added successfully' })
   } catch (error) {
-    console.error('Error in add variant:', error)
-    res.status(500).json({ message: 'Internal server error' })
+    next(error)
   }
 }
 
-const loadEditVariant = async (req, res) => {
+const loadEditVariant = async (req, res,next) => {
   try {
     const id = req.query.id
     if (!id) {
-      // req.flash('error', 'Variant not found');
-      // return res.redirect('/admin/variants');
+  
       return res.status(400).json({message:'Variant not found'})
     } 
 
-    // if (!mongoose.Types.ObjectId.isValid(id)) {
-    //   return res.status(400).json({ message: 'Invalid variant ID format' });
-    // }
+  
 
     const variant = await Variants.findById(id).populate('productId')
     if(!variant){
-      return res.status(400).json({message:'Variant not found'})
+      return res.redirect('/products-list')
     }
 
     res.render('editVariant', { variant, message: undefined })
   } catch (error) {
-    console.log('err in loadEditVariant', error)
-    res.status(500).json({message:'internal server error'})
+    next(error)
   }
 }
 
 
-const editVariant = async (req, res) => {
+const editVariant = async (req, res,next) => {
   
     try {
       const id = req.params.id;
@@ -320,7 +306,7 @@ const editVariant = async (req, res) => {
       try {
         sizes = JSON.parse(req.body.sizesInput || '[]');
       } catch (error) {
-        console.error('Error parsing sizesInput:', error);
+       
         return res.status(400).json({ message: 'Invalid sizes input' });
       }
   
@@ -360,13 +346,12 @@ const editVariant = async (req, res) => {
       res.status(200).json({ message: 'Variant updated successfully' });
 
   } catch (error) {
-    console.log('err in edit variant ', error)
-    res.status(500).json({message:'internal server error'})
+    next(error)
   }
 }
 
 
-const blockUnblockVariant = async (req,res)=>{
+const blockUnblockVariant = async (req,res,next)=>{
    try {
     const {id} = req.body
     if (!id) {
@@ -389,8 +374,7 @@ const blockUnblockVariant = async (req,res)=>{
    
   
    } catch (error) {
-    console.log('err in blocking variant',error);
-    res.status(500).json({message:'internal server error'})
+    next(error)
    }
 
 

@@ -1,12 +1,9 @@
 const errorMiddleware =(error,req,res,next)=>{
 
-    // const status=error.status
-    // const message=error.message
-    // if(status==404){
-    //     res.render('error',{status:404, error:message})
-    // }else{
-    //     res.render('error',{status:500, error:message})
-    // }
+    console.error(error);
+    const errorMsg = error.message
+    const status = error.status
+    return res.redirect('/errorD',{errorMsg,status})
 
     
 

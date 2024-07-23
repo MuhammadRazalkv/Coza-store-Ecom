@@ -119,4 +119,8 @@ user_route.get('/contact', userController.contactPage);
 
 user_route.get('/wallet',userAuth.isLogin,orderController.loadWalletPage)
 
+const errorHandlingMiddleware = require('../middleware/errorHandling')
+user_route.use(errorHandlingMiddleware)
+
+
 module.exports = user_route
