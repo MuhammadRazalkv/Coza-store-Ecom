@@ -30,7 +30,7 @@ const mailSender = async (email,otp) => {
     }
    })
 
-  //  console.log('Email info:', info);
+
    // return info;
   } catch (error) {
     console.error('Error while sending mails with nodemailer:', error); // Improved error logging

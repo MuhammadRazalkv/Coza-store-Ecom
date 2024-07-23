@@ -61,7 +61,7 @@ async function cancelOrderItem(orderId,variantObjectId){
             }
             
         } catch (error) {
-            console.log('err in cancel order js',error);
+        
             Swal.fire({
                 title:"Oops...",
                 icon:"error",
@@ -191,10 +191,9 @@ if (result.isConfirmed) {
   const data = await response.json()
 
   if (response.ok) {
-    console.log('in the function after first data ');
+   
     const {order,placedOrder,KEY} = data
-    // console.log('order',order);
-    // console.log('po',placedOrder);
+  
     let  options = {
         key:KEY, // Enter the Key ID generated from the Dashboard
         amount: order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise

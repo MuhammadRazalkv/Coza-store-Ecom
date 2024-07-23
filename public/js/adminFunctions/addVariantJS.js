@@ -130,7 +130,7 @@ document.querySelectorAll('input[name="sizes"]').forEach(input => {
 
 document.getElementById('addVariantForm').addEventListener('submit', async function(event) {
   event.preventDefault();
-  console.log('submit ');
+ 
   const form = event.target;
   const formData = new FormData(form);
 

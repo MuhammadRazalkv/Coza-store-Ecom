@@ -641,9 +641,9 @@ const loadSalesReport = async (req, res,next) => {
       },
       {$group:{_id:'$id', count :{$sum:1}}}
     ])
-   console.log('co',count);
+
    const orderCount = Array.isArray(count) && count.length === 0 ? 0 : count[0]?.count || 0
-    console.log(orderCount);
+  
     const totalPages = Math.ceil(orderCount / limit);
 
 

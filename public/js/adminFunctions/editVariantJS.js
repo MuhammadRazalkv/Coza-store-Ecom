@@ -7,7 +7,7 @@ document.querySelectorAll('#productImage1, #productImage2, #productImage3').forE
       showCropper(event.target, event.target.id);
     } else {
       alert('Only image files are allowed!');
-      console.log(event.target.value);
+   
       event.target.value = ''; 
     }
   });
@@ -157,7 +157,7 @@ document.getElementById('editVariantForm').addEventListener('submit', async func
      
 
   } catch (error) {
-    console.log('err in editVariantJS.js',error);
+  
     throw error
   }
 

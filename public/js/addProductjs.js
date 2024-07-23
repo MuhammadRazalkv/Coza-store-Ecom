@@ -2,7 +2,7 @@ document
   .getElementById('addProductForm')
   .addEventListener('submit', async function (event) {
     event.preventDefault()
-   console.log(event.target);
+
     const form = event.target
     const formData = new FormData(form)
  

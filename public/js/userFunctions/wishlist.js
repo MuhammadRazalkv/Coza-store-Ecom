@@ -3,7 +3,7 @@
 // document.addEventListener('DOMContentLoaded', function(){
 
 async function removeItem(variantId,selectedSize){
-    console.log('variant ID ',variantId);
+  
     const confirmMessage = 'Are you sure you want to remove this item from wishlist'
     const result = await Swal.fire({
         title: confirmMessage,
@@ -17,7 +17,7 @@ async function removeItem(variantId,selectedSize){
       if (result.isConfirmed) {
        try {
         
-        console.log('result con ');
+      
         const response = await fetch(`/removeWishlistItem/${variantId}/${selectedSize}`, {
             method: 'DELETE',
             headers: {
@@ -43,7 +43,12 @@ async function removeItem(variantId,selectedSize){
               });
         }
        } catch (error) {
-        console.log(error);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: error.message,
+         
+        });
        }
      
       }
@@ -84,7 +89,12 @@ async function addToCart(variantId,selectedSize){
     }
       
     } catch (error) {
-      console.log('error in addToCart from wishlist',error);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: error.message,
+       
+      });
 
     }
   }

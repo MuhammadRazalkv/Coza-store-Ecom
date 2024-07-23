@@ -217,7 +217,7 @@ async function submitForm() {
               })
    
               const data = await response.json()
-              console.log('data cod',data);
+            
               if (!response.ok) {
                Swal.fire({
                    icon: "error",

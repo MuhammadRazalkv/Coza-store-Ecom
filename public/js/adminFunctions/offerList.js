@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
               });
             }
           } catch (error) {
-            console.log(error);
+         
             Swal.fire({
               title: 'Error',
               text: 'An unexpected error occurred.',

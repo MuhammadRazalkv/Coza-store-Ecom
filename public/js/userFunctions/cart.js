@@ -413,16 +413,16 @@ function updateSubtotal() {
 }
 
 function checkAndAdjustQuantities() {
-    console.log('entred to the func');
+  
     const cartItems = document.querySelectorAll('.table_row');
     cartItems.forEach((item, index) => {
-        console.log('loop');
+ 
         const quantityElement = document.getElementById('quantity' + index);
         const currentStock = parseInt(document.getElementById('currentStock' + index).value);
         let currentQuantity = parseInt(quantityElement.textContent);
 
         if (currentQuantity > currentStock) {
-            console.log('if check');
+        
             let variantName = document.getElementById('variantName'+index).value
             quantityElement.textContent = currentStock;
             updateTotalPrice(index, currentStock);
@@ -502,7 +502,7 @@ async function deleteCartItem(index, variantId, selectedSize) {
         }
   
       } catch (error) {
-        console.log('error in delete cart item ', error);
+       
         Swal.fire({
           title: 'Error',
           text: error.message,

@@ -327,62 +327,7 @@
 
 
 <script>
-    //   document.addEventListener('DOMContentLoaded', async function () {
-    //     console.log('loaded');
-    //   const filterSelect = document.getElementById('filterType');
-      
-    //   filterSelect.addEventListener('change', async function() {
-    //     const filter = filterSelect.value;
-    //     console.log('sending req');
-    //     const response = await fetch(`/admin/home?filter=${filter}`);
-    //     console.log('req send');
-    //     const data = await response.json();
-    //     console.log('data ',data);
-    //     if (response.ok) {
-         
-    //       const { xValues, yValues } = data;
 
-    //       console.log('js xval',xValues);
-    //       console.log('js yval',yValues);
-
-    //       new Chart("myChart", {
-    //         type: "bar",
-    //         data: {
-    //           labels: xValues,
-    //           datasets: [{
-    //             backgroundColor: ["red", "green", "blue", "orange", "brown"],
-    //             data: yValues
-    //           }]
-    //         },
-    //         options: {
-    //           indexAxis: 'y', // This makes the bar chart horizontal
-    //           legend: { display: false },
-    //           title: {
-    //             display: true,
-    //             text: "Top 5 Selling Products"
-    //           },
-    //           scales: {
-    //             xAxes: [{
-    //               ticks: {
-    //                 beginAtZero: true
-    //               }
-    //             }],
-    //             yAxes: [{
-    //               barThickness: 30
-    //             }]
-    //           },
-    //           responsive: true,
-    //           maintainAspectRatio: false
-    //         }
-    //       });
-    //     } else {
-    //       console.error('Failed to fetch data');
-    //     }
-    //   });
-
-    //   // Trigger the change event to load the chart initially
-    //   filterSelect.dispatchEvent(new Event('change'));
-    // });
  
     document.addEventListener('DOMContentLoaded', async function () {
   
@@ -431,7 +376,7 @@ chartInstance =  new Chart("myChart", {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const {xValues,yValues} = await response.json();
-        console.log('xV',xValues,'yv',yValues);
+      
         renderChart(xValues,yValues);
     } catch (error) {
         console.error('Failed to fetch and display data:', error);
@@ -441,11 +386,11 @@ chartInstance =  new Chart("myChart", {
 
     filterSelect.addEventListener('change', async function() {
         const filter = filterSelect.value;
-        console.log('Filter changed to:', filter);
+      
         await fetchAndDisplayData(`/admin/home?filter=${filter}`);
     });
 
-    console.log('Triggering initial filter change event');
+  
     filterSelect.dispatchEvent(new Event('change'));
 });
  </script>

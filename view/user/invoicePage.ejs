@@ -642,16 +642,16 @@
     let orders = <%- JSON.stringify(orders) %>;
 
     document.addEventListener('DOMContentLoaded', function () {
-        console.log('DOM content loaded');
+    
         document.querySelectorAll('.invoiceTable tbody tr').forEach(row => {
-            console.log('Inside the loop');
+       
             let rowData = [];
             row.querySelectorAll('td').forEach(cell => {
                 rowData.push(cell.textContent.trim());
             });
             data.push(rowData);
         });
-        console.log('data: ', data);
+    
     });
 
     window.downloadInvoice = function () {

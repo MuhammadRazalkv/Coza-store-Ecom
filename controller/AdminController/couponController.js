@@ -25,52 +25,6 @@ const loadAddCoupon = async (req,res,next)=>{
     }
 }
 
-// const addCoupon = async (req,res)=>{
-//     try {
-//         const {
-//             couponName,
-//             couponCode,
-//             minimumPurchaseAmount,
-//             discountPercentage,
-//             maxRedeemAmount,
-//             expiryDate
-//         } = req.body
-     
-//         if (couponName == ''|| couponCode == '' ||  minimumPurchaseAmount == '' || maxRedeemAmount == '' || discountPercentage == '' || expiryDate == '' ) {
-//             return res.status(400).json({success: false, message: "Please fill out all the fields"});
-//         } else {
-            
-//             const regexName = new RegExp(couponName,'i')
-//             const regexCode = new RegExp(couponCode, 'i');
-//             const existingCoupon = await CouponDB.findOne({
-//                 couponCode: regexCode
-//             });
-        
-//             if (existingCoupon) {
-//                 return res.status(400).json({success: false, message: "Coupon already . Please change the coupon code"});
-//             } else {
-//                 const newCoupon = new CouponDB({
-//                     couponCode: couponCode,
-//                     minPurchaseAmount: parseInt(minimumPurchaseAmount),
-//                     maxRedeemAmount: parseInt(maxRedeemAmount),
-//                     discountPercentage: parseInt(discountPercentage),
-//                     expiryDate: expiryDate
-//                 });
-        
-               
-//                 await newCoupon.save();
-        
-                
-//                 return res.status(200).json({success: true, message: 'Coupon added successfully'});
-//             }
-//         }
-      
-        
-//     } catch (error) {
-//         console.log('error in add Coupon',error);
-//         res.status(500).json({success:false,message:"Internal server error"})
-//     }
-// }
 
 const addCoupon = async (req, res,next) => {
     try {

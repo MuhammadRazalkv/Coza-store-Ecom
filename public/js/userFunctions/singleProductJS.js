@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 text: confirmMsg,
             });
             valid = false;
-            console.log('Validation worked: Size not selected');
+          
         }
 
         if (valid) {
@@ -121,7 +121,7 @@ document.getElementById('addToWishlist').addEventListener('click',async function
        
            }
     } catch (error) {
-        console.log('err in add wishlist js',error );
+    
         Swal.fire({
             title: 'Error',
             icon: 'error',

@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
           })
           .catch(error => {
-            console.log('err in update orderStatus')
+          
             Swal.fire({
               title: 'Error',
               text: error,

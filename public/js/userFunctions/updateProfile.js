@@ -757,7 +757,7 @@ if (result.isConfirmed) {
     }
     
   } catch (error) {
-    console.log('err in change password js',error);
+   
     Swal.fire({
       title:'error',
       icon:'error',

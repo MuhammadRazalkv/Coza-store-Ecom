@@ -374,7 +374,7 @@ const placeOrder = async (req, res,next) => {
 
 const verifyPayment = async (req, res,next) => {
   try {
-    console.log('inside the verify payment ')
+ 
     const {
       razorpay_order_id,
       razorpay_payment_id,
@@ -385,7 +385,7 @@ const verifyPayment = async (req, res,next) => {
     const shasum = crypto.createHmac('sha256', process.env.RAZORPAY_KEYSECRET)
     shasum.update(`${razorpay_order_id}|${razorpay_payment_id}`)
     const digest = shasum.digest('hex')
-    console.log('object id ', order_id)
+   
     //CHECKING PAYMENT IS VERIFIED
     if (digest === razorpay_signature) {
       // UPDATING FEILD
@@ -490,7 +490,7 @@ const cancelOrder = async (req, res,next) => {
 
     let deliveryCharge = newSubTotal.subTotal > 5000 ? 0 : 100
     let dCount = newSubTotal.orderItems.filter((item)=> item.orderStatus !== 'Cancelled' ).length
-    console.log(dCount);
+ 
 
     if (dCount > 1  ) {
       deliveryCharge = 0
@@ -624,7 +624,7 @@ const cancelOrder = async (req, res,next) => {
         const amountToRefund = parseInt(
           totalVariantPriceAfterDiscount - couponDiscountPerItem + parseInt(deliveryCharge)
         )
-        console.log('amountToRefund', amountToRefund)
+       
         await OrderDB.findByIdAndUpdate(
           orderId,
           {
@@ -938,7 +938,7 @@ const requestReturn = async (req, res,next) => {
 const rePayment = async (req, res,next) => {
   try {
     const { orderId } = req.body
-    console.log('orderId', orderId)
+  
 
     const placedOrder = await OrderDB.findById(orderId)
     if (!orderId || !placedOrder) {
