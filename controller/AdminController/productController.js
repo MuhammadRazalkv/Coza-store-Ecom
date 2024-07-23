@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt')
 const Category = require('../../model/categoryModel')
 const Products = require('../../model/productModel')
 const Variants = require('../../model/variantModel')
+const OfferDB = require('../../model/offerModel')
 const { name } = require('ejs')
 
 const loadProductPage = async (req, res,next) => {
@@ -39,7 +40,7 @@ const addProduct = async (req, res,next) => {
     
     const { productName, productDescription, productCategory, productBrand } =
      req.body
-   // console.log('body',req.body);
+   
 
     const nameRegex = /^[a-zA-Z0-9 ]+$/
     if (!nameRegex.test(productName)) {
@@ -100,7 +101,7 @@ const loadEditProduct = async (req, res,next) => {
   try {
     const categories = await Category.find({})
     const id = req.query.id
-    //console.log(id);
+   
     const product = await Products.findById(id)
 
     res.render('editProduct', { categories, product })
@@ -235,7 +236,7 @@ const addVariant = async (req, res,next) => {
 
     // const variantName = `${productName} - ${variantColor}`.trim()
     const variantName = `${productName}`.trim()
-    const variant = new Variants({
+    let variant = new Variants({
       variantName,
       variantColor,
       variantStock,
@@ -246,14 +247,35 @@ const addVariant = async (req, res,next) => {
       variantImg: imagePaths,
       productId: productId
     })
-        // Update the product to include the new variant
+       
         await Products.findByIdAndUpdate(
           productId,
           { $push: { variant: variant._id } },
           { new: true, useFindAndModify: false }
         );
-    
 
+      const product = await Products.findById(productId).populate('categoryId')  
+     
+        const offer = await OfferDB.findOne({categoryId:product.categoryId._id})
+        if (offer) {
+        let categoryOffer = {
+          offerId:offer._id,
+          discountPercentage:offer.discountPercentage,
+          listed:offer.listed
+        }
+        variant.categoryOffer = categoryOffer
+  
+      }
+      const productOffer = await OfferDB.findOne({productId:product._id})
+      if (productOffer) {
+        let prOffer = {
+          offerId:productOffer._id,
+          discountPercentage:productOffer.discountPercentage,
+          listed:productOffer.listed
+        }
+        variant.productOffer = prOffer
+      }
+      
     await variant.save()
 
     return res.status(200).json({ message: 'Variant added successfully' })
