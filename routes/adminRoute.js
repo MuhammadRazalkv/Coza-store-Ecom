@@ -98,7 +98,10 @@ adminRoute.delete('/offers/deleteOffer',adminAuth.isLogin,offerController.delete
 
 
 adminRoute.get('/logout',adminController.logout)
-
+adminRoute.all('*',(req,res)=>{
+    res.render('error')
+  })
+  
 
 const errorHandling = require('../middleware/adminError')
 adminRoute.use(errorHandling)

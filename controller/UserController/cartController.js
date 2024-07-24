@@ -97,6 +97,11 @@ const addToCart = async (req, res,next) => {
 
       if (existingCartItem) {
         // Check if there is enough stock to increment quantity
+
+        if(existingCartItem.quantity > 4 ){
+          return res.status(400).json({ success: true, message: 'Purchasing limit reached' });
+        }
+
         if (variant.variantStock > existingCartItem.quantity) {
           existingCartItem.quantity++;
           await existingCartUser.save();
