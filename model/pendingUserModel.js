@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const PendingUserSchema = new mongoose.Schema({
   name: String,
@@ -7,9 +7,9 @@ const PendingUserSchema = new mongoose.Schema({
   password: String,
   joinedDate: { type: Date, default: Date.now },
   otp: String,
-  otpExpires: { type: Date, default: Date.now, index: { expires: '1m' } } // OTP expires in 1 minutes
+  otpExpires: { type: Date, default: Date.now, index: { expires: "1m" } }, // OTP expires in 1 minutes
 });
 
-const PendingUser = mongoose.model('PendingUser', PendingUserSchema);
+const PendingUser = mongoose.model("PendingUser", PendingUserSchema);
 
- module.exports = PendingUser;
+module.exports = PendingUser;

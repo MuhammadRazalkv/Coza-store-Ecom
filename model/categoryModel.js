@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
 const categorySchema = new mongoose.Schema(
   {
@@ -6,28 +6,28 @@ const categorySchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      trim: true
+      trim: true,
     },
     description: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
     isDeleted: {
       type: Boolean,
       required: true,
-      default: false
+      default: false,
     },
     // offerPercentage:{
     //   type:Number
     // }
-    offerId:{
-      type:mongoose.Schema.Types.ObjectId,
-      ref:'Offers'
-    }
+    offerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Offers",
+    },
   },
 
   { timestamps: true }
-)
+);
 
-module.exports = mongoose.model('Category', categorySchema)
+module.exports = mongoose.model("Category", categorySchema);

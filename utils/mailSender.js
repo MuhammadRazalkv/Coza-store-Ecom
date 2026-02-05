@@ -1,4 +1,4 @@
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 
 const mailSender = async (email, otp) => {
   try {
@@ -19,21 +19,19 @@ const mailSender = async (email, otp) => {
       to: email,
       subject: "otp verification",
       html: `<p>Your OTP code is <strong>${otp}</strong></p>`,
+    };
 
-    }
-
-    transporter.sendMail(mailOptions, function (error, info) {
+    transporter.sendMail(mailOptions, function (error, _info) {
       if (error) {
         console.log(error.message);
       } else {
-        console.log('mail has been send', otp)
+        console.log("mail has been send", otp);
       }
-    })
-
+    });
 
     // return info;
   } catch (error) {
-    console.error('Error while sending mails with nodemailer:', error); // Improved error logging
+    console.error("Error while sending mails with nodemailer:", error); // Improved error logging
     throw error; // Rethrow the error to handle it outside the function if necessary
   }
 };

@@ -13,48 +13,40 @@
 //     }
 // }
 
-const UserDB = require('../model/userModel')
- 
-const isLogin=async(req,res,next)=>{
-        try {
-            // console.log(req.session.userId);
-            if(req.session.user_id ){
-               const user = await UserDB.findById(req.session.user_id)
-                if (user.isBlocked == true) {
-                    return res.redirect('/login')
-                }
+const UserDB = require("../model/userModel");
 
-                next()
+const isLogin = async (req, res, next) => {
+  try {
+    // console.log(req.session.userId);
+    if (req.session.user_id) {
+      const user = await UserDB.findById(req.session.user_id);
+      if (user.isBlocked == true) {
+        return res.redirect("/login");
+      }
 
-
-            }else{
-                res.redirect("/login")
-            }
-        } catch (error) {
-            console.log(error.message);
-        }
+      next();
+    } else {
+      res.redirect("/login");
     }
-    
+  } catch (error) {
+    console.log(error.message);
+  }
+};
 
-
-const isLogout = async(req,res,next)=>{
-    try {
-        // console.log(req.session.userId)
-        if(req.session.userId){
-            res.redirect('/home')
-        }else{
-            next()
-        }
-        
-    } catch (error) {
-        console.log(error.message);
+const isLogout = async (req, res, next) => {
+  try {
+    // console.log(req.session.userId)
+    if (req.session.userId) {
+      res.redirect("/home");
+    } else {
+      next();
     }
-}
-
-
+  } catch (error) {
+    console.log(error.message);
+  }
+};
 
 module.exports = {
-    isLogin,
-    isLogout,
-  
+  isLogin,
+  isLogout,
 };
