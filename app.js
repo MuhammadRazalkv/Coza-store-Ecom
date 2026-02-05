@@ -1,13 +1,13 @@
 // Mongoose connection
 require('dotenv').config();
 const mongoose = require('mongoose')
-// mongoose.connect('mongodb://127.0.0.1:27017/First_project')
-mongoose.connect(process.env.MONGO_CONNECT)
-  .then(() => console.log('Connected to MongoDB Atlas'))
-  .catch((error) => console.error('Error connecting to MongoDB Atlas:', error));
+mongoose.connect('mongodb://127.0.0.1:27017/COZA-2')
+  // mongoose.connect(process.env.MONGO_CONNECT)
+  .then(() => console.log('Connected to MongoDB '))
+  .catch((error) => console.error('Error connecting to MongoDB :', error));
 
 
-console.log('e',process.env.MONGO_CONNECT);
+// console.log('e',process.env.MONGO_CONNECT);
 
 const express = require('express')
 const app = express()
@@ -20,9 +20,9 @@ app.use(nocache())
 
 
 app.use(session({
-  resave:false,
-  saveUninitialized:true,
-  secret:process.env.SESSION_SECRET
+  resave: false,
+  saveUninitialized: true,
+  secret: process.env.SESSION_SECRET
 }))
 
 
@@ -43,11 +43,8 @@ const adminRoute = require('./routes/adminRoute')
 app.use('/admin', adminRoute)
 
 
-
-
-
-app.all('*',(req,res)=>{
-  res.render('404error',{message:undefined})
+app.all('*', (req, res) => {
+  res.render('404error', { message: undefined })
 })
 
 

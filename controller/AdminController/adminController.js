@@ -265,8 +265,11 @@ const loadAddCategory = async (req, res,next) => {
 const addCategory = async (req, res , next) => {
   try {
     const { name, description } = req.body
-    const categories = await Category.find({ name: name })
+    console.log(name,description);
+    
+    const categories = await Category.findOne({ name: name })
     if (categories) {
+      console.log('cater',categories)
       return res
         .status(400)
         .json({ success: false, message: 'Category already exists' })

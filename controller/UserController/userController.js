@@ -15,18 +15,18 @@ const { name } = require('ejs')
 //User Authentication
 const { ObjectId } = require('mongodb')
 
-function isValidObjectId (id) {
+function isValidObjectId(id) {
   return ObjectId.isValid(id) && String(new ObjectId(id)) === id
 }
-const errorPage = async (req,res)=>{
+const errorPage = async (req, res) => {
   try {
-    return res.render('/404error',{message:undefined})
+    return res.render('/404error', { message: undefined })
   } catch (error) {
-    console.log('err in errorPage',error);
+    console.log('err in errorPage', error);
   }
 }
 
-const registerPage = async (req, res,next) => {
+const registerPage = async (req, res, next) => {
   try {
     res.render('register')
   } catch (error) {
@@ -53,7 +53,7 @@ const generateOTP = () => {
   })
 }
 
-const insertUser = async (req, res,next) => {
+const insertUser = async (req, res, next) => {
   try {
     const sPassword = await securePassword(req.body.password)
     const { name, email, phone } = req.body
@@ -64,7 +64,7 @@ const insertUser = async (req, res,next) => {
     }
 
     const otp = generateOTP()
-   
+
 
     const pendingUser = new PendingUser({
       name: name.trim(),
@@ -84,7 +84,7 @@ const insertUser = async (req, res,next) => {
   }
 }
 
-const otpPage = async (req, res,next) => {
+const otpPage = async (req, res, next) => {
   try {
     const { email } = req.query
     res.render('otp', { email: email })
@@ -92,8 +92,8 @@ const otpPage = async (req, res,next) => {
     next(error)
   }
 }
-  
-const resendOtp = async (req, res,next) => {
+
+const resendOtp = async (req, res, next) => {
   try {
     const email = req.query.email
     if (!email) {
@@ -106,7 +106,7 @@ const resendOtp = async (req, res,next) => {
     }
 
     const otp = generateOTP()
-   
+
 
     pendingUser.otp = otp
     pendingUser.otpExpires = Date.now() + 1 * 60 * 1000 // Reset OTP expiry time
@@ -120,11 +120,11 @@ const resendOtp = async (req, res,next) => {
   }
 }
 
-const verifyOTP = async (req, res,next) => {
+const verifyOTP = async (req, res, next) => {
   try {
     // const { otp1, otp2, otp3, otp4 } = req.body
     // const otp = otp1 + otp2 + otp3 + otp4
-    const {otp} = req.body
+    const { otp } = req.body
     const { email } = req.query
 
     const pendingUser = await PendingUser.findOne({ email: email })
@@ -151,14 +151,14 @@ const verifyOTP = async (req, res,next) => {
 
       return res.redirect('/')
     } else {
-      return res.render('otp', { success: false, message: 'Invalid OTP' })
+      return res.render('otp', { success: false, message: 'Invalid OTP', email })
     }
   } catch (error) {
     next(error)
   }
 }
 
-const loginPage = async (req, res,next) => {
+const loginPage = async (req, res, next) => {
   try {
     res.render('login')
   } catch (error) {
@@ -166,7 +166,7 @@ const loginPage = async (req, res,next) => {
   }
 }
 
-const verifyLogin = async (req, res,next) => {
+const verifyLogin = async (req, res, next) => {
   try {
     const { email, password } = req.body
     //  console.log('pass',password);
@@ -174,7 +174,7 @@ const verifyLogin = async (req, res,next) => {
     if (!user) {
       return res.status(400).json({ error: 'Invalid Email or Password' })
     }
-   
+
     const passwordMatch = await bcrypt.compare(password, user.password)
     if (!passwordMatch) {
       return res.status(400).json({ error: 'Invalid Email or Password' })
@@ -189,18 +189,18 @@ const verifyLogin = async (req, res,next) => {
         .status(400)
         .json({ error: 'You are not allowed to login, Please contact us' })
     }
-    
+
 
     req.session.user_id = user._id
 
-     return res.status(200).json({ message: 'Login successful' })
-   // return res.redirect('/')
+    return res.status(200).json({ message: 'Login successful' })
+    // return res.redirect('/')
   } catch (error) {
     next(error)
   }
 }
 
-const googleAuth = async (req, res,next) => {
+const googleAuth = async (req, res, next) => {
   try {
     if (req.user) {
       const existingUser = await User.findOne({ email: req.user.email })
@@ -224,7 +224,7 @@ const googleAuth = async (req, res,next) => {
   }
 }
 
-const googleFail = async (req, res,next) => {
+const googleFail = async (req, res, next) => {
   try {
     res.render('login', { message: 'Google authentication failed' })
   } catch (error) {
@@ -232,7 +232,7 @@ const googleFail = async (req, res,next) => {
   }
 }
 
-const logout = async (req, res,next) => {
+const logout = async (req, res, next) => {
   try {
     req.session.destroy(error => {
       if (error) {
@@ -247,15 +247,15 @@ const logout = async (req, res,next) => {
 }
 
 // Home page
-const loadHome = async (req, res,next) => {
+const loadHome = async (req, res, next) => {
   try {
-   
+
     const products = await productDB.find({ listed: true })
-    .populate({
+      .populate({
         path: 'variant',
         match: { variantListed: true }
-    })
-    .populate('categoryId');  // Adjust if you need filters or select specific fields
+      })
+      .populate('categoryId');  // Adjust if you need filters or select specific fields
 
 
     res.render('index', { products })
@@ -263,13 +263,13 @@ const loadHome = async (req, res,next) => {
     next(error)
   }
 }
- 
-const productDetail = async (req, res,next) => {
+
+const productDetail = async (req, res, next) => {
   try {
-    const id = req.query.id    
+    const id = req.query.id
     const variantId = req.query.variantId
-    
-   
+
+
     if (!isValidObjectId(variantId)) {
       return res.redirect('/404error')
     }
@@ -286,16 +286,16 @@ const productDetail = async (req, res,next) => {
       return res.redirect('/404error')
     }
 
-    const categoryId = product.categoryId 
-    const otherProducts = await productDB.find({categoryId:categoryId , listed:true})
-    .populate({
-      path: 'variant',
-      match: { variantListed: true }
-    })
-    .limit(4)
-   
-    
-    res.render('product-detail', { variant, product , otherProducts })
+    const categoryId = product.categoryId
+    const otherProducts = await productDB.find({ categoryId: categoryId, listed: true })
+      .populate({
+        path: 'variant',
+        match: { variantListed: true }
+      })
+      .limit(4)
+
+
+    res.render('product-detail', { variant, product, otherProducts })
 
   } catch (error) {
     next(error)
@@ -305,7 +305,7 @@ const productDetail = async (req, res,next) => {
 
 
 
-const shopPage = async (req, res,next) => {
+const shopPage = async (req, res, next) => {
   try {
     const search = req.query.search || '';
     const sortBy = req.query.sortBy || 'Default';
@@ -314,14 +314,14 @@ const shopPage = async (req, res,next) => {
     const color = req.query.color || '';
 
     let query = { listed: true, productName: new RegExp(search, 'i') };
-   
-   
+
+
     if (categoryName) {
       if (!isValidObjectId(categoryName)) {
         return res.redirect('/404error')
       }
       const category = await CategoryDB.findById(categoryName, { isDeleted: true });
-   
+
       if (category) {
         query.categoryId = category._id;
       } else {
@@ -333,7 +333,7 @@ const shopPage = async (req, res,next) => {
     const productsQuery = await productDB.find(query)
       .populate({
         path: 'variant',
-        match: { 
+        match: {
           variantListed: true,
           ...(size && { variantSizes: size }),
           ...(color && { variantColor: color })
@@ -373,24 +373,24 @@ const shopPage = async (req, res,next) => {
 };
 
 
-const myAccount = async (req, res,next) => {
+const myAccount = async (req, res, next) => {
   try {
     const userId = req.session.user_id;
     const user = await User.findById(userId).populate('address');
-  
+
     if (!user) {
-   
+
       return res.status(404).redirect('/home');
     }
-  
-  
+
+
     res.render('accountDetails', { user, message: undefined });
   } catch (error) {
     next(error)
   }
 }
 
-const editProfile = async (req, res,next) => {
+const editProfile = async (req, res, next) => {
   try {
     const id = req.params.id
     const { name, phone } = req.body
@@ -412,7 +412,7 @@ const editProfile = async (req, res,next) => {
   }
 }
 
-const saveAddress = async (req, res,next) => {
+const saveAddress = async (req, res, next) => {
   try {
     // const userId = req.params.id;
     const userId = req.session.user_id
@@ -435,7 +435,7 @@ const saveAddress = async (req, res,next) => {
 
     // Check if the address already exists for the user
     let addressDocument = await AddressDB.findOne({ userId: userId });
-    
+
     if (addressDocument) {
       // Address document exists, update it by pushing the new address
       addressDocument.addresses.push(newAddress);
@@ -460,35 +460,35 @@ const saveAddress = async (req, res,next) => {
 
 
 
-const deleteAddress = async (req, res,next) => {
+const deleteAddress = async (req, res, next) => {
   try {
-      const { userId, addressId } = req.params;
+    const { userId, addressId } = req.params;
 
-      // Check if userId and addressId are provided
-      if (!userId || !addressId) {
-          return res.status(400).json({ success: false, message: 'Invalid parameters' });
-      }
-
-      // Find the address document by userId and update to pull the address
-      const updatedAddress = await AddressDB.findOneAndUpdate(
-          { userId: userId },
-          { $pull: { addresses: { _id: addressId } } },
-          { new: true } // Return the updated document after update
-      );
-
-      if (!updatedAddress) {
-        return res.status(404).json({ success: false, message: 'User not found' });
+    // Check if userId and addressId are provided
+    if (!userId || !addressId) {
+      return res.status(400).json({ success: false, message: 'Invalid parameters' });
     }
 
-    
+    // Find the address document by userId and update to pull the address
+    const updatedAddress = await AddressDB.findOneAndUpdate(
+      { userId: userId },
+      { $pull: { addresses: { _id: addressId } } },
+      { new: true } // Return the updated document after update
+    );
+
+    if (!updatedAddress) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+
     if (updatedAddress.addresses.length === 0) {
-        
-        await User.findByIdAndUpdate(userId, { address: null });
 
-        return res.status(200).json({ success: true, message: 'Last address deleted successfully' });
+      await User.findByIdAndUpdate(userId, { address: null });
+
+      return res.status(200).json({ success: true, message: 'Last address deleted successfully' });
     }
 
-      res.status(200).json({ success: true, message: 'Address deleted successfully' });
+    res.status(200).json({ success: true, message: 'Address deleted successfully' });
 
   } catch (error) {
     next(error)
@@ -496,7 +496,7 @@ const deleteAddress = async (req, res,next) => {
 };
 
 
-const editAddress = async (req, res,next) => {
+const editAddress = async (req, res, next) => {
   try {
     const { userId, addressId } = req.params;
     const {
@@ -541,7 +541,7 @@ const editAddress = async (req, res,next) => {
 };
 
 
-const changePassword = async (req, res,next) => {
+const changePassword = async (req, res, next) => {
   try {
     const userId = req.params.userId;
     const user = await User.findById(userId);
@@ -575,7 +575,7 @@ const changePassword = async (req, res,next) => {
 
 
 
-const aboutPage = async (req, res,next) => {
+const aboutPage = async (req, res, next) => {
   try {
     res.render('about')
   } catch (error) {
@@ -583,7 +583,7 @@ const aboutPage = async (req, res,next) => {
   }
 }
 
-const contactPage = async (req, res,next) => {
+const contactPage = async (req, res, next) => {
   try {
     res.render('contact')
   } catch (error) {
@@ -593,7 +593,6 @@ const contactPage = async (req, res,next) => {
 
 module.exports = {
   loadHome,
-  
   aboutPage,
   shopPage,
   productDetail,

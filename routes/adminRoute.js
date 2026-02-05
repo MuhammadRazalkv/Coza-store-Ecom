@@ -19,7 +19,7 @@ const offerController = require('../controller/AdminController/offerController')
 const session = require('express-session')
 
 adminRoute.use(session({
-    secret:process.env.SECRET_SESSION,
+    secret:process.env.ADMIN_SESSION_SECRET,
     resave:false,
     saveUninitialized:true
 }))

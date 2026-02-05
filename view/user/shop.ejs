@@ -50,13 +50,13 @@
           <div class="right-top-bar flex-w h-full">
             <a href="#" class="flex-c-m trans-04 p-lr-25"> Help & FAQs </a>
             <% if (user) { %>
-              <a href="/myAccount" class="flex-c-m trans-04 p-lr-25"> My Account </a>
-              <a href="/logout" class="flex-c-m trans-04 p-lr-25">Logout</a>
+            <a href="/myAccount" class="flex-c-m trans-04 p-lr-25"> My Account </a>
+            <a href="/logout" class="flex-c-m trans-04 p-lr-25">Logout</a>
             <% } else { %>
             <a href="/login" class="flex-c-m trans-04 p-lr-25"> Login </a>
 
-           <a href="/register" class="flex-c-m trans-04 p-lr-25">Register</a>
-          <% } %>
+            <a href="/register" class="flex-c-m trans-04 p-lr-25">Register</a>
+            <% } %>
             <a href="#" class="flex-c-m trans-04 p-lr-25"> EN </a>
 
             <a href="#" class="flex-c-m trans-04 p-lr-25"> USD </a>
@@ -84,7 +84,7 @@
                 <a href="shop_products">Shop</a>
               </li>
 
-             
+
               <li>
                 <a href="/about">About</a>
               </li>
@@ -187,7 +187,7 @@
           <a href="/shop_products">Shop</a>
         </li>
 
-       
+
 
         <li>
           <a href="/about">About</a>
@@ -261,15 +261,15 @@
             All Products
           </button>
 
-          
+
           <% if(categoryList.length > 0){ %>
-            <% categoryList.forEach((category)=>{ %>
-          
-            <button  onclick='categorySort("<%= category._id %>")'  class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
-              <%=category.name %>
-            </button>
-            <% }) %>
-            <% } %>
+          <% categoryList.forEach((category)=>{ %>
+
+          <button onclick='categorySort("<%= category._id %>")' class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
+            <%=category.name %>
+          </button>
+          <% }) %>
+          <% } %>
         </div>
         <div class="flex-w flex-c-m m-tb-10">
           <div class="flex-c-m stext-106 cl6 size-104 bor4 pointer hov-btn3 trans-04 m-r-8 m-tb-4 js-show-filter">
@@ -302,7 +302,7 @@
                 <li class="p-b-6">
                   <a onclick="sortShop('Default')" class="filter-link stext-106 trans-04">Default</a>
                 </li>
-              
+
                 <li class="p-b-6">
                   <a onclick="sortShop('Newness')" class="filter-link stext-106 trans-04 filter-link-active">New arrivals</a>
                 </li>
@@ -444,7 +444,7 @@
 
     </div>
   </div>
-   
+
   <!-- Footer -->
 
 

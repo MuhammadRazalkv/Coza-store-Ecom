@@ -1,120 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>otp verification</title>
-    <link rel="stylesheet" href="/css/register.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>otp verification</title>
+  <link rel="stylesheet" href="/css/register.css">
 </head>
+
 <body>
-    <div id="main">
-		<div class="wrapper">
-			<div class="inner">
-				<form action="" method="post">
-					<h3>OTP verification</h3>
-                    <% if (typeof message !== 'undefined') { %>
-								
-                        <p style="color: red;margin-top: 10px; "><%= message %></p>
-                         <br>
-                    <% } %>
-						<label>
-                           Please enter the OTP 
-                            <br>
-                            <br>
-							 
-						 </label> 
-					
-                         <!-- <div id="resendTimer" class="text-sm text-slate-500 mt-4">Resend OTP In <span id="countdown">10</span>seconds</div>
+  <div id="main">
+    <div class="wrapper">
+      <div class="inner">
+        <form action="" method="post">
+          <h3>OTP verification</h3>
+          <% if (typeof message !== 'undefined') { %>
+
+          <p style="color: red;margin-top: 10px; "><%= message %></p>
+          <br>
+          <% } %>
+          <label>
+            Please enter the OTP
+            <br>
+            <br>
+
+          </label>
+
+          <!-- <div id="resendTimer" class="text-sm text-slate-500 mt-4">Resend OTP In <span id="countdown">10</span>seconds</div>
 
                         <div></div>  -->
-                        <p id="timer"></p>
+          <p id="timer"></p>
 
-						<div class="otp-h">
-						<div class="form-wrapper otp-h"> 
-							<input name="otp" type="number" class="form-control " id="otp1"   required>
-                            <!-- <input name="otp2" type="text" class="form-control otp-v " id="otp2" min='0'max='9' maxlength ='1' required>
+          <div class="otp-h">
+            <div class="form-wrapper otp-h">
+              <input name="otp" type="number" class="form-control " id="otp1" required>
+              <!-- <input name="otp2" type="text" class="form-control otp-v " id="otp2" min='0'max='9' maxlength ='1' required>
                             <input name="otp3" type="text" class="form-control otp-v " id="otp3" min='0'max='9' maxlength ='1' required>
                             <input name="otp4" type="text" class="form-control otp-v " id="otp4" min='0'max='9' maxlength ='1' required> -->
-						</div>
+            </div>
 
-					</div>
-                   Didn`t received the code <a href="/resend-otp?email=<%= email %>"  id="resend-message">resend</a>
-				
-					<button type="submit" id="submit-btn">Verify</button>
-				</form>
-			</div>
-		</div>
+          </div>
+          Didn`t received the code <a href="/resend-otp?email=<%= email %>" id="resend-message">resend</a>
+
+          <button type="submit" id="submit-btn">Verify</button>
+        </form>
+      </div>
     </div>
+  </div>
 
 
-    <script>
-        // const otpValues = document.querySelectorAll('.otp-v');
-    
-        // otpValues.forEach((input, index, array) => {
-        //     input.addEventListener('input', function() {
-        //         if (this.value.length > 1) {
-        //             const nextIndex = index + 1;
-        //             if (nextIndex < array.length) {
-        //                 array[nextIndex].focus();
-        //                 array[nextIndex].value = this.value.slice(-1);
-        //                 this.value = this.value.slice(0, -1); 
-        //             }
-        //         }
-        //         if (parseInt(this.value) < 0) {
-        //             this.value = ''; 
-        //         }
-        //     });
-        // });
+  <script>
+    // const otpValues = document.querySelectorAll('.otp-v');
+
+    // otpValues.forEach((input, index, array) => {
+    //     input.addEventListener('input', function() {
+    //         if (this.value.length > 1) {
+    //             const nextIndex = index + 1;
+    //             if (nextIndex < array.length) {
+    //                 array[nextIndex].focus();
+    //                 array[nextIndex].value = this.value.slice(-1);
+    //                 this.value = this.value.slice(0, -1); 
+    //             }
+    //         }
+    //         if (parseInt(this.value) < 0) {
+    //             this.value = ''; 
+    //         }
+    //     });
+    // });
 
 
 
-        //timer Settings
+    //timer Settings
 
-// script.js
-document.addEventListener("DOMContentLoaded", function() {
-    const timerElement = document.getElementById('timer');
-    const resendMessageElement = document.getElementById('resend-message');
-    const otpInput = document.getElementById('otp-input');
-    const submitBtn = document.getElementById('submit-btn');
-    let timerDuration = 60; // 1 minute
-    let timer;
+    // script.js
+    document.addEventListener("DOMContentLoaded", function() {
+      const timerElement = document.getElementById('timer');
+      const resendMessageElement = document.getElementById('resend-message');
+      const otpInput = document.getElementById('otp-input');
+      const submitBtn = document.getElementById('submit-btn');
+      let timerDuration = 60; // 1 minute
+      let timer;
 
-    function startTimer(duration) {
+      function startTimer(duration) {
         let timeRemaining = duration;
         timer = setInterval(function() {
-            let minutes = Math.floor(timeRemaining / 60);
-            let seconds = timeRemaining % 60;
-            seconds = seconds < 10 ? '0' + seconds : seconds;
-            timerElement.textContent = `Time remaining: ${minutes}:${seconds}`;
+          let minutes = Math.floor(timeRemaining / 60);
+          let seconds = timeRemaining % 60;
+          seconds = seconds < 10 ? '0' + seconds : seconds;
+          timerElement.textContent = `Time remaining: ${minutes}:${seconds}`;
 
-            if (timeRemaining <= 0) {
-                clearInterval(timer);
-                timerElement.textContent = "OTP expired!";
-                resendMessageElement.style.display = 'block';
-            }
+          if (timeRemaining <= 0) {
+            clearInterval(timer);
+            timerElement.textContent = "OTP expired!";
+            resendMessageElement.style.display = 'block';
+          }
 
-            timeRemaining--;
+          timeRemaining--;
         }, 1000);
-    }
+      }
 
-    function resetTimer() {
+      function resetTimer() {
         clearInterval(timer);
         timerElement.textContent = "";
         resendMessageElement.style.display = 'none';
         startTimer(timerDuration);
-    }
+      }
 
-    // Start the timer when the page loads
-    startTimer(timerDuration);
+      // Start the timer when the page loads
+      startTimer(timerDuration);
 
-    // Handle OTP submission
-    submitBtn.addEventListener('click', function() {
+      // Handle OTP submission
+      submitBtn.addEventListener('click', function() {
         resetTimer();
+      });
     });
-});
+  </script>
 
-    </script>
-    
 
 </body>
+
 </html>

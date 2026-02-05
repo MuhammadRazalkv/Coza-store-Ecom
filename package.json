@@ -18,7 +18,7 @@
     "excel4node": "^1.8.2",
     "exceljs": "^4.4.0",
     "express": "^4.19.2",
-    "express-session": "^1.18.0",
+    "express-session": "^1.19.0",
     "flash": "^1.1.0",
     "fs": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
