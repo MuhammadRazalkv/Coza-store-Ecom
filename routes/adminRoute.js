@@ -4,18 +4,18 @@ const dotenv = require("dotenv");
 const nocache = require("nocache");
 const adminAuth = require("../middleware/adminAuth");
 const upload = require("../middleware/multer");
-const orderController = require("../controller/AdminController/orderControllerAdmin");
+const orderController = require("../controller/admin/orderControllerAdmin");
 dotenv.config();
-const couponController = require("../controller/AdminController/couponController");
+const couponController = require("../controller/admin/couponController");
 
 adminRoute.use(express.json());
 adminRoute.use(express.urlencoded({ extended: true }));
 
 adminRoute.set("view engine", "ejs");
 adminRoute.set("views", "./view/admin");
-const adminController = require("../controller/AdminController/adminController");
-const productController = require("../controller/AdminController/productController");
-const offerController = require("../controller/AdminController/offerController");
+const adminController = require("../controller/admin/adminController");
+const productController = require("../controller/admin/productController");
+const offerController = require("../controller/admin/offerController");
 const session = require("express-session");
 
 adminRoute.use(

@@ -2,12 +2,19 @@ const express = require("express");
 const user_route = express();
 const passport = require("passport");
 require("../passport");
-const cartController = require("../controller/UserController/cartController");
-const orderController = require("../controller/UserController/orderController");
-
+const cartController = require("../controller/user/cartController");
+const orderController = require("../controller/user/orderController");
 const userAuth = require("../middleware/userAuth");
-
+const errorHandlingMiddleware = require("../middleware/errorHandling");
 const session = require("express-session");
+const userController = require("../controller/user/userController");
+const validateBody = require("../middleware/validateBody");
+const userSchema = require("../utils/validations/userSchema");
+const loginSchema = require("../utils/validations/loginSchema");
+const profileSchema = require("../utils/validations/profileSchema");
+const addressSchema = require("../utils/validations/addressSchema");
+const passwordSchema = require("../utils/validations/passwordSchema");
+
 
 user_route.use(
   session({
@@ -33,48 +40,43 @@ const attachUserToViews = (req, res, next) => {
 
 user_route.use(attachUserToViews);
 
-const userController = require("../controller/UserController/userController");
+
 // Registration routes
-user_route.get("/register", userAuth.isLogout, userController.registerPage);
-user_route.post("/register", userController.insertUser);
+user_route.get("/register", userAuth.isLogout, userController.registerPage).
+  post("/register", validateBody(userSchema, 'register'), userController.insertUser).
+  get("/auth/google", passport.authenticate("google", { scope: ["email", "profile"] })).
+  get(
+    "/auth/google/callback",
+    passport.authenticate("google", {
+      successRedirect: "/success",
+      failureRedirect: "/failure",
+    })
+  ).
+  get("/success", userController.googleAuth).
+  get("/failure", userController.googleFail)
 
-user_route.get("/auth/google", passport.authenticate("google", { scope: ["email", "profile"] }));
+  // OTP routes
+  .get("/otpVerification", userAuth.isLogout, userController.otpPage)
+  .post("/otpVerification", userController.verifyOTP)
+  .get("/resend-otp", userAuth.isLogout, userController.resendOtp)
 
-user_route.get(
-  "/auth/google/callback",
-  passport.authenticate("google", {
-    successRedirect: "/success",
-    failureRedirect: "/failure",
-  })
-);
+  //Login routes
 
-user_route.get("/success", userController.googleAuth);
-user_route.get("/failure", userController.googleFail);
+  .get("/login", userAuth.isLogout, userController.loginPage)
+  .post("/login", validateBody(loginSchema, 'login'), userController.verifyLogin)
 
-// OTP routes
-user_route.get("/otpVerification", userAuth.isLogout, userController.otpPage);
-user_route.post("/otpVerification", userController.verifyOTP);
-user_route.get("/resend-otp", userAuth.isLogout, userController.resendOtp);
-
-//Login routes
-
-user_route.get("/login", userAuth.isLogout, userController.loginPage);
-user_route.post("/login", userController.verifyLogin);
-
-// Logout route
-user_route.get("/logout", userAuth.isLogin, userController.logout);
-
-user_route.get("/myAccount", userAuth.isLogin, userController.myAccount);
-user_route.patch("/myAccount/editProfile/:id", userAuth.isLogin, userController.editProfile);
-// user_route.post('/myAccount/save-address/:id',userAuth.isLogin,userController.saveAddress)
-user_route.post("/myAccount/save-address", userAuth.isLogin, userController.saveAddress);
-user_route.delete(
-  "/deleteAddress/:userId/:addressId",
-  userAuth.isLogin,
-  userController.deleteAddress
-);
-user_route.patch("/edit-Address/:userId/:addressId", userAuth.isLogin, userController.editAddress);
-user_route.patch("/change-password/:userId", userAuth.isLogin, userController.changePassword);
+  // Logout route
+  .get("/logout", userAuth.isLogin, userController.logout)
+  .get("/myAccount", userAuth.isLogin, userController.myAccount)
+  .patch("/myAccount/editProfile", userAuth.isLogin, validateBody(profileSchema), userController.editProfile)
+  .post("/myAccount/save-address", userAuth.isLogin, validateBody(addressSchema), userController.saveAddress)
+  .delete(
+    "/deleteAddress/:addressId",
+    userAuth.isLogin,
+    userController.deleteAddress
+  )
+  .patch("/edit-Address/:addressId", userAuth.isLogin, validateBody(addressSchema), userController.editAddress)
+  .patch("/change-password", userAuth.isLogin,validateBody(passwordSchema), userController.changePassword);
 
 // Other routes
 user_route.get("/", userController.loadHome);
@@ -115,7 +117,7 @@ user_route.get("/contact", userController.contactPage);
 
 user_route.get("/wallet", userAuth.isLogin, orderController.loadWalletPage);
 
-const errorHandlingMiddleware = require("../middleware/errorHandling");
+
 user_route.use(errorHandlingMiddleware);
 
 module.exports = user_route;

@@ -1,121 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login </title>
-    <link rel="stylesheet" href="/css/register.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login </title>
+  <link rel="stylesheet" href="/css/register.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
+
 <body>
-    <div id="main">
-        <div class="wrapper">
-            <div class="inner">
-                <form id="loginForm">
-                    <h3>Login Form</h3>
+  <div id="main">
+    <div class="wrapper">
+      <div class="inner">
+        <form id="loginForm">
+          <h3>Login Form</h3>
 
-                    <!-- <div class="alert alert-danger" id="" role="alert"></div> -->
-                    <div class="custom-alert custom-alert-error" id="error-msg"></div>
-                      
-                    <div class="form-wrapper"> 
-                        <label for="email">Email</label>
-                        <input type="text" class="form-control" id="email" name="email">
-                    </div>
-                    <div class="form-wrapper">
-                        <label for="password">Password</label>
-                        <input type="password" class="form-control" id="password" name="password">
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                            Don’t have an account?
-                            <a href="/register">Click here</a>
-                        </label>
-                    </div>
-                    <button type="submit">Login</button>
-					<div class="login-container">
-						<h2>Or </h2>
-						<div class="login-button">
-							<a href="/auth/google">
-								<i class="fa-brands fa-google"></i> Login with Google
-							</a>
-						</div>
-					</div>
-                </form>
-                
+          <!-- <div class="alert alert-danger" id="" role="alert"></div> -->
+          <div class="custom-alert custom-alert-error" id="error-msg"></div>
+
+          <div class="form-wrapper">
+            <label for="email">Email</label>
+            <input type="text" class="form-control" id="email" name="email" value="rasalkv21@gmail.com">
+          </div>
+          <div class="form-wrapper">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" name="password" value="Peslink@1">
+          </div>
+          <div class="checkbox">
+            <label>
+              Don't have an account?
+              <a href="/register">Click here</a>
+            </label>
+          </div>
+          <button type="submit">Login</button>
+          <div class="login-container">
+            <h2>Or </h2>
+            <div class="login-button">
+              <a href="/auth/google">
+                <i class="fa-brands fa-google"></i> Login with Google
+              </a>
             </div>
-        </div>
+          </div>
+        </form>
+
+      </div>
     </div>
-    <script>
-        const errorDiv = document.getElementById('error-msg');
-        
-        const hideErrorMsg = () => {
-            errorDiv.style.display = 'none';
-        };
+  </div>
+  <script>
+    const errorDiv = document.getElementById('error-msg');
 
-        document.getElementById('loginForm').addEventListener('submit', async (event) => {
-            event.preventDefault();
+    function showError(msg) {
+      errorDiv.style.display = 'block';
+      errorDiv.innerText = msg;
 
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value.trim();
+      setTimeout(() => {
+        errorDiv.style.display = 'none';
+      }, 5000);
+    }
 
-            if (!email || !password) {
-                errorDiv.style.display = 'block';
-                errorDiv.innerText = 'Please fill out all fields.';
-                
-                // Hide the message after 5 seconds
-                setTimeout(() => {
-                    errorDiv.style.display = 'none';
-                }, 5000);
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-                return; // Stop form submission
-            }
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
 
-            try {
-                const response = await fetch('/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email, password })
-                });
+      if (!email || !password) {
+        return showError('Please fill out all fields.');
+      }
 
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || 'Network response was not ok');
-                }
-
-                const data = await response.json();
-
-                if (data.error) {
-                    const error_msg = data.error;
-                    errorDiv.style.display = 'block';
-                    errorDiv.innerText = error_msg;
-                    
-                    // Hide the message after 5 seconds
-                    setTimeout(() => {
-                        errorDiv.style.display = 'none';
-                    }, 5000);
-                } 
-                else  {
-                    window.location.href = '/'; // Redirect account page on successful login
-                
-                }
-            } catch (error) {
-                errorDiv.style.display = 'block';
-                errorDiv.innerText = error.message;
-                
-                // Hide the message after 5 seconds
-                setTimeout(() => {
-                    errorDiv.style.display = 'none';
-                }, 5000);
-
-                console.error('Error:', error);
-            }
+      try {
+        const response = await fetch('/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email,
+            password
+          })
         });
 
-        // Add event listeners to input fields to hide the error message when the user starts typing
-        document.getElementById('email').addEventListener('input', hideErrorMsg);
-        document.getElementById('password').addEventListener('input', hideErrorMsg);
-    </script>
+        const data = await response.json();
+
+        if (!response.ok) {        
+          throw new Error(data.message || 'Login failed');
+        }
+
+        window.location.href = '/';
+      } catch (err) {
+        showError(err.message);
+      }
+    });
+
+
+    // Add event listeners to input fields to hide the error message when the user starts typing
+    document.getElementById('email').addEventListener('input', hideErrorMsg);
+    document.getElementById('password').addEventListener('input', hideErrorMsg);
+  </script>
 </body>
+
 </html>

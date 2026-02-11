@@ -1,4 +1,10 @@
 {
   "liveServer.settings.port": 5501,
-  "cSpell.words": ["COZA"]
+  "cSpell.words": [
+    "COZA",
+    "currentpass",
+    "firstname",
+    "useraddress",
+    "userphone"
+  ]
 }

@@ -5186,3 +5186,16 @@ table .ticket-row:hover {
 .user-dashboard .nav-content .modal-wrapper.active {
   display: flex;
 }/*# sourceMappingURL=style.css.map */
+
+.password-container {
+  position: relative;   /* ⭐ VERY IMPORTANT */
+  margin-bottom: 18px;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+}

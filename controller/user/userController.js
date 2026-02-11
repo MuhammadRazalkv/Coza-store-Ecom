@@ -5,27 +5,21 @@ const mailSender = require("../../utils/mailSender");
 const PendingUser = require("../../model/pendingUserModel");
 const productDB = require("../../model/productModel");
 const CategoryDB = require("../../model/categoryModel");
-
 const variantDB = require("../../model/variantModel");
 const AddressDB = require("../../model/addressModal");
 
 //User Authentication
 const { ObjectId } = require("mongodb");
+const MESSAGES = require("../../constants/messages");
+const HttpStatus = require("../../constants/statusCode");
 
 function isValidObjectId(id) {
-  return ObjectId.isValid(id) && String(new ObjectId(id)) === id;
+  return ObjectId.isValid(id)
 }
-// const errorPage = async (req, res) => {
-//   try {
-//     return res.render("/404error", { message: undefined });
-//   } catch (error) {
-//     console.log("err in errorPage", error);
-//   }
-// };
 
 const registerPage = async (req, res, next) => {
   try {
-    res.render("register");
+    res.render("register", { old: null });
   } catch (error) {
     next(error);
   }
@@ -48,25 +42,23 @@ const generateOTP = () => {
 
 const insertUser = async (req, res, next) => {
   try {
-    const sPassword = await securePassword(req.body.password);
-    const { name, email, phone } = req.body;
+    const { name, email, phone } = req.validatedBody;
 
-    const existingUser = await User.findOne({ email: email });
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.render("register", { message: "Email already exists" });
+      return res.render("register", { message: MESSAGES.EMAIL_ALREADY_EXISTS });
     }
 
     const otp = generateOTP();
-
+    const sPassword = await securePassword(req.validatedBody.password.trim());
     const pendingUser = new PendingUser({
-      name: name.trim(),
-      email: email,
-      mobile: phone,
+      name,
+      email,
+      phone,
       password: sPassword,
-      otp: otp,
+      otp,
       otpExpires: Date.now() + 1 * 60 * 1000, // OTP expires in 1 minutes
     });
-
     await pendingUser.save();
     await mailSender(email, otp);
 
@@ -79,6 +71,10 @@ const insertUser = async (req, res, next) => {
 const otpPage = async (req, res, next) => {
   try {
     const { email } = req.query;
+    const pendingUser = await PendingUser.findOne({ email });
+    if (!pendingUser) {
+      return res.status(HttpStatus.BAD_REQUEST).render("register", { message: "User not found", old: null });
+    }
     res.render("otp", { email: email });
   } catch (error) {
     next(error);
@@ -89,12 +85,12 @@ const resendOtp = async (req, res, next) => {
   try {
     const email = req.query.email;
     if (!email) {
-      return res.render("register", { message: "Email not found" });
+      return res.redirect("register", { message: "Email not found", old: null });
     }
 
     const pendingUser = await PendingUser.findOne({ email: email });
     if (!pendingUser) {
-      return res.render("register", { message: "User not found" });
+      return res.render("register", { message: "User not found", old: null });
     }
 
     const otp = generateOTP();
@@ -128,7 +124,7 @@ const verifyOTP = async (req, res, next) => {
       const user = new User({
         name: pendingUser.name,
         email: pendingUser.email,
-        mobile: pendingUser.mobile,
+        phone: pendingUser.phone,
         password: pendingUser.password,
         joinedDate: pendingUser.joinedDate,
         isAdmin: false,
@@ -159,29 +155,32 @@ const loginPage = async (req, res, next) => {
 
 const verifyLogin = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
-    //  console.log('pass',password);
+    const { email, password } = req.validatedBody;
+
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ error: "Invalid Email or Password" });
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: MESSAGES.INVALID_CREDENTIALS });
     }
+    if (!user.password) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: MESSAGES.LOGIN_METHOD_MISMATCH });
 
-    const passwordMatch = await bcrypt.compare(password, user.password);
+    }
+    const passwordMatch = await bcrypt.compare(password.trim(), user.password);
     if (!passwordMatch) {
-      return res.status(400).json({ error: "Invalid Email or Password" });
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: MESSAGES.INVALID_CREDENTIALS });
     }
 
     if (!user.isVerified) {
-      return res.status(400).json({ error: "Email is not verified" });
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: "Email is not verified" });
     }
 
     if (user.isBlocked) {
-      return res.status(400).json({ error: "You are not allowed to login, Please contact us" });
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: "You are not allowed to login, Please contact us" });
     }
 
     req.session.user_id = user._id;
 
-    return res.status(200).json({ message: "Login successful" });
+    return res.status(HttpStatus.OK).json({ message: "Login successful" });
     // return res.redirect('/')
   } catch (error) {
     next(error);
@@ -204,7 +203,7 @@ const googleAuth = async (req, res, next) => {
         });
         req.session.user_id = user._id;
         await user.save();
-        return res.status(200).redirect("/home");
+        return res.status(HttpStatus.OK).redirect("/home");
       }
     }
   } catch (error) {
@@ -370,7 +369,7 @@ const myAccount = async (req, res, next) => {
     const user = await User.findById(userId).populate("address");
 
     if (!user) {
-      return res.status(404).redirect("/home");
+      return res.status(HttpStatus.NOT_FOUND).redirect("/home");
     }
 
     res.render("accountDetails", { user, message: undefined });
@@ -381,19 +380,17 @@ const myAccount = async (req, res, next) => {
 
 const editProfile = async (req, res, next) => {
   try {
-    const id = req.params.id;
-    const { name, phone } = req.body;
-    //  console.log('body',req.body);
+    const userId = req.session.user_id;
+    const { name, phone } = req.validatedBody;
 
-    parseInt(phone);
-
-    const user = await User.findById(id);
+    const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({ message: "User not found Please try again later " });
+      return res.status(HttpStatus.NOT_FOUND).json({ message: MESSAGES.ACCOUNT_NOT_FOUND });
     }
-    await User.findByIdAndUpdate(id, { name: name, mobile: phone });
+    parseInt(phone);
+    await User.findByIdAndUpdate(userId, { name: name, phone });
 
-    res.status(200).json({ message: "Profile updated successfully" });
+    res.status(HttpStatus.OK).json({ message: "Profile updated successfully" });
   } catch (error) {
     next(error);
   }
@@ -413,7 +410,7 @@ const saveAddress = async (req, res, next) => {
       userState,
       userLandmark,
       addressType,
-    } = req.body;
+    } = req.validatedBody;
 
     const newAddress = {
       name: userName,
@@ -446,7 +443,7 @@ const saveAddress = async (req, res, next) => {
     // Update the user's address reference
     await User.findByIdAndUpdate(userId, { address: addressDocument._id });
 
-    res.status(200).json({ success: true, message: "Address added successfully" });
+    res.status(HttpStatus.OK).json({ success: true, message: MESSAGES.ADDRESS_ADDED });
   } catch (error) {
     next(error);
   }
@@ -454,31 +451,37 @@ const saveAddress = async (req, res, next) => {
 
 const deleteAddress = async (req, res, next) => {
   try {
-    const { userId, addressId } = req.params;
+    const { addressId } = req.params;
+    const userId = req.session.user_id;
+
+    if (!isValidObjectId(addressId)) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ success: false, message: MESSAGES.INVALID_REQUEST })
+    }
+
 
     // Check if userId and addressId are provided
     if (!userId || !addressId) {
-      return res.status(400).json({ success: false, message: "Invalid parameters" });
+      return res.status(HttpStatus.BAD_REQUEST).json({ success: false, message: MESSAGES.INVALID_REQUEST });
     }
 
     // Find the address document by userId and update to pull the address
     const updatedAddress = await AddressDB.findOneAndUpdate(
-      { userId: userId },
+      { userId },
       { $pull: { addresses: { _id: addressId } } },
       { new: true } // Return the updated document after update
     );
 
     if (!updatedAddress) {
-      return res.status(404).json({ success: false, message: "User not found" });
+      return res.status(HttpStatus.NOT_FOUND).json({ success: false, message: MESSAGES.ACCOUNT_NOT_FOUND });
     }
 
     if (updatedAddress.addresses.length === 0) {
       await User.findByIdAndUpdate(userId, { address: null });
 
-      return res.status(200).json({ success: true, message: "Last address deleted successfully" });
+      return res.status(HttpStatus.OK).json({ success: true, message: MESSAGES.LAST_ADDRESS_REMOVED });
     }
 
-    res.status(200).json({ success: true, message: "Address deleted successfully" });
+    res.status(HttpStatus.OK).json({ success: true, message: MESSAGES.ADDRESS_DELETED });
   } catch (error) {
     next(error);
   }
@@ -486,7 +489,8 @@ const deleteAddress = async (req, res, next) => {
 
 const editAddress = async (req, res, next) => {
   try {
-    const { userId, addressId } = req.params;
+    const { addressId } = req.params;
+    const userId = req.session.user_id;
     const {
       userName,
       userLocality,
@@ -497,7 +501,7 @@ const editAddress = async (req, res, next) => {
       userState,
       userPIN,
       addressType,
-    } = req.body;
+    } = req.validatedBody;
 
     // Update the specific address using $ positional operator
     const updatedAddress = {
@@ -519,10 +523,10 @@ const editAddress = async (req, res, next) => {
     );
 
     if (!result) {
-      return res.status(400).json({ success: false, message: "Address not found" });
+      return res.status(HttpStatus.BAD_REQUEST).json({ success: false, message: MESSAGES.ADDRESS_NOT_FOUND });
     }
 
-    res.status(200).json({ success: true, message: "Address updated successfully", data: result });
+    res.status(HttpStatus.OK).json({ success: true, message: MESSAGES.ADDRESS_UPDATED, data: result });
   } catch (error) {
     next(error);
   }
@@ -530,35 +534,46 @@ const editAddress = async (req, res, next) => {
 
 const changePassword = async (req, res, next) => {
   try {
-    const userId = req.params.userId;
+    const userId = req.session.user_id;
+    const { currentPassword, newPassword } = req.validatedBody;
+
     const user = await User.findById(userId);
-    const { password, newPassword, rePassword } = req.body;
-
     if (!user) {
-      return res.status(400).json({ success: false, message: "User not found" });
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        success: false,
+        message: MESSAGES.USER_NOT_FOUND,
+      });
     }
 
-    const passwordMatch = await bcrypt.compare(password, user.password);
+    // If user has password 
+    if (user.password) {
+      const match = await bcrypt.compare(
+        currentPassword.trim(),
+        user.password
+      );
 
-    if (!passwordMatch) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Incorrect current password, try again" });
+      if (!match) {
+        return res.status(HttpStatus.BAD_REQUEST).json({
+          success: false,
+          message: MESSAGES.PASSWORD_INCORRECT,
+        });
+      }
     }
 
-    if (newPassword !== rePassword) {
-      return res.status(400).json({ success: false, message: "Passwords do not match" });
-    }
+    // Hash new password ONLY after verification
+    const hashed = await securePassword(newPassword.trim())
 
-    // Ensure securePassword is a function that securely hashes the password
-    let sPassword = await securePassword(newPassword);
-    await User.findByIdAndUpdate(userId, { password: sPassword });
+    await User.findByIdAndUpdate(userId, { password: hashed });
 
-    return res.status(200).json({ success: true, message: "Password updated successfully" });
-  } catch (error) {
-    next(error);
+    return res.status(200).json({
+      success: true,
+      message: MESSAGES.PASSWORD_UPDATED,
+    });
+  } catch (err) {
+    next(err);
   }
 };
+
 
 const aboutPage = async (req, res, next) => {
   try {

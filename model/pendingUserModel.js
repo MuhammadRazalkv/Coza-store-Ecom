@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const PendingUserSchema = new mongoose.Schema({
   name: String,
   email: String,
-  mobile: String,
+  phone: String,
   password: String,
   joinedDate: { type: Date, default: Date.now },
   otp: String,
