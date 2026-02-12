@@ -7,16 +7,22 @@ const upload = require("../middleware/multer");
 const orderController = require("../controller/admin/orderControllerAdmin");
 dotenv.config();
 const couponController = require("../controller/admin/couponController");
+const adminController = require("../controller/admin/adminController");
+const productController = require("../controller/admin/productController");
+const offerController = require("../controller/admin/offerController");
+const session = require("express-session");
+const validateBody = require("../middleware/validateBody");
+const errorHandling = require("../middleware/adminError");
+const loginSchema = require("../utils/validations/loginSchema");
+const objectIdSchema = require("../utils/validations/objectIdSchema");
+const { categorySchema, editCategorySchema } = require("../utils/validations/categorySchema");
+
 
 adminRoute.use(express.json());
 adminRoute.use(express.urlencoded({ extended: true }));
 
 adminRoute.set("view engine", "ejs");
 adminRoute.set("views", "./view/admin");
-const adminController = require("../controller/admin/adminController");
-const productController = require("../controller/admin/productController");
-const offerController = require("../controller/admin/offerController");
-const session = require("express-session");
 
 adminRoute.use(
   session({
@@ -27,34 +33,24 @@ adminRoute.use(
 );
 
 // adminRoute.get('/login',adminController.registerPage)
-
-adminRoute.get("/", adminAuth.isLogout, adminController.registerPage);
-
-adminRoute.post("/", adminAuth.isLogout, adminController.verifyLogin);
-
 adminRoute.use(nocache());
 
-adminRoute.get("/logout", adminAuth.isLogin, adminController.logout);
+adminRoute.get("/", adminAuth.isLogout, adminController.registerPage)
+  .post("/", adminAuth.isLogout, validateBody(loginSchema), adminController.verifyLogin)
+  .get("/logout", adminAuth.isLogin, adminController.logout)
+  .get("/home", adminAuth.isLogin, adminController.loadHome)
+  .get("/user-List", adminAuth.isLogin, adminController.userManagement)
+  .patch("/user-block", adminAuth.isLogin, validateBody(objectIdSchema), adminController.blockUnblock)
+  .get("/category-list", adminAuth.isLogin, adminController.categoryManagement)
+  .get("/categories/add", adminAuth.isLogin, adminController.loadAddCategory)
+  .post("/categories/add", adminAuth.isLogin, validateBody(categorySchema), adminController.addCategory)
+  .get("/categories/edit", adminAuth.isLogin, adminController.loadEditCategory)
+  .post("/categories/edit", adminAuth.isLogin,validateBody(editCategorySchema), adminController.editCategory)
+  .patch("/categories/delete", adminAuth.isLogin,validateBody(objectIdSchema), adminController.softDeleteCategory)
+  .get("/products-list", adminAuth.isLogin, productController.loadProductPage)
 
-adminRoute.get("/home", adminAuth.isLogin, adminController.loadHome);
-
-adminRoute.get("/user-List", adminAuth.isLogin, adminController.userManagement);
-adminRoute.patch("/user-block", adminAuth.isLogin, adminController.blockUnblock);
-
-adminRoute.get("/category-list", adminAuth.isLogin, adminController.categoryManagement);
-
-adminRoute.get("/categories/add", adminAuth.isLogin, adminController.loadAddCategory);
-adminRoute.post("/categories/add", adminAuth.isLogin, adminController.addCategory);
-
-adminRoute.get("/categories/edit", adminAuth.isLogin, adminController.loadEditCategory);
-adminRoute.post("/categories/edit", adminAuth.isLogin, adminController.editCategory);
-
-adminRoute.patch("/categories/delete", adminAuth.isLogin, adminController.softDeleteCategory);
-
-adminRoute.get("/products-list", adminAuth.isLogin, productController.loadProductPage);
-
-adminRoute.get("/product/add", adminAuth.isLogin, productController.loadAddProduct);
-adminRoute.post("/product/add", adminAuth.isLogin, productController.addProduct);
+adminRoute.get("/product/add", adminAuth.isLogin, productController.loadAddProduct)
+adminRoute.post("/product/add", adminAuth.isLogin, productController.addProduct)
 
 adminRoute.get("/product/edit", adminAuth.isLogin, productController.loadEditProduct);
 adminRoute.post("/product/edit", adminAuth.isLogin, productController.editProduct);
@@ -106,7 +102,7 @@ adminRoute.all("*", (req, res) => {
   res.render("error");
 });
 
-const errorHandling = require("../middleware/adminError");
+
 adminRoute.use(errorHandling);
 
 module.exports = adminRoute;

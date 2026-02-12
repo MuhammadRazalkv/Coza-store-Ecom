@@ -90,6 +90,8 @@ const resendOtp = async (req, res, next) => {
 
     const pendingUser = await PendingUser.findOne({ email: email });
     if (!pendingUser) {
+      console.log(pendingUser);
+      
       return res.render("register", { message: "User not found", old: null });
     }
 
@@ -171,11 +173,11 @@ const verifyLogin = async (req, res, next) => {
     }
 
     if (!user.isVerified) {
-      return res.status(HttpStatus.BAD_REQUEST).json({ message: "Email is not verified" });
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: MESSAGES.EMAIL_NOT_VERIFIED});
     }
 
     if (user.isBlocked) {
-      return res.status(HttpStatus.BAD_REQUEST).json({ message: "You are not allowed to login, Please contact us" });
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: MESSAGES.ACCOUNT_BLOCKED });
     }
 
     req.session.user_id = user._id;
@@ -300,7 +302,7 @@ const shopPage = async (req, res, next) => {
       if (!isValidObjectId(categoryName)) {
         return res.redirect("/404error");
       }
-      const category = await CategoryDB.findById(categoryName, { isDeleted: true });
+      const category = await CategoryDB.findById(categoryName, { isListed: true });
 
       if (category) {
         query.categoryId = category._id;
@@ -322,7 +324,7 @@ const shopPage = async (req, res, next) => {
       })
       .populate({
         path: "categoryId",
-        match: { isDeleted: true },
+        match: { isListed: true },
       });
 
     // Filter out products with no matching variants after population
@@ -351,7 +353,7 @@ const shopPage = async (req, res, next) => {
       );
     }
 
-    const categoryList = await CategoryDB.find({ isDeleted: true });
+    const categoryList = await CategoryDB.find({ isListed: true });
 
     if (req.xhr) {
       res.json(filteredProducts);

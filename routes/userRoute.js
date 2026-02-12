@@ -76,14 +76,14 @@ user_route.get("/register", userAuth.isLogout, userController.registerPage).
     userController.deleteAddress
   )
   .patch("/edit-Address/:addressId", userAuth.isLogin, validateBody(addressSchema), userController.editAddress)
-  .patch("/change-password", userAuth.isLogin,validateBody(passwordSchema), userController.changePassword);
+  .patch("/change-password", userAuth.isLogin,validateBody(passwordSchema), userController.changePassword)
 
 // Other routes
-user_route.get("/", userController.loadHome);
-user_route.get("/home", userController.loadHome);
+  .get("/", userController.loadHome)
+  .get("/home", userController.loadHome)
 
 // cart routes
-user_route.get("/cart", userAuth.isLogin, cartController.loadCartPage);
+  .get("/cart", userAuth.isLogin, cartController.loadCartPage);
 user_route.post("/addToCart", userAuth.isLogin, cartController.addToCart);
 user_route.patch("/editCart", userAuth.isLogin, cartController.editCart);
 user_route.delete("/deleteCartItem", userAuth.isLogin, cartController.deleteCartItem);

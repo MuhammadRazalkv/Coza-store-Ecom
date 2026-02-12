@@ -3,39 +3,46 @@ const bcrypt = require("bcrypt");
 const Category = require("../../model/categoryModel");
 const Products = require("../../model/productModel");
 const OrderDB = require("../../model/orderModal");
+const HttpStatus = require("../../constants/statusCode");
+const MESSAGES = require("../../constants/messages");
+const { default: mongoose } = require("mongoose");
 
 const registerPage = async (req, res, next) => {
   try {
     res.render("adminLogin");
   } catch (error) {
-    // console.error('Error loading register page:', error)
-    // res.status(500).send('Server Error')
     next(error);
   }
 };
 
 const verifyLogin = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { email, password } = req.validatedBody;
 
     const admin = await User.findOne({ email: email });
 
     if (!admin) {
-      return res.render("adminLogin", { message: "Invalid Email or Password" });
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: MESSAGES.INVALID_CREDENTIALS });
     }
+
 
     const passwordMatch = await bcrypt.compare(password, admin.password);
 
     if (!passwordMatch) {
-      return res.render("adminLogin", { message: "Invalid Email or Password" });
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: MESSAGES.INVALID_CREDENTIALS });
     }
 
     if (admin.isAdmin == false) {
-      return res.render("adminLogin", { message: "Invalid Email or Password" });
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: MESSAGES.INVALID_CREDENTIALS });
+
     }
     req.session.admin_id = admin._id;
 
-    return res.redirect("/admin/home");
+    return res.status(HttpStatus.OK).json({
+      success: true,
+      redirect: "/admin/home"
+    });
+
   } catch (error) {
     next(error);
   }
@@ -205,27 +212,21 @@ const userManagement = async (req, res, next) => {
 };
 
 const blockUnblock = async (req, res, next) => {
-  const { id } = req.body;
+  const { id } = req.validatedBody;
 
   try {
-    if (!id) {
-      return res.status(400).json({ message: "User not found" });
-    }
-
     const user = await User.findById(id);
 
     if (!user) {
-      return res.status(400).json({ message: "User not found" });
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: MESSAGES.ACCOUNT_NOT_FOUND });
     }
 
     const updatedStatus = !user.isBlocked;
 
     await User.findByIdAndUpdate(id, { isBlocked: updatedStatus });
 
-    // if (userStatus.isBlocked == true) {
-    // }
 
-    return res.status(200).json({
+    return res.status(HttpStatus.OK).json({
       message: updatedStatus ? "User blocked successfully" : "User unblocked successfully",
       listed: updatedStatus,
     });
@@ -237,7 +238,6 @@ const blockUnblock = async (req, res, next) => {
 const categoryManagement = async (req, res, next) => {
   try {
     const categories = await Category.find({});
-
     res.render("categoryManagement", { categories });
   } catch (error) {
     next(error);
@@ -254,17 +254,15 @@ const loadAddCategory = async (req, res, next) => {
 
 const addCategory = async (req, res, next) => {
   try {
-    const { name, description } = req.body;
-    console.log(name, description);
-
+    let { name, description } = req.validatedBody;
+    name = name.toLowerCase()
     const categories = await Category.findOne({ name: name });
     if (categories) {
-      console.log("cater", categories);
-      return res.status(400).json({ success: false, message: "Category already exists" });
+      return res.status(HttpStatus.BAD_REQUEST).json({ success: false, message: MESSAGES.CATEGORY_EXISTS});
     }
     const newCategory = new Category({ name, description });
     await newCategory.save();
-    res.redirect("/admin/category-list");
+    return res.status(HttpStatus.OK).json({ success: true, messages: MESSAGES.CATEGORY_ADDED })
   } catch (error) {
     next(error);
   }
@@ -274,9 +272,27 @@ const loadEditCategory = async (req, res, next) => {
   try {
     const id = req.query.id;
 
-    const categories = await Category.findById({ _id: id });
+    //  Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).render("editCategory", {
+        error: "Invalid category ID.",
+        categories: null
+      });
+    }
 
-    res.render("editCategory", { categories });
+    //  Find category
+    const categories = await Category.findById(id);
+
+    //  Handle not found
+    if (!categories) {
+      return res.status(404).render("editCategory", {
+        error: "Category not found.",
+        categories: null
+      });
+    }
+
+
+    res.render("editCategory", { categories, error: null });
   } catch (error) {
     next(error);
   }
@@ -284,21 +300,21 @@ const loadEditCategory = async (req, res, next) => {
 
 const editCategory = async (req, res, next) => {
   try {
-    const { id, name, description } = req.body;
+    let { id, name, description } = req.validatedBody;
+    name = name.toLowerCase()
 
-    const regexName = new RegExp(name, "i");
 
     const existingCategory = await Category.findOne({
-      name: regexName,
+      name,
       _id: { $ne: id },
     });
 
     if (existingCategory) {
-      return res.status(400).json({ message: "Category name already exists " });
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: MESSAGES.CATEGORY_EXISTS });
     }
 
     await Category.findByIdAndUpdate(
-      { _id: id },
+      id,
       {
         $set: {
           name: name,
@@ -306,7 +322,7 @@ const editCategory = async (req, res, next) => {
         },
       }
     );
-    return res.status(200).json({ message: "Category updated successfully" });
+    return res.status(HttpStatus.OK).json({ message: MESSAGES.CATEGORY_UPDATED });
   } catch (error) {
     next(error);
   }
@@ -314,30 +330,18 @@ const editCategory = async (req, res, next) => {
 
 const softDeleteCategory = async (req, res, next) => {
   try {
-    const { id } = req.body;
+    const { id } = req.validatedBody;
 
-    if (!id) {
-      return res.status(400).json({ message: "Category not found" });
-    }
-
-    //await Category.findByIdAndUpdate({_id:id},{isDeleted:true})
-    const category = await Category.findOne({ _id: id });
+    const category = await Category.findById(id);
     if (!category) {
-      return res.status(400).json({ message: "Category not found" });
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: MESSAGES.CATEGORY_NOT_FOUND});
     }
-    const updatedStatus = !category.isDeleted;
+    const updatedStatus = !category.isListed;
+ 
+    await Category.findByIdAndUpdate(id, { isListed: updatedStatus });
 
-    await Category.findByIdAndUpdate(id, { isDeleted: updatedStatus });
-
-    // if (category.isDeleted === false) {
-    //   await Category.findByIdAndUpdate({ _id: id }, { isDeleted: true })
-    // } else {
-    //   await Category.findByIdAndUpdate({ _id: id }, { isDeleted: false })
-    // }
-
-    // res.redirect('/admin/category-list')
-    return res.status(200).json({
-      message: category.isDeleted
+    return res.status(HttpStatus.OK).json({
+      message: category.isListed
         ? "Category unlisted successfully"
         : "Category listed successfully",
       listed: updatedStatus,

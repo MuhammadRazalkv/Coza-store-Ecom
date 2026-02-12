@@ -22,6 +22,7 @@ const MESSAGES = Object.freeze({
   OTP_INVALID: "Invalid OTP. Please try again.",
   OTP_EXPIRED: "OTP has expired. Request a new one.",
   EMAIL_VERIFIED: "Email verified successfully.",
+  EMAIL_NOT_VERIFIED: "Email not verified.",
 
   // Password
   PASSWORD_INCORRECT: "Current password is incorrect.",
@@ -60,7 +61,10 @@ const MESSAGES = Object.freeze({
   ADDRESS_NOT_FOUND:"Address not found" ,
   ADDRESS_UPDATED:"Address updated successfully",
 
- 
+  CATEGORY_ADDED:'Category added successfully.',
+  CATEGORY_EXISTS:'Category already exists.',
+  CATEGORY_UPDATED:'Category updated successfully.',
+  CATEGORY_NOT_FOUND:'Category not found.'
 });
 
 module.exports = MESSAGES;
