@@ -1,22 +1,44 @@
-
-
 let cropper;
 let currentIndex;
 const modal = new bootstrap.Modal(document.querySelector("#cropperModal"));
 
-document.querySelectorAll('#productImage1, #productImage2, #productImage3').forEach(input => {
-  input.addEventListener('change', function(event) {
-    if (validateFileType(event.target.files[0])) {
-      showCropper(event.target, event.target.id); // Pass the input element's ID as the second argument
-    } else {
-      alert('Only image files are allowed!');
-      event.target.value = ''; // Clear the invalid file input
-    }
+document
+  .querySelectorAll('#productImage1, #productImage2, #productImage3')
+  .forEach(input => {
+    input.addEventListener('change', function (event) {
+      const file = event.target.files[0];
+      const maxFileSize = 5 * 1024 * 1024;
+      if (!file) return;
+      if (file.size > maxFileSize) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Maximum file size exceeded.',
+          text: 'Please select images less than 5mb.'
+        });
+        event.target.value = ''
+        return
+      }
+      if (validateFileType(file)) {
+        showCropper(event.target, event.target.id);
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Invalid file',
+          text: 'Only JPG, PNG, or WEBP images are allowed.'
+        });
+        event.target.value = "";
+      }
+    });
   });
-});
 
 function validateFileType(file) {
-  const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+  const allowedTypes = [
+    'image/jpeg',
+    'image/jpg',
+    'image/png',
+    'image/webp'
+  ];
+
   return allowedTypes.includes(file.type);
 }
 
@@ -109,37 +131,159 @@ function closeModal() {
 
 
 
-let selectedSizes = [];
+// let selectedSizes = [];
 
-function updateSizes(input) {
-  if (input.checked && !selectedSizes.includes(input.value)) {
-    selectedSizes.push(input.value);
-  } else if (!input.checked) {
-    selectedSizes = selectedSizes.filter(size => size !== input.value);
+// function updateSizes(input) {
+//   if (input.checked && !selectedSizes.includes(input.value)) {
+//     selectedSizes.push(input.value);
+//   } else if (!input.checked) {
+//     selectedSizes = selectedSizes.filter(size => size !== input.value);
+//   }
+
+
+//   const refinedValues = selectedSizes.filter(size => size && size !== '[]');
+//   document.getElementById('sizes').value = JSON.stringify(refinedValues);
+//   //console.log('Updated sizesInput:', document.getElementById('sizes').value);
+// }
+
+const selectedSizes = {};
+
+function toggleSize(input) {
+  const container = document.getElementById("stockContainer");
+
+  if (input.checked) {
+    // create stock input row
+    selectedSizes[input.value] = 0;
+
+    const row = document.createElement("div");
+    row.className = "size-row mb-1";
+    row.id = `row-${input.value}`;
+
+    row.innerHTML = `
+    <label>${input.value} - Stock:</label>
+    <input type="number" min="0" value="0"
+    onchange="updateStock('${input.value}', this.value)">
+    `;
+
+
+    container.appendChild(row);
+
+  } else {
+    // remove size + stock
+    delete selectedSizes[input.value];
+    document.getElementById(`row-${input.value}`)?.remove();
   }
 
-
-  const refinedValues = selectedSizes.filter(size => size && size !== '[]');
-  document.getElementById('sizes').value = JSON.stringify(refinedValues);
-  //console.log('Updated sizesInput:', document.getElementById('sizes').value);
+  updateHiddenField();
 }
+
+function updateStock(size, value) {
+  selectedSizes[size] = Number(value) || 0;
+  updateHiddenField();
+}
+
+function updateHiddenField() {
+  const sizesArray = Object.entries(selectedSizes).map(([size, stock]) => ({
+    size,
+    stock
+  }));
+
+  document.getElementById("sizes").value = JSON.stringify(sizesArray);
+}
+
 
 document.querySelectorAll('input[name="sizes"]').forEach(input => {
   input.addEventListener('change', () => updateSizes(input));
 });
 
-document.getElementById('addVariantForm').addEventListener('submit', async function(event) {
+function validateVariant(data) {
+  const colorPattern = /^(?=.*[A-Za-z])[A-Za-z ]{3,}$/;
+  const maxPrice = 100000;
+  const price = Number(data.variantPrice);
+
+  if (!Number.isFinite(price)) {
+    return "Price must be a valid number.";
+  }
+
+  if (price <= 0) {
+    return "Price must be greater than ₹0.";
+  }
+
+  if (price > maxPrice) {
+    return `Price cannot exceed ₹${maxPrice}.`;
+  }
+
+  if (!colorPattern.test(data.variantColor)) {
+    return "Color must contain only letters and be at least 3 characters.";
+  }
+
+  data.sizes = JSON.parse(data.sizes)
+  if (!Array.isArray(data.sizes) || data.sizes.length === 0) {
+    return "At least one size is required.";
+  }
+
+  const seen = new Set();
+
+  for (const s of data.sizes) {
+    if (!s.size || s.size.trim() === "") {
+      return "Size name cannot be empty.";
+    }
+
+    if (seen.has(s.size)) {
+      return "Duplicate sizes are not allowed.";
+    }
+    seen.add(s.size);
+
+    if (isNaN(s.stock) || Number(s.stock) < 0) {
+      return "Stock must be zero or a positive number.";
+    }
+  }
+
+  return null;
+}
+
+const errorDiv = document.getElementById('messageContainer')
+
+function setLoading(button, isLoading, text = "Submitting...") {
+  if (!button) return;
+
+  button.disabled = isLoading;
+  button.textContent = isLoading ? text : button.dataset.originalText;
+}
+
+
+const btn = document.getElementById("submit-btn");
+btn.dataset.originalText = btn.textContent;
+document.getElementById('addVariantForm').addEventListener('submit', async function (event) {
   event.preventDefault();
- 
+  errorDiv.innerText = ''
   const form = event.target;
   const formData = new FormData(form);
 
-  // Logging the FormData entries to debug
-//   for (let [key, value] of formData.entries()) {
-//     console.log(`${key}: ${value}`);
-//   }
+  const data = {
+    variantPrice: Number(formData.get("variantPrice")),
+    variantColor: formData.get("variantColor")?.trim(),
+    productId: formData.get("productId"),
+    sizes: formData.get('sizesInput'),
+  };
+  const imageFiles = [
+    formData.get("variantImg1"),
+    formData.get("variantImg2"),
+    formData.get("variantImg3")
+  ].filter(file => file && file.size > 0);
+
+  if (imageFiles.length !== 3) {
+    return "Please upload exactly 3 images.";
+  }
+
+  const error = validateVariant(data)
+  if (error) {
+    errorDiv.innerText = error;
+    return
+  }
 
   try {
+    setLoading(btn, true)
     const response = await fetch('/admin/product/addVariant', {
       method: 'POST',
       body: formData
@@ -155,7 +299,7 @@ document.getElementById('addVariantForm').addEventListener('submit', async funct
       return;
     }
     const productId = document.getElementById('productId').value;
-     Swal.fire({
+    Swal.fire({
       icon: 'success',
       title: 'Success',
       text: result.message,
@@ -172,5 +316,7 @@ document.getElementById('addVariantForm').addEventListener('submit', async funct
       title: 'Error',
       text: 'An error occurred while adding the product.'
     });
+  } finally {
+    setLoading(btn, false)
   }
 });

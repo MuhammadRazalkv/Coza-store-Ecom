@@ -16,6 +16,9 @@ const errorHandling = require("../middleware/adminError");
 const loginSchema = require("../utils/validations/loginSchema");
 const objectIdSchema = require("../utils/validations/objectIdSchema");
 const { categorySchema, editCategorySchema } = require("../utils/validations/categorySchema");
+const { productSchema, editProductSchema } = require("../utils/validations/productSchema");
+const { variantSchema, editVariantSchema } = require("../utils/validations/variantSchema");
+const parseSizes = require("../middleware/sizeParser");
 
 
 adminRoute.use(express.json());
@@ -45,28 +48,26 @@ adminRoute.get("/", adminAuth.isLogout, adminController.registerPage)
   .get("/categories/add", adminAuth.isLogin, adminController.loadAddCategory)
   .post("/categories/add", adminAuth.isLogin, validateBody(categorySchema), adminController.addCategory)
   .get("/categories/edit", adminAuth.isLogin, adminController.loadEditCategory)
-  .post("/categories/edit", adminAuth.isLogin,validateBody(editCategorySchema), adminController.editCategory)
-  .patch("/categories/delete", adminAuth.isLogin,validateBody(objectIdSchema), adminController.softDeleteCategory)
+  .post("/categories/edit", adminAuth.isLogin, validateBody(editCategorySchema), adminController.editCategory)
+  .patch("/categories/delete", adminAuth.isLogin, validateBody(objectIdSchema), adminController.softDeleteCategory)
   .get("/products-list", adminAuth.isLogin, productController.loadProductPage)
-
-adminRoute.get("/product/add", adminAuth.isLogin, productController.loadAddProduct)
-adminRoute.post("/product/add", adminAuth.isLogin, productController.addProduct)
-
-adminRoute.get("/product/edit", adminAuth.isLogin, productController.loadEditProduct);
-adminRoute.post("/product/edit", adminAuth.isLogin, productController.editProduct);
-
-adminRoute.post("/product/delete", adminAuth.isLogin, productController.blockProduct);
-
-adminRoute.get("/product/details", adminAuth.isLogin, productController.loadProductDetails);
-adminRoute.get("/product/addVariant", adminAuth.isLogin, productController.loadAddVariant);
-adminRoute.post("/product/addVariant", adminAuth.isLogin, upload, productController.addVariant);
-adminRoute.get("/product/editVariant", adminAuth.isLogin, productController.loadEditVariant);
-adminRoute.post(
-  "/product/editVariant/:id",
-  adminAuth.isLogin,
-  upload,
-  productController.editVariant
-);
+  .get("/product/add", adminAuth.isLogin, productController.loadAddProduct)
+  .post("/product/add", adminAuth.isLogin, validateBody(productSchema), productController.addProduct)
+  .get("/product/details", adminAuth.isLogin, productController.loadProductDetails)
+  .get("/product/edit", adminAuth.isLogin, productController.loadEditProduct)
+  .post("/product/edit", adminAuth.isLogin, validateBody(editProductSchema), productController.editProduct)
+  .post("/product/delete", adminAuth.isLogin, validateBody(objectIdSchema), productController.blockProduct)
+  .get("/product/addVariant", adminAuth.isLogin, productController.loadAddVariant)
+  .post("/product/addVariant", adminAuth.isLogin, upload, parseSizes, validateBody(variantSchema), productController.addVariant)
+  .get("/product/editVariant", adminAuth.isLogin, productController.loadEditVariant)
+  .post(
+    "/product/editVariant/:id",
+    adminAuth.isLogin,
+    upload,
+    parseSizes,
+    validateBody(editVariantSchema),
+    productController.editVariant
+  );
 adminRoute.patch("/product/blockVariant", adminAuth.isLogin, productController.blockUnblockVariant);
 
 adminRoute.get("/orderDetails", adminAuth.isLogin, orderController.loadOrderPage);

@@ -274,7 +274,7 @@ const loadEditCategory = async (req, res, next) => {
 
     //  Validate ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).render("editCategory", {
+      return res.status(HttpStatus.BAD_REQUEST).render("editCategory", {
         error: "Invalid category ID.",
         categories: null
       });

@@ -15,7 +15,7 @@ const MESSAGES = Object.freeze({
   REGISTER_SUCCESS: "Registration completed successfully.",
   LOGIN_METHOD_MISMATCH:
     "This account was registered using Google. Please continue with Google login.",
-  USER_NOT_FOUND:'User not found.',  
+  USER_NOT_FOUND: 'User not found.',
 
   // Email / OTP
   OTP_SENT: "OTP has been sent to your email.",
@@ -45,6 +45,7 @@ const MESSAGES = Object.freeze({
   PRODUCT_ADDED: "Product added successfully.",
   PRODUCT_UPDATED: "Product updated successfully.",
   PRODUCT_DELETED: "Product deleted successfully.",
+  PRODUCT_EXISTS: 'Product name is already taken.',
 
   CART_EMPTY: "Your cart is empty.",
   ITEM_ADDED_TO_CART: "Item added to cart.",
@@ -55,16 +56,24 @@ const MESSAGES = Object.freeze({
   PAYMENT_FAILED: "Payment failed. Please try again.",
   PAYMENT_SUCCESS: "Payment completed successfully.",
 
-  ADDRESS_ADDED:"Address added successfully",
-  LAST_ADDRESS_REMOVED:"Last address deleted successfully",
-  ADDRESS_DELETED:"Address deleted successfully",
-  ADDRESS_NOT_FOUND:"Address not found" ,
-  ADDRESS_UPDATED:"Address updated successfully",
+  ADDRESS_ADDED: "Address added successfully",
+  LAST_ADDRESS_REMOVED: "Last address deleted successfully",
+  ADDRESS_DELETED: "Address deleted successfully",
+  ADDRESS_NOT_FOUND: "Address not found",
+  ADDRESS_UPDATED: "Address updated successfully",
 
-  CATEGORY_ADDED:'Category added successfully.',
-  CATEGORY_EXISTS:'Category already exists.',
-  CATEGORY_UPDATED:'Category updated successfully.',
-  CATEGORY_NOT_FOUND:'Category not found.'
+  CATEGORY_ADDED: 'Category added successfully.',
+  CATEGORY_EXISTS: 'Category already exists.',
+  CATEGORY_UPDATED: 'Category updated successfully.',
+  CATEGORY_NOT_FOUND: 'Category not found.',
+
+  THREE_IMAGES_REQUIRED: 'Exactly three images required.',
+  DUPLICATE_VARIANT: "This variant color already exists",
+
+  INVALID_SIZE_FORMAT: "Invalid sizes format.",
+
+  VARIANT_NOT_FOUND:'Variant not found.',
+  VARIANT_EXISTS:"This variant color already exists"
 });
 
 module.exports = MESSAGES;

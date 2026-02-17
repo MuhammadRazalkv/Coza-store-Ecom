@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const sizeSchema = require("./sizeSchema");
 
 const variantSchema = mongoose.Schema(
   {
@@ -6,25 +7,25 @@ const variantSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    variantStock: {
-      type: Number,
+    sizes: {
+      type: [sizeSchema],
       required: true,
+      validate: {
+        validator: (arr) => arr.length > 0,
+        message: "At least one size is required.",
+      },
     },
     variantPrice: {
       type: Number,
-      //   required:true
+      required: true
     },
-    variantDiscountPrice: {
-      type: Number,
-      required: true,
-    },
+    // variantDiscountPrice: {
+    //   type: Number,
+    //   required: true,
+    // },
     variantListed: {
       type: Boolean,
       default: true,
-    },
-    variantSizes: {
-      type: [String],
-      required: true,
     },
     variantColor: {
       type: String,
