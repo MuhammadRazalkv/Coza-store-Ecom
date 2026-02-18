@@ -1,5 +1,3 @@
-
-
 document.addEventListener('DOMContentLoaded', () => {
   const searchInput = document.getElementById('search-input');
   let currentCategory = '';
@@ -55,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     productGrid.innerHTML = '';
-  
+
     if (products.length === 0) {
       const noProductsHtml = `
         <div class="col-12 text-center p-t-35">
@@ -65,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
       productGrid.insertAdjacentHTML('beforeend', noProductsHtml);
       return;
     }
-  
+
     products.forEach(productItem => {
       if (productItem.variant && productItem.variant.length > 0) {
         const firstVariant = productItem.variant[0];
@@ -75,13 +73,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="block2">
                <div class="block2-pic hov-img0">
                 <a href="/productDetail?id=${productItem._id}&variantId=${firstVariant._id}">
-                  <img src="/assets/productImages/${firstVariant.variantImg[0]}" alt="IMG-PRODUCT" />
+                  <img src="${firstVariant.variantImg[0]}" alt="IMG-PRODUCT" />
                   </a>
                 </div>
                 <div class="block2-txt flex-w flex-t p-t-14">
                   <div class="block2-txt-child1 flex-col-l">
                     <a href="/productDetail?id=${productItem._id}&variantId=${firstVariant._id}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">${productItem.productName}</a>
-                    <span class="stext-105 cl3">RS ${firstVariant.variantDiscountPrice}</span>
+                    <span class="stext-105 cl3">₹ ${firstVariant.variantPrice}</span>
                   </div>
                   <div class="block2-txt-child2 flex-r p-t-3">
                  

@@ -14,6 +14,7 @@ const loginSchema = require("../utils/validations/loginSchema");
 const profileSchema = require("../utils/validations/profileSchema");
 const addressSchema = require("../utils/validations/addressSchema");
 const passwordSchema = require("../utils/validations/passwordSchema");
+const { variantAndSizeSchema, variantAndQtySchema } = require("../utils/validations/cartSchema");
 
 
 user_route.use(
@@ -76,46 +77,45 @@ user_route.get("/register", userAuth.isLogout, userController.registerPage).
     userController.deleteAddress
   )
   .patch("/edit-Address/:addressId", userAuth.isLogin, validateBody(addressSchema), userController.editAddress)
-  .patch("/change-password", userAuth.isLogin,validateBody(passwordSchema), userController.changePassword)
+  .patch("/change-password", userAuth.isLogin, validateBody(passwordSchema), userController.changePassword)
 
-// Other routes
+  // Other routes
   .get("/", userController.loadHome)
   .get("/home", userController.loadHome)
+  .get("/shop_products", userController.shopPage)
+  .get("/productDetail", userController.productDetail)
 
-// cart routes
-  .get("/cart", userAuth.isLogin, cartController.loadCartPage);
-user_route.post("/addToCart", userAuth.isLogin, cartController.addToCart);
-user_route.patch("/editCart", userAuth.isLogin, cartController.editCart);
-user_route.delete("/deleteCartItem", userAuth.isLogin, cartController.deleteCartItem);
+  // cart routes
+  .get("/cart", userAuth.isLogin, cartController.loadCartPage)
+  .patch("/editCart", userAuth.isLogin, validateBody(variantAndQtySchema), cartController.editCart)
+  .post("/addToCart", userAuth.isLogin, validateBody(variantAndSizeSchema), cartController.addToCart)
+  .delete("/deleteCartItem", userAuth.isLogin, validateBody(variantAndSizeSchema), cartController.deleteCartItem)
 
-// check out routes
-user_route.get("/checkout", userAuth.isLogin, orderController.loadCheckOutPage);
-user_route.post("/applyCoupon", userAuth.isLogin, orderController.applyCoupon);
+  // check out routes
+  .get("/checkout", userAuth.isLogin, orderController.loadCheckOutPage)
+  .post("/applyCoupon", userAuth.isLogin, orderController.applyCoupon)
 
-user_route.post("/placeOrder", userAuth.isLogin, orderController.placeOrder);
-user_route.post("/verify-payment", userAuth.isLogin, orderController.verifyPayment);
-user_route.post("/rePayment", userAuth.isLogin, orderController.rePayment);
+  .post("/placeOrder", userAuth.isLogin, orderController.placeOrder)
+  .post("/verify-payment", userAuth.isLogin, orderController.verifyPayment)
+  .post("/rePayment", userAuth.isLogin, orderController.rePayment)
+  .get("/orders", userAuth.isLogin, orderController.loadOrderPage)
+  .post("/orders/cancelOrder", userAuth.isLogin, orderController.cancelOrder)
+  .get("/orderTracking", userAuth.isLogin, orderController.loadOrderTrackingPage)
+  .post("/requestReturn", userAuth.isLogin, orderController.requestReturn)
+  .get("/downloadInvoice", userAuth.isLogin, orderController.downloadInvoice)
 
-user_route.get("/orders", userAuth.isLogin, orderController.loadOrderPage);
-user_route.post("/orders/cancelOrder", userAuth.isLogin, orderController.cancelOrder);
-user_route.get("/orderTracking", userAuth.isLogin, orderController.loadOrderTrackingPage);
-user_route.post("/requestReturn", userAuth.isLogin, orderController.requestReturn);
-user_route.get("/downloadInvoice", userAuth.isLogin, orderController.downloadInvoice);
+  .get("/wishlist", userAuth.isLogin, orderController.loadWishList)
+  .post("/addToWishlist", userAuth.isLogin, orderController.addToWishlist)
+  .delete(
+    "/removeWishlistItem/:variantId/:selectedSize",
+    userAuth.isLogin,
+    orderController.removeFromWishlist
+  )
 
-user_route.get("/wishlist", userAuth.isLogin, orderController.loadWishList);
-user_route.post("/addToWishlist", userAuth.isLogin, orderController.addToWishlist);
-user_route.delete(
-  "/removeWishlistItem/:variantId/:selectedSize",
-  userAuth.isLogin,
-  orderController.removeFromWishlist
-);
+  .get("/about", userController.aboutPage)
+  .get("/contact", userController.contactPage)
 
-user_route.get("/about", userController.aboutPage);
-user_route.get("/shop_products", userController.shopPage);
-user_route.get("/productDetail", userController.productDetail);
-user_route.get("/contact", userController.contactPage);
-
-user_route.get("/wallet", userAuth.isLogin, orderController.loadWalletPage);
+  .get("/wallet", userAuth.isLogin, orderController.loadWalletPage);
 
 
 user_route.use(errorHandlingMiddleware);

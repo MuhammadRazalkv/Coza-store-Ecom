@@ -319,15 +319,12 @@ const editVariant = async (req, res, next) => {
       { index: 2, file: req.files?.variantImg3?.[0] },
     ].filter(entry => entry.file);
 
-
-
     const currentVariant = await Variants.findById(variantId);
     if (!currentVariant) {
       return res.status(HttpStatus.NOT_FOUND).json({ success: false, message: MESSAGES.VARIANT_NOT_FOUND })
     }
 
     const productId = currentVariant.productId._id;
-    // console.log('p',productId);
 
     const existingVariant = await Variants.findOne({
       productId: productId,
@@ -353,10 +350,8 @@ const editVariant = async (req, res, next) => {
       }
     }
 
-
-
     await Variants.findByIdAndUpdate(variantId, { $set: { variantColor, sizes, variantPrice, variantImg: imagePaths } });
-    res.status(200).json({ message: "Variant updated successfully" });
+    res.status(HttpStatus.OK).json({ message: MESSAGES.VARIANT_UPDATED });
   } catch (error) {
     next(error);
   }
@@ -364,21 +359,18 @@ const editVariant = async (req, res, next) => {
 
 const blockUnblockVariant = async (req, res, next) => {
   try {
-    const { id } = req.body;
-    if (!id) {
-      return res.status(HttpStatus.BAD_REQUEST).json({ message: "Variant not found" });
-    }
+    const { id } = req.validatedBody;
 
     const variant = await Variants.findById(id);
 
     if (!variant) {
-      return res.status(HttpStatus.BAD_REQUEST).json({ message: "Variant not found" });
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: MESSAGES.VARIANT_NOT_FOUND });
     }
     const updatedStatus = !variant.variantListed;
 
     await Variants.findByIdAndUpdate(id, { variantListed: updatedStatus });
 
-    return res.status(200).json({
+    return res.status(HttpStatus.OK).json({
       message: variant.variantListed
         ? "Variant unlisted successfully"
         : "Variant listed successfully",

@@ -91,7 +91,7 @@ const resendOtp = async (req, res, next) => {
     const pendingUser = await PendingUser.findOne({ email: email });
     if (!pendingUser) {
       console.log(pendingUser);
-      
+
       return res.render("register", { message: "User not found", old: null });
     }
 
@@ -173,7 +173,7 @@ const verifyLogin = async (req, res, next) => {
     }
 
     if (!user.isVerified) {
-      return res.status(HttpStatus.BAD_REQUEST).json({ message: MESSAGES.EMAIL_NOT_VERIFIED});
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: MESSAGES.EMAIL_NOT_VERIFIED });
     }
 
     if (user.isBlocked) {
@@ -244,7 +244,7 @@ const loadHome = async (req, res, next) => {
         path: "variant",
         match: { variantListed: true },
       })
-      .populate("categoryId"); // Adjust if you need filters or select specific fields
+      .populate("categoryId");
 
     res.render("index", { products });
   } catch (error) {
@@ -280,7 +280,7 @@ const productDetail = async (req, res, next) => {
         path: "variant",
         match: { variantListed: true },
       })
-      .limit(4);
+      .limit(4); 
 
     res.render("product-detail", { variant, product, otherProducts });
   } catch (error) {
@@ -318,7 +318,7 @@ const shopPage = async (req, res, next) => {
         path: "variant",
         match: {
           variantListed: true,
-          ...(size && { variantSizes: size }),
+          ...(size && { "sizes.size": size }),
           ...(color && { variantColor: color }),
         },
       })
@@ -326,18 +326,17 @@ const shopPage = async (req, res, next) => {
         path: "categoryId",
         match: { isListed: true },
       });
-
     // Filter out products with no matching variants after population
     const filteredProducts = productsQuery.filter((product) => product.variant.length > 0);
 
     // Sorting logic
     if (sortBy === "Price: Low to High") {
       filteredProducts.sort(
-        (a, b) => a.variant[0].variantDiscountPrice - b.variant[0].variantDiscountPrice
+        (a, b) => a.variant[0].variantPrice - b.variant[0].variantPrice
       );
     } else if (sortBy === "Price: High to Low") {
       filteredProducts.sort(
-        (a, b) => b.variant[0].variantDiscountPrice - a.variant[0].variantDiscountPrice
+        (a, b) => b.variant[0].variantPrice - a.variant[0].variantPrice
       );
     } else if (sortBy === "A-Z") {
       filteredProducts.sort((a, b) =>
@@ -379,7 +378,7 @@ const myAccount = async (req, res, next) => {
     next(error);
   }
 };
-
+ 
 const editProfile = async (req, res, next) => {
   try {
     const userId = req.session.user_id;

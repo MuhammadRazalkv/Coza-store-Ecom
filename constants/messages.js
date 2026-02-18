@@ -46,10 +46,15 @@ const MESSAGES = Object.freeze({
   PRODUCT_UPDATED: "Product updated successfully.",
   PRODUCT_DELETED: "Product deleted successfully.",
   PRODUCT_EXISTS: 'Product name is already taken.',
+  PRODUCT_UNAVAILABLE: "Product temporarily unavailable",
+  PRODUCT_OUT_OF_STOCK: "Product out of stock",
 
   CART_EMPTY: "Your cart is empty.",
   ITEM_ADDED_TO_CART: "Item added to cart.",
   ITEM_REMOVED_FROM_CART: "Item removed from cart.",
+  ITEM_NOT_FOUND_IN_CART: "No matching product found in the cart",
+  CART_UPDATED: "cart updated successfully.",
+  PURCHASING_LIMIT:'You can purchase a maximum of 5 units of this item.',
 
   // Order / payment
   ORDER_PLACED: "Order placed successfully.",
@@ -72,8 +77,13 @@ const MESSAGES = Object.freeze({
 
   INVALID_SIZE_FORMAT: "Invalid sizes format.",
 
-  VARIANT_NOT_FOUND:'Variant not found.',
-  VARIANT_EXISTS:"This variant color already exists"
+  VARIANT_NOT_FOUND: 'Variant not found.',
+  VARIANT_EXISTS: "This variant color already exists",
+  VARIANT_UPDATED: "Variant updated successfully",
+  VARIANT_SIZE_NOT_FOUNT:"The variant doesn't have selected size",
+
+  PURCHASING_LIMIT_REACHED:"Purchasing limit reached",
+  PRODUCT_COUNT_INCREASED:"Product count increased successfully" 
 });
 
 module.exports = MESSAGES;

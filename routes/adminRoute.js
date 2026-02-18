@@ -67,26 +67,26 @@ adminRoute.get("/", adminAuth.isLogout, adminController.registerPage)
     parseSizes,
     validateBody(editVariantSchema),
     productController.editVariant
-  );
-adminRoute.patch("/product/blockVariant", adminAuth.isLogin, productController.blockUnblockVariant);
+  )
+  .patch("/product/blockVariant", adminAuth.isLogin,validateBody(objectIdSchema), productController.blockUnblockVariant)
 
-adminRoute.get("/orderDetails", adminAuth.isLogin, orderController.loadOrderPage);
-adminRoute.get("/userOrders/:orderId", adminAuth.isLogin, orderController.loadOrderDetailsPage);
-adminRoute.post(
-  "/userOrders/change-status/:orderId",
-  adminAuth.isLogin,
-  orderController.changeOrderStatus
-);
+  .get("/orderDetails", adminAuth.isLogin, orderController.loadOrderPage)
+  .get("/userOrders/:orderId", adminAuth.isLogin, orderController.loadOrderDetailsPage)
+  .post(
+    "/userOrders/change-status/:orderId",
+    adminAuth.isLogin,
+    orderController.changeOrderStatus
+  )
 
-adminRoute.get("/couponList", adminAuth.isLogin, couponController.loadCouponPage);
-adminRoute.get("/addCoupon", adminAuth.isLogin, couponController.loadAddCoupon);
-adminRoute.post("/addCoupon", adminAuth.isLogin, couponController.addCoupon);
-adminRoute.get("/editCoupon", adminAuth.isLogin, couponController.loadEditCoupon);
-adminRoute.post("/editCoupon", adminAuth.isLogin, couponController.editCoupon);
-adminRoute.patch("/changeStatus", adminAuth.isLogin, couponController.updateStatus);
-adminRoute.delete("/deleteCoupon", adminAuth.isLogin, couponController.deleteCoupon);
+  .get("/couponList", adminAuth.isLogin, couponController.loadCouponPage)
+  .get("/addCoupon", adminAuth.isLogin, couponController.loadAddCoupon)
+  .post("/addCoupon", adminAuth.isLogin, couponController.addCoupon)
+  .get("/editCoupon", adminAuth.isLogin, couponController.loadEditCoupon)
+  .post("/editCoupon", adminAuth.isLogin, couponController.editCoupon)
+  .patch("/changeStatus", adminAuth.isLogin, couponController.updateStatus)
+  .delete("/deleteCoupon", adminAuth.isLogin, couponController.deleteCoupon)
 
-adminRoute.get("/salesReport", adminAuth.isLogin, orderController.loadSalesReport);
+  .get("/salesReport", adminAuth.isLogin, orderController.loadSalesReport);
 // adminRoute.get('/downloadSalesReport',orderController.downloadSalesReport)
 // adminRoute.get('/salesReport/downloadPDFReport',orderController.downloadPDFReport)
 

@@ -1,20 +1,24 @@
 const User = require("../../model/userModel");
 const variantDB = require("../../model/variantModel");
 const CartDB = require("../../model/cartModel");
+const HttpStatus = require("../../constants/statusCode");
+const MESSAGES = require("../../constants/messages");
+const sendErrorRes = require("../../utils/sendJsonError");
+const sendSuccessRes = require("../../utils/sendSuccessRes");
 
 const loadCartPage = async (req, res, next) => {
   try {
     const userId = req.session.user_id;
     if (!userId) {
       return res
-        .status(400)
-        .json({ success: false, message: "User not found, please login again" });
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ success: false, message: MESSAGES.USER_NOT_FOUND });
     }
 
     // Fetching  user details
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(400).json({ success: false, message: "User not found" });
+      return res.status(HttpStatus.BAD_REQUEST).json({ success: false, message: MESSAGES.USER_NOT_FOUND });
     }
 
     // Fetching cart items
@@ -31,14 +35,20 @@ const loadCartPage = async (req, res, next) => {
       return res.render("cart", {
         cartItems: [],
         user: user,
-        message: "No items in the cart, add a product",
+        message: MESSAGES.CART_EMPTY,
+        cartTotal: 0
       });
     }
+    let cartTotal = cart.cartItems.reduce((acc, curr) => {
+      const price = curr.productVariantId.variantPrice
+      return price * curr.quantity + acc
+    }, 0)
 
     res.render("cart", {
       cartItems: cart.cartItems,
       user: user,
       message: undefined,
+      cartTotal
     });
   } catch (error) {
     next(error);
@@ -47,27 +57,26 @@ const loadCartPage = async (req, res, next) => {
 
 const addToCart = async (req, res, next) => {
   try {
-    const { variantId, selectedSize } = req.body;
+    const { variantId, selectedSize } = req.validatedBody;
     const userId = req.session.user_id;
 
     const variant = await variantDB.findById(variantId).populate("productId");
 
     if (!variant) {
-      return res.status(400).json({ success: false, message: "Variant not found" });
+      return res.status(HttpStatus.NOT_FOUND).json({ success: false, message: MESSAGES.VARIANT_NOT_FOUND });
     }
-    if (variant.variantListed == false) {
-      return res.status(400).json({ success: false, message: "Product temporarily unavailable" });
-    }
-    if (variant.productId.listed == false) {
-      return res.status(400).json({ success: false, message: "Product temporarily unavailable" });
-    }
-    if (variant.variantStock <= 0) {
-      return res.status(400).json({ success: false, message: "Product out of stock" });
-    }
-    if (!variant.variantSizes.includes(selectedSize)) {
-      return res.status(400).json({ success: false, message: "Please select a valid size" });
+    if (!variant.variantListed || !variant.productId.listed) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ success: false, message: MESSAGES.PRODUCT_UNAVAILABLE });
     }
 
+    const stockAndSize = variant.sizes.find(({ size }) => size === selectedSize);
+
+    if (!stockAndSize) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ success: false, message: MESSAGES.VARIANT_SIZE_NOT_FOUNT });
+    }
+    if (stockAndSize.stock <= 0) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ success: false, message: MESSAGES.PRODUCT_OUT_OF_STOCK });
+    }
     const existingCartUser = await CartDB.findOne({ userId });
 
     if (existingCartUser) {
@@ -80,22 +89,23 @@ const addToCart = async (req, res, next) => {
         // Check if there is enough stock to increment quantity
 
         if (existingCartItem.quantity > 4) {
-          return res.status(400).json({ success: true, message: "Purchasing limit reached" });
+          return res.status(HttpStatus.BAD_REQUEST).json({ success: true, message: MESSAGES.PURCHASING_LIMIT_REACHED });
         }
 
-        if (variant.variantStock > existingCartItem.quantity) {
+        if (stockAndSize.stock > existingCartItem.quantity) {
           existingCartItem.quantity++;
           await existingCartUser.save();
           return res
-            .status(200)
-            .json({ success: true, message: "Product count increased successfully" });
-        } else if (existingCartItem.quantity > 5) {
-          return res.status(400).json({ success: true, message: "Purchasing limit reached" });
+            .status(HttpStatus.OK)
+            .json({ success: true, message: MESSAGES.PRODUCT_COUNT_INCREASED });
         } else {
           // If there is not enough stock, return an error message
           return res
-            .status(400)
-            .json({ success: false, message: `Only ${variant.variantStock} stock left` });
+            .status(HttpStatus.BAD_REQUEST)
+            .json({
+              success: false, message: `Only ${stockAndSize.stock} left in stock.
+              We've updated your cart to the available quantity.
+              ` });
         }
       }
     }
@@ -118,7 +128,7 @@ const addToCart = async (req, res, next) => {
       await newCartUser.save();
     }
 
-    res.status(200).json({ success: true, message: "Product added to cart successfully" });
+    res.status(HttpStatus.OK).json({ success: true, message: MESSAGES.ITEM_ADDED_TO_CART });
   } catch (error) {
     next(error);
   }
@@ -127,14 +137,11 @@ const addToCart = async (req, res, next) => {
 const editCart = async (req, res, next) => {
   try {
     const userId = req.session.user_id;
-    const { variantId, newQuantity } = req.body;
+    const { variantId, newQuantity } = req.validatedBody;
     const parsedQuantity = parseInt(newQuantity);
 
     if (!userId) {
-      return res.status(400).json({
-        success: false,
-        message: "User not found, please ensure that you are logged in",
-      });
+      return sendErrorRes(req, res, HttpStatus.BAD_REQUEST, MESSAGES.USER_NOT_FOUND)
     }
 
     const cart = await CartDB.findOne({ userId })
@@ -144,35 +151,30 @@ const editCart = async (req, res, next) => {
     const item = cart.cartItems.find((item) => item.productVariantId._id.toString() === variantId);
 
     if (!item) {
-      return res.status(400).json({ success: false, message: "Cart item doesn't exist" });
-    } else {
-      if (
-        item.productVariantId.variantListed == false ||
-        item.productVariantId.productId.listed == false
-      ) {
-        return res.status(400).json({ success: false, message: "Product temporarily unavailable" });
-      } else if (item.productVariantId.variantStock <= 0) {
-        return res.status(400).json({ success: false, message: "Product out of stock" });
-      } else if (item.productVariantId.variantStock < parsedQuantity) {
-        item.quantity = item.productVariantId.variantStock;
-        await cart.save();
-        return res.status(200).json({
-          success: true,
-          message: `Quantity adjusted of the product ${item.productVariantId.variantName} to available stock: ${item.productVariantId.variantStock}`,
-          adjustedQuantity: item.productVariantId.variantStock,
-        });
-      } else if (parsedQuantity <= 0) {
-        return res.status(400).json({
-          success: false,
-          message: "Please select at least one quantity",
-        });
-      } else {
-        //    console.log('In the quantity update phase', parsedQuantity);
-        item.quantity = parsedQuantity;
-        await cart.save();
-        return res.status(200).json({ success: true, message: "Cart updated successfully" });
-      }
+      return sendErrorRes(req, res, HttpStatus.BAD_REQUEST, MESSAGES.ITEM_NOT_FOUND_IN_CART)
     }
+
+
+    if (
+      item.productVariantId.variantListed == false ||
+      item.productVariantId.productId.listed == false
+    ) {
+      return sendErrorRes(req, res, HttpStatus.BAD_REQUEST, MESSAGES.PRODUCT_UNAVAILABLE)
+    } else if (item.productVariantId.variantStock <= 0) {
+      return sendErrorRes(req, res, HttpStatus.BAD_REQUEST, MESSAGES.PRODUCT_OUT_OF_STOCK)
+    } else if (item.productVariantId.variantStock < parsedQuantity) {
+      item.quantity = item.productVariantId.variantStock;
+      await cart.save();
+      return sendSuccessRes(req, res, HttpStatus.OK, `Quantity adjusted of the product ${item.productVariantId.variantName} to available stock: ${item.productVariantId.variantStock}`, { adjustedQuantity: item.productVariantId.variantStock })
+    } else if (parsedQuantity > 5) {
+      return sendErrorRes(req, res, HttpStatus.BAD_REQUEST, MESSAGES.PURCHASING_LIMIT)
+    }
+    else {
+      item.quantity = parsedQuantity;
+      await cart.save();
+      return sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.CART_UPDATED)
+    }
+
   } catch (error) {
     next(error);
   }
@@ -181,11 +183,8 @@ const editCart = async (req, res, next) => {
 const deleteCartItem = async (req, res, next) => {
   try {
     const userId = req.session.user_id;
-    const { variantId, selectedSize } = req.body;
+    const { variantId, selectedSize } = req.validatedBody;
 
-    if (!variantId || !selectedSize) {
-      return res.status(400).json({ success: false, message: "Variant not found" });
-    }
 
     const updatedData = await CartDB.findOneAndUpdate(
       { userId: userId },
@@ -198,15 +197,15 @@ const deleteCartItem = async (req, res, next) => {
     );
 
     if (!updatedData) {
-      return res.status(400).json({
+      return res.status(HttpStatus.BAD_REQUEST).json({
         success: false,
-        message: "No matching product found in the cart",
+        message: MESSAGES.ITEM_NOT_FOUND_IN_CART,
       });
     }
 
-    return res.status(200).json({
+    return res.status(HttpStatus.OK).json({
       success: true,
-      message: "Product successfully removed from the cart",
+      message: MESSAGES.ITEM_REMOVED_FROM_CART,
     });
   } catch (error) {
     next(error);

@@ -13,6 +13,11 @@ const ERROR_MSG = Object.freeze({
 
   FILE_TYPE: "Only JPG, PNG, or WEBP files are allowed.",
   FILE_SIZE: "File size must be less than 5MB.",
+
+  INVALID_ID: "Invalid ID.",
+  INVALID_ID_FORMAT: "Invalid ID format.",
+
+  SELECT_VALID_SIZE:"Please select a valid size."
 });
 
 module.exports = ERROR_MSG;
