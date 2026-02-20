@@ -19,30 +19,37 @@ const loadCheckOutPage = async (req, res, next) => {
   try {
     const userId = req.session.user_id;
 
-    const cart = await CartDB.findOne({ userId }).populate("cartItems.productVariantId");
-    const addressData = await AddressDB.findOne({ userId });
 
+    const cart = await CartDB.findOne({ userId })
+      .populate({
+        path: "cartItems.productVariantId",
+        match: { variantListed: true }
+      });
     if (!userId || !cart || !cart.cartItems.length) {
       return res.redirect("/cart");
     }
 
-    const stock = cart.cartItems.filter(
-      (item) => item.productVariantId.variantListed && item.productVariantId.variantStock > 0
-    );
+    cart.cartItems = cart.cartItems.filter(item => {
+      const variant = item.productVariantId;
+      if (!variant) return false;
 
-    const quantityPrice = stock.map(
-      (item) => item.productVariantId.variantDiscountPrice * item.quantity
-    );
+      return variant.sizes.some(
+        s => s.size === item.selectedSize && s.stock > 0
+      );
+    });
+    const addressData = await AddressDB.findOne({ userId });
 
-    const cartSubTotal = quantityPrice.reduce((acc, curr) => acc + curr, 0);
 
+    const cartSubTotal = cart.cartItems.reduce((acc, curr) => acc + curr.productVariantId.variantPrice * curr.quantity, 0);
+    console.log('CartSubTotal',cartSubTotal);
+    
     const deliveryCharge = cartSubTotal < 5000 ? 100 : "Free delivery";
 
     let offerDiscount = 0;
 
-    stock.forEach((item) => {
-      const originalPrice = parseFloat(item.productVariantId.variantDiscountPrice);
-
+    cart.cartItems.forEach((item) => {
+      const originalPrice = parseFloat(item.productVariantId.variantPrice);
+      let bestDiscount = 0;
       if (
         item.productVariantId.categoryOffer &&
         item.productVariantId.categoryOffer.listed &&
@@ -51,7 +58,7 @@ const loadCheckOutPage = async (req, res, next) => {
         const discountPercentage = parseFloat(
           item.productVariantId.categoryOffer.discountPercentage
         );
-        offerDiscount += originalPrice * (discountPercentage / 100) * item.quantity;
+        bestDiscount = originalPrice * (discountPercentage / 100) * item.quantity;
       }
 
       if (
@@ -62,8 +69,11 @@ const loadCheckOutPage = async (req, res, next) => {
         const discountPercentage = parseFloat(
           item.productVariantId.productOffer.discountPercentage
         );
-        offerDiscount += originalPrice * (discountPercentage / 100) * item.quantity;
+        let discount = originalPrice * (discountPercentage / 100) * item.quantity;
+        bestDiscount = bestDiscount < discount ? discount : bestDiscount
       }
+
+      offerDiscount += bestDiscount;
     });
 
     let grandTotal =
@@ -553,7 +563,7 @@ const cancelOrder = async (req, res, next) => {
         const couponDiscount = Math.min(
           discountAmount,
           appliedCoupon.couponDetails.maxDiscountAmount ||
-            appliedCoupon.couponDetails.maxRedeemAmount
+          appliedCoupon.couponDetails.maxRedeemAmount
         );
         const finalGrandTotal = parseInt(grandTotal - couponDiscount);
         const amountToRefund = parseInt(
