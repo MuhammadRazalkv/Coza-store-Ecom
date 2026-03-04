@@ -19,7 +19,10 @@ const orderSchema = new mongoose.Schema(
           ref: "Variants",
           required: true,
         },
-
+        selectedSize: {
+          type: String,
+          required: true
+        },
         variantName: {
           type: String,
           required: true,
@@ -82,7 +85,7 @@ const orderSchema = new mongoose.Schema(
     deliveryCharge: {
       type: String,
     },
-    TotalOfferDiscount: {
+    totalOfferDiscount: {
       type: Number,
     },
     grandTotal: {

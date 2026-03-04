@@ -398,7 +398,7 @@
 													</h6>
 
 
-													<button onclick="copyText('<%= index %>')"
+													<button onclick="copyText('<%= coupon.couponCode %>')"
 														class="btn btn-sm btn-info">Copy</button>
 												</div>
 
@@ -664,26 +664,28 @@
 															<%= item.productVariantId.variantPrice %>
 														</td>
 														<td>
-															<%= item.productVariantId.variantPrice *
-																item.quantity %>
+															<%= item.productVariantId.variantPrice * item.quantity %>
 														</td>
 													</tr>
 													<% }); %>
 														<tr>
 															<td class="text-black font-weight-bold" colspan="2">
-																<strong>Cart Subtotal</strong></td>
+																<strong>Cart Subtotal</strong>
+															</td>
 															<td class="text-black" id="cartSubTotal">
 																<%= cartSubTotal %>
 															</td>
 														</tr>
 														<tr>
 															<td class="text-black font-weight-bold" colspan="2">
-																<strong>Coupon Discount</strong></td>
+																<strong>Coupon Discount</strong>
+															</td>
 															<td class="text-black" id="couponDiscountTd">---</td>
 														</tr>
 														<tr>
 															<td class="text-black font-weight-bold" colspan="2">
-																<strong>Offer Discount</strong></td>
+																<strong>Offer Discount</strong>
+															</td>
 															<td class="text-black" id="offerDiscount">
 																<%= offerDiscount %>
 															</td>
@@ -691,14 +693,16 @@
 
 														<tr>
 															<td class="text-black font-weight-bold" colspan="2">
-																<strong>Delivery Charges</strong></td>
+																<strong>Delivery Charges</strong>
+															</td>
 															<td class="text-black">
 																<%= deliveryCharge %>
 															</td>
 														</tr>
 														<tr>
 															<td class="text-black font-weight-bold" colspan="2">
-																<strong>Order Total</strong></td>
+																<strong>Order Total</strong>
+															</td>
 															<td class="text-black font-weight-bold" id="grandTotalTD">
 																<%= grandTotal %>
 															</td>

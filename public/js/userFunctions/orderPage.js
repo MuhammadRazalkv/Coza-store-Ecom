@@ -1,7 +1,4 @@
-
-
 async function cancelOrderItem(orderId, variantObjectId) {
-
   if (!orderId || !variantObjectId) {
     await Swal.fire({
       title: 'Oops...',
@@ -11,10 +8,6 @@ async function cancelOrderItem(orderId, variantObjectId) {
       window.location.reload()
     })
   }
-
-
-
-
 
   const confirmMessage = 'Are you sure you want to cancel this item  ?';
 
@@ -37,7 +30,7 @@ async function cancelOrderItem(orderId, variantObjectId) {
         method: 'POST',
         body: JSON.stringify({
           orderId,
-          variantObjectId
+          variantId: variantObjectId
         })
       })
 
@@ -75,7 +68,6 @@ async function cancelOrderItem(orderId, variantObjectId) {
 function viewOrderDetails(orderId) {
   window.location.href = `/orderTracking/?orderId=${orderId}`;
 }
-
 
 // request return 
 
@@ -150,7 +142,6 @@ document.getElementById('returnForm').addEventListener('submit', async function 
 // function for re payment 
 
 async function rePayment(orderId) {
-
   if (!orderId) {
     await Swal.fire({
       title: 'Oops...',
@@ -160,10 +151,6 @@ async function rePayment(orderId) {
       window.location.reload()
     })
   }
-
-
-
-
 
   const confirmMessage = 'Are you sure you want to rePay  this order ?';
 
@@ -178,114 +165,100 @@ async function rePayment(orderId) {
 
   if (result.isConfirmed) {
     const response = await fetch('/rePayment', {
-
       headers: {
         'Content-Type': 'application/json'
       },
       method: 'POST',
       body: JSON.stringify({
-        orderId: orderId
+        id: orderId
       })
     })
 
     const data = await response.json()
 
     if (response.ok) {
+      // const { order, placedOrder, KEY } = data
+      // let options = {
+      //   key: KEY, // Enter the Key ID generated from the Dashboard
+      //   amount: order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+      //   currency: "INR",
+      //   name: "COZASOTRE",
+      //   // "description": "Test Transaction",
+      //   // "image": "https://example.com/your_logo",
+      //   order_id: order.id,
+      //   //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+      //   handler: async function (response) {
 
-      const { order, placedOrder, KEY } = data
+      //     const paymentData = {
+      //       razorpay_order_id: response.razorpay_order_id,
+      //       razorpay_payment_id: response.razorpay_payment_id,
+      //       razorpay_signature: response.razorpay_signature,
+      //       order_id: placedOrder._id
+      //     };
 
-      let options = {
-        key: KEY, // Enter the Key ID generated from the Dashboard
-        amount: order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-        currency: "INR",
-        name: "COZASOTRE",
-        // "description": "Test Transaction",
-        // "image": "https://example.com/your_logo",
-        order_id: order.id,
-        //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
-        handler: async function (response) {
+      //     const res = await fetch('/verify-payment', {
+      //       headers: {
+      //         'Content-Type': 'application/json'
+      //       },
+      //       method: "POST",
+      //       body: JSON.stringify(paymentData)
+      //     })
+      //     const data = await res.json()
 
-          const paymentData = {
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature,
-            order_id: placedOrder._id
-          };
+      //     if (res.ok) {
+      //       Swal.fire({
+      //         title: "Success !",
+      //         text: data.message,
+      //         icon: "success"
+      //       }).then(() => {
+      //         window.location.reload()
+      //       })
+      //     } else {
+      //       Swal.fire({
+      //         icon: "error",
+      //         title: "oops...",
+      //         text: data.message
+      //       })
 
-          const res = await fetch('/verify-payment', {
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            method: "POST",
-            body: JSON.stringify(paymentData)
-          })
-          const data = await res.json()
-
-          if (res.ok) {
-            Swal.fire({
-              title: "Success !",
-              text: data.message,
-              icon: "success"
-            }).then(() => {
-              window.location.reload()
-            })
-          } else {
-            Swal.fire({
-              icon: "error",
-              title: "oops...",
-              text: data.message
-            })
-
-          }
+      //     }
 
 
 
 
-        },
-        "prefill": {
-          "name": placedOrder.shippingAddress.name,
-          "email": "gaurav.kumar@example.com",
-          "contact": placedOrder.shippingAddress.altPhone
-        },
-        // "notes": {
-        //     "address": "Razorpay Corporate Office"
-        // },
-        "theme": {
-          "color": "#3399cc"
-        },
-        modal: {
-          ondismiss: function () {
-            Swal.fire({
-              text: "Payment failed or was dismissed. Please try again.",
-              icon: "error"
-            }).then(() => {
-              return window.location.href = '/orders'
-            })
-          }
-        }
-      };
-      const rzp1 = new Razorpay(options);
-      rzp1.open();
-
+      //   },
+      //   "prefill": {
+      //     "name": placedOrder.shippingAddress.name,
+      //     "email": "gaurav.kumar@example.com",
+      //     "contact": placedOrder.shippingAddress.altPhone
+      //   },
+      //   // "notes": {
+      //   //     "address": "Razorpay Corporate Office"
+      //   // },
+      //   "theme": {
+      //     "color": "#3399cc"
+      //   },
+      //   modal: {
+      //     ondismiss: function () {
+      //       Swal.fire({
+      //         text: "Payment failed or was dismissed. Please try again.",
+      //         icon: "error"
+      //       }).then(() => {
+      //         return window.location.href = '/orders'
+      //       })
+      //     }
+      //   }
+      // };
+      // const rzp1 = new Razorpay(options);
+      // rzp1.open();
+      window.location.href = data.url
     } else {
-
       Swal.fire({
         icon: "error",
         title: "Oops...",
         text: data.message,
       })
     }
-
-
-
   }
-
-
-
-
-
-
-
 }
 
 async function downloadInvoice(orderId) {

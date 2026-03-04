@@ -1,21 +1,22 @@
 // Mongoose connection
 require("dotenv").config();
-const mongoose = require("mongoose");
-mongoose
-  .connect("mongodb://127.0.0.1:27017/COZA-2")
-  // mongoose.connect(process.env.MONGO_CONNECT)
-  .then(() => console.log("Connected to MongoDB "))
-  .catch((error) => console.error("Error connecting to MongoDB :", error));
-
-// console.log('e',process.env.MONGO_CONNECT);
-
 const express = require("express");
 const app = express();
 const path = require("path");
 const session = require("express-session");
-
+const adminRoute = require("./routes/adminRoute");
+const { webhook } = require("./controller/user/orderController");
 const nocache = require("nocache");
+const userRoute = require("./routes/userRoute");
+const connectDB = require("./config/db");
 
+
+app.post(
+  "/webhook/stripe",
+  express.raw({ type: "application/json" }),
+  webhook
+);
+connectDB()
 app.use(nocache());
 
 app.use(
@@ -32,12 +33,8 @@ app.use(express.static(path.join(__dirname, "/public")));
 app.set("view engine", "ejs");
 app.set("views", "./view/user");
 
-const userRoute = require("./routes/userRoute");
 
 app.use("/", userRoute);
-
-const adminRoute = require("./routes/adminRoute");
-
 app.use("/admin", adminRoute);
 
 app.all("*", (req, res) => {

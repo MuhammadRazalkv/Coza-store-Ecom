@@ -1,20 +1,20 @@
 
 document.getElementById('selectType').addEventListener('change', function () {
-    var type = this.value;
-    var categoryContainer = document.getElementById('categoryContainer');
-    var productContainer = document.getElementById('productContainer');
+  var type = this.value;
+  var categoryContainer = document.getElementById('categoryContainer');
+  var productContainer = document.getElementById('productContainer');
 
-    if (type === 'Category Offer') {
-      categoryContainer.style.display = 'block';
-      productContainer.style.display = 'none';
-    } else if (type === 'Product Offer') {
-      categoryContainer.style.display = 'none';
-      productContainer.style.display = 'block';
-    } else {
-      categoryContainer.style.display = 'none';
-      productContainer.style.display = 'none';
-    }
-  });
+  if (type === 'Category Offer') {
+    categoryContainer.style.display = 'block';
+    productContainer.style.display = 'none';
+  } else if (type === 'Product Offer') {
+    categoryContainer.style.display = 'none';
+    productContainer.style.display = 'block';
+  } else {
+    categoryContainer.style.display = 'none';
+    productContainer.style.display = 'none';
+  }
+});
 
 
 const numberInputs = document.querySelectorAll('.numberVal')
@@ -37,17 +37,17 @@ document
     const productId = document.getElementById('productSelect').value
     const categoryId = document.getElementById('categorySelect').value
     const discountPercentage = document.getElementById('discountPercentage').value
-    
+
 
     const expiryDate = document.getElementById('expiryDate').value
     const currentDate = new Date()
     const inputDate = new Date(expiryDate)
-   
-    if ( offerName == '' ||selectType == '' ||   discountPercentage =='' ) {
+
+    if (offerName == '' || selectType == '' || discountPercentage == '') {
       alert.innerText = 'Please fill out all the columns'
       alert.style.display = 'block';
       return
-     }
+    }
 
     if (discountPercentage < 1 || discountPercentage > 90) {
       alert.innerText = 'Please select the discount percentage between 1-90'
@@ -75,41 +75,42 @@ document
       // this.value = '';
       return
     }
-    
 
-   const response = await fetch('/admin/addOffer',{
-    method: 'POST',
-    headers: {
+
+    const response = await fetch('/admin/addOffer', {
+      method: 'POST',
+      headers: {
         'Content-Type': 'application/json'
-    },
-    body:JSON.stringify({
+      },
+      body: JSON.stringify({
         offerName,
-        selectType,
-        productId,
-        categoryId,
+        offerType: selectType,
+        
+        productId: productId ? productId : undefined,
+        categoryId: categoryId ? categoryId : undefined,
         discountPercentage,
         expiryDate
+      })
     })
-   })
-   
-   const data = await response.json()
-   if (response.ok) {
-    Swal.fire({
-       
+
+    const data = await response.json()
+    if (response.ok) {
+      Swal.fire({
+
         icon: "success",
         title: data.message,
         showConfirmButton: true,
-        
-    }).then(()=>{
-      window.location.href = '/admin/offers'
-    })
-} else {
-    Swal.fire({
+
+      }).then(() => {
+        window.location.href = '/admin/offers'
+      })
+    } else {
+      Swal.fire({
         icon: "error",
         title: "Oops...",
         text: data.message,
-    });
-}
+      });
+    }
 
-})
+  })
 

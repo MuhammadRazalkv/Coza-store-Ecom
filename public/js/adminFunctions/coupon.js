@@ -18,20 +18,20 @@ document
     const minimumPurchaseAmount = document.getElementById('minimumPurchaseAmount').value
     const discountPercentage = document.getElementById('discountPercentage').value
     const maxRedeemAmount = document.getElementById('maxRedeemAmount').value
-    
+
 
     const expiryDate = document.getElementById('expiryDate').value
     const currentDate = new Date()
     const inputDate = new Date(expiryDate)
-   
-    if ( couponName == '' ||couponCode == '' ||  minimumPurchaseAmount =='' || maxRedeemAmount =='' || discountPercentage =='' ) {
+
+    if (couponName == '' || couponCode == '' || minimumPurchaseAmount == '' || maxRedeemAmount == '' || discountPercentage == '') {
       alert.innerText = 'Please fill out all the columns'
       alert.style.display = 'block';
       return
-     }
+    }
 
-    if (discountPercentage < 10 || discountPercentage > 90) {
-      alert.innerText = 'Please select the discount percentage between 10-90'
+    if (discountPercentage < 5 || discountPercentage > 90) {
+      alert.innerText = 'Please select the discount percentage between 5-90'
       alert.style.display = 'block';
       return
     }
@@ -56,42 +56,41 @@ document
       // this.value = '';
       return
     }
-    
 
-   const response = await fetch('/admin/addCoupon',{
-    method: 'POST',
-    headers: {
+
+    const response = await fetch('/admin/addCoupon', {
+      method: 'POST',
+      headers: {
         'Content-Type': 'application/json'
-    },
-    body:JSON.stringify({
-      couponName,
-      couponCode,
-      minimumPurchaseAmount,
-      discountPercentage,
-      maxRedeemAmount,
-      expiryDate
+      },
+      body: JSON.stringify({
+        couponName,
+        couponCode,
+        minimumPurchaseAmount,
+        discountPercentage,
+        maxRedeemAmount,
+        expiryDate
+      })
     })
-   })
-   
-   const data = await response.json()
-   if (response.ok) {
-    Swal.fire({
-       
+
+    const data = await response.json()
+    if (response.ok) {
+      Swal.fire({
         icon: "success",
         title: data.message,
         showConfirmButton: true,
-        
-    }).then(()=>{
-      window.location.href = '/admin/couponList'
-    })
-} else {
-    Swal.fire({
+
+      }).then(() => {
+        window.location.href = '/admin/couponList'
+      })
+    } else {
+      Swal.fire({
         icon: "error",
         title: "Oops...",
         text: data.message,
-    });
-}
+      });
+    }
 
-})
+  })
 
 

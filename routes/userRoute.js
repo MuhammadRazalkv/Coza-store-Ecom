@@ -15,6 +15,11 @@ const profileSchema = require("../utils/validations/profileSchema");
 const addressSchema = require("../utils/validations/addressSchema");
 const passwordSchema = require("../utils/validations/passwordSchema");
 const { variantAndSizeSchema, variantAndQtySchema } = require("../utils/validations/cartSchema");
+const { checkoutSchema } = require("../utils/validations/checkoutSchma");
+const objectIdSchema = require("../utils/validations/objectIdSchema");
+const { applyCouponSchema } = require("../utils/validations/couponSchema");
+const { cancelOrderSchema, returnReqSchema } = require("../utils/validations/orderSchema");
+const { wishListSchema } = require("../utils/validations/wishlistSchema");
 
 
 user_route.use(
@@ -93,22 +98,23 @@ user_route.get("/register", userAuth.isLogout, userController.registerPage).
 
   // check out routes
   .get("/checkout", userAuth.isLogin, orderController.loadCheckOutPage)
-  .post("/applyCoupon", userAuth.isLogin, orderController.applyCoupon)
+  .post("/applyCoupon", userAuth.isLogin, validateBody(applyCouponSchema), orderController.applyCoupon)
 
-  .post("/placeOrder", userAuth.isLogin, orderController.placeOrder)
-  .post("/verify-payment", userAuth.isLogin, orderController.verifyPayment)
-  .post("/rePayment", userAuth.isLogin, orderController.rePayment)
+  .post("/placeOrder", userAuth.isLogin, validateBody(checkoutSchema), orderController.placeOrder)
+  // .post("/verify-payment", userAuth.isLogin, orderController.verifyPayment)
+  .post("/rePayment", userAuth.isLogin, validateBody(objectIdSchema), orderController.rePayment)
   .get("/orders", userAuth.isLogin, orderController.loadOrderPage)
-  .post("/orders/cancelOrder", userAuth.isLogin, orderController.cancelOrder)
+  .post("/orders/cancelOrder", userAuth.isLogin, validateBody(cancelOrderSchema), orderController.cancelOrder)
   .get("/orderTracking", userAuth.isLogin, orderController.loadOrderTrackingPage)
-  .post("/requestReturn", userAuth.isLogin, orderController.requestReturn)
+  .post("/requestReturn", userAuth.isLogin, validateBody(returnReqSchema), orderController.requestReturn)
   .get("/downloadInvoice", userAuth.isLogin, orderController.downloadInvoice)
 
   .get("/wishlist", userAuth.isLogin, orderController.loadWishList)
-  .post("/addToWishlist", userAuth.isLogin, orderController.addToWishlist)
+  .post("/addToWishlist", userAuth.isLogin, validateBody(wishListSchema), orderController.addToWishlist)
   .delete(
-    "/removeWishlistItem/:variantId/:selectedSize",
+    "/removeWishlistItem",
     userAuth.isLogin,
+    validateBody(wishListSchema),
     orderController.removeFromWishlist
   )
 

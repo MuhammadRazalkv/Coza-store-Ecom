@@ -19,6 +19,9 @@ const { categorySchema, editCategorySchema } = require("../utils/validations/cat
 const { productSchema, editProductSchema } = require("../utils/validations/productSchema");
 const { variantSchema, editVariantSchema } = require("../utils/validations/variantSchema");
 const parseSizes = require("../middleware/sizeParser");
+const { couponSchema, editCouponSchema } = require("../utils/validations/couponSchema");
+const { offerSchema, editOfferSchema } = require("../utils/validations/offerSchema");
+const { orderStatusSchema } = require("../utils/validations/orderSchema");
 
 
 adminRoute.use(express.json());
@@ -68,37 +71,39 @@ adminRoute.get("/", adminAuth.isLogout, adminController.registerPage)
     validateBody(editVariantSchema),
     productController.editVariant
   )
-  .patch("/product/blockVariant", adminAuth.isLogin,validateBody(objectIdSchema), productController.blockUnblockVariant)
+  .patch("/product/blockVariant", adminAuth.isLogin, validateBody(objectIdSchema), productController.blockUnblockVariant)
 
   .get("/orderDetails", adminAuth.isLogin, orderController.loadOrderPage)
   .get("/userOrders/:orderId", adminAuth.isLogin, orderController.loadOrderDetailsPage)
   .post(
-    "/userOrders/change-status/:orderId",
+    "/userOrders/change-status",
     adminAuth.isLogin,
+    validateBody(orderStatusSchema),
     orderController.changeOrderStatus
   )
 
   .get("/couponList", adminAuth.isLogin, couponController.loadCouponPage)
   .get("/addCoupon", adminAuth.isLogin, couponController.loadAddCoupon)
-  .post("/addCoupon", adminAuth.isLogin, couponController.addCoupon)
+  .post("/addCoupon", adminAuth.isLogin, validateBody(couponSchema), couponController.addCoupon)
   .get("/editCoupon", adminAuth.isLogin, couponController.loadEditCoupon)
-  .post("/editCoupon", adminAuth.isLogin, couponController.editCoupon)
-  .patch("/changeStatus", adminAuth.isLogin, couponController.updateStatus)
-  .delete("/deleteCoupon", adminAuth.isLogin, couponController.deleteCoupon)
+  .post("/editCoupon", adminAuth.isLogin, validateBody(editCouponSchema), couponController.editCoupon)
+  .patch("/couponstatus", adminAuth.isLogin, validateBody(objectIdSchema), couponController.updateStatus)
+  .delete("/deleteCoupon", adminAuth.isLogin, validateBody(objectIdSchema), couponController.deleteCoupon)
 
-  .get("/salesReport", adminAuth.isLogin, orderController.loadSalesReport);
+
+  .get("/offers", adminAuth.isLogin, offerController.loadOfferPage)
+  .get("/addOffer", adminAuth.isLogin, offerController.loadAddOffer)
+  .post("/addOffer", adminAuth.isLogin, validateBody(offerSchema), offerController.addOffer)
+  .patch("/offers/changeStatus", adminAuth.isLogin, validateBody(objectIdSchema), offerController.changeOfferStatus)
+  .get("/offers/editOffer", adminAuth.isLogin, offerController.loadEditOffer)
+  .post("/offers/editOffer", adminAuth.isLogin, validateBody(editOfferSchema), offerController.editOffer)
+  .delete("/offers/deleteOffer", adminAuth.isLogin, validateBody(objectIdSchema), offerController.deleteOffer)
+
+
+  .get("/salesReport", adminAuth.isLogin, orderController.loadSalesReport)
+  .get("/logout", adminController.logout);
 // adminRoute.get('/downloadSalesReport',orderController.downloadSalesReport)
 // adminRoute.get('/salesReport/downloadPDFReport',orderController.downloadPDFReport)
-
-adminRoute.get("/offers", adminAuth.isLogin, offerController.loadOfferPage);
-adminRoute.get("/addOffer", adminAuth.isLogin, offerController.loadAddOffer);
-adminRoute.post("/addOffer", adminAuth.isLogin, offerController.addOffer);
-adminRoute.patch("/offers/changeStatus", adminAuth.isLogin, offerController.changeOfferStatus);
-adminRoute.get("/offers/editOffer", adminAuth.isLogin, offerController.loadEditOffer);
-adminRoute.post("/offers/editOffer", adminAuth.isLogin, offerController.editOffer);
-adminRoute.delete("/offers/deleteOffer", adminAuth.isLogin, offerController.deleteOffer);
-
-adminRoute.get("/logout", adminController.logout);
 adminRoute.all("*", (req, res) => {
   res.render("error");
 });

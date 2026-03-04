@@ -2,98 +2,101 @@
 
 // document.addEventListener('DOMContentLoaded', function(){
 
-async function removeItem(variantId,selectedSize){
-  
-    const confirmMessage = 'Are you sure you want to remove this item from wishlist'
-    const result = await Swal.fire({
-        title: confirmMessage,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes'
+async function removeItem(variantId, selectedSize) {
+
+  const confirmMessage = 'Are you sure you want to remove this item from wishlist'
+  const result = await Swal.fire({
+    title: confirmMessage,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes'
+  });
+
+  if (result.isConfirmed) {
+    try {
+
+
+      const response = await fetch(`/removeWishlistItem`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          variantId, selectedSize
+        })
       });
 
-      if (result.isConfirmed) {
-       try {
-        
-      
-        const response = await fetch(`/removeWishlistItem/${variantId}/${selectedSize}`, {
-            method: 'DELETE',
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          });
-        
-        const data = await response.json()
-        if (response.ok) {
-            Swal.fire({
-                title: "Success !",
-                text:data.message,
-                icon: "success"
-              }).then(()=>{
-                window.location.reload()
-              })
-        }else{
-            Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: data.message,
-               
-              });
-        }
-       } catch (error) {
+      const data = await response.json()
+      if (response.ok) {
+        Swal.fire({
+          title: "Success !",
+          text: data.message,
+          icon: "success"
+        }).then(() => {
+          window.location.reload()
+        })
+      } else {
         Swal.fire({
           icon: "error",
           title: "Oops...",
-          text: error.message,
-         
+          text: data.message,
+
         });
-       }
-     
       }
-
-}
-
-
-async function addToCart(variantId,selectedSize){
-  
-  if ( variantId && selectedSize ) {
-    try {
-      const response = await fetch('/addToCart', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            variantId,
-            selectedSize
-        })
-    });
-    const data = await response.json();
-
-    if (response.ok) {
-        Swal.fire({
-            position: "top-end",
-            icon: "success",
-            title: data.message,
-            showConfirmButton: false,
-            timer: 1500
-        });
-    } else {
-        Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: data.message,
-        });
-    }
-      
     } catch (error) {
       Swal.fire({
         icon: "error",
         title: "Oops...",
         text: error.message,
-       
+
+      });
+    }
+
+  }
+
+}
+
+
+async function addToCart(variantId, selectedSize) {
+
+  if (variantId && selectedSize) {
+    try {
+      const response = await fetch('/addToCart', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          variantId,
+          selectedSize
+        })
+      });
+      const data = await response.json();
+
+      if (response.ok) {
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: data.message,
+          showConfirmButton: false,
+          timer: 1500
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: data.message,
+        });
+      }
+
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: error.message,
+
       });
 
     }

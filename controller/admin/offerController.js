@@ -2,6 +2,11 @@ const CategoryDB = require("../../model/categoryModel");
 const productDB = require("../../model/productModel");
 const variantDB = require("../../model/variantModel");
 const OfferDB = require("../../model/offerModel");
+const sendErrorRes = require("../../utils/sendJsonError");
+const HttpStatus = require("../../constants/statusCode");
+const MESSAGES = require("../../constants/messages");
+const sendSuccessRes = require("../../utils/sendSuccessRes");
+const { isValidObjectId } = require("mongoose");
 
 const loadOfferPage = async (req, res, next) => {
   try {
@@ -26,13 +31,8 @@ const loadAddOffer = async (req, res, next) => {
 
 const addOffer = async (req, res, next) => {
   try {
-    const { offerName, selectType, productId, categoryId, discountPercentage, expiryDate } =
-      req.body;
-
-    if (offerName == "" || selectType == "" || discountPercentage == "" || expiryDate == "") {
-      return res.status(400).json({ message: "fields can not be empty" });
-    }
-
+    const { offerName, offerType, productId, categoryId, discountPercentage, expiryDate } =
+      req.validatedBody;
     const regexName = new RegExp(offerName, "i");
 
     const existingOffer = await OfferDB.findOne({
@@ -40,29 +40,24 @@ const addOffer = async (req, res, next) => {
     });
 
     if (existingOffer) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Offer name already exists. Please change it." });
+      return sendErrorRes(req, res, HttpStatus.CONFLICT, MESSAGES.DUPLICATE_OFFER)
     }
 
-    if (selectType == "Category Offer") {
-      if (categoryId == "") {
-        return res.status(400).json({ message: "Please select a category" });
-      }
+    if (offerType == "Category Offer") {
 
       const categoryOffer = await OfferDB.findOne({ categoryId: categoryId });
       if (categoryOffer) {
-        return res.status(400).json({ message: "This category already have an offer" });
+        return sendErrorRes(req, res, HttpStatus.CONFLICT, MESSAGES.DUPLICATE_CATEGORY_OFFER)
       }
 
       const category = await CategoryDB.findOne({ _id: categoryId });
 
       const offer = new OfferDB({
-        offerName: offerName,
-        offerType: selectType,
-        discountPercentage: parseInt(discountPercentage),
-        expiryDate: expiryDate,
-        categoryId: categoryId,
+        offerName,
+        offerType,
+        discountPercentage,
+        expiryDate,
+        categoryId,
         appliedItem: category.name,
       });
 
@@ -90,23 +85,20 @@ const addOffer = async (req, res, next) => {
         },
         { upsert: true }
       );
-      return res.status(200).json({ message: "Offer added successfully" });
-    } else if (selectType == "Product Offer") {
-      if (productId == "") {
-        return res.status(400).json({ message: "Please select a category" });
-      }
-      const productOffer = await OfferDB.findOne({ productId: productId });
+      return sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.OFFER_ADDED)
+    } else if (offerType == "Product Offer") {
+      const productOffer = await OfferDB.findOne({ productId });
       if (productOffer) {
-        return res.status(400).json({ message: "This product already have an offer" });
+        return sendErrorRes(req, res, HttpStatus.CONFLICT, MESSAGES.DUPLICATE_PRODUCT_OFFER)
       }
       const product = await productDB.findById(productId);
 
       const offer = new OfferDB({
-        offerName: offerName,
-        offerType: selectType,
-        discountPercentage: parseInt(discountPercentage),
-        expiryDate: expiryDate,
-        productId: productId,
+        offerName,
+        offerType,
+        discountPercentage,
+        expiryDate,
+        productId,
         appliedItem: product.productName,
       });
 
@@ -124,9 +116,7 @@ const addOffer = async (req, res, next) => {
         { upsert: true }
       );
 
-      return res.status(200).json({ message: "Offer added successfully" });
-    } else {
-      return res.status(400).json({ message: "No type found" });
+      return sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.OFFER_ADDED)
     }
   } catch (error) {
     next(error);
@@ -135,15 +125,12 @@ const addOffer = async (req, res, next) => {
 
 const changeOfferStatus = async (req, res, next) => {
   try {
-    const { offerId } = req.body;
+    const { id: offerId } = req.validatedBody;
 
-    if (!offerId) {
-      return res.status(400).json({ success: false, message: "Offer not found" });
-    }
 
     const offer = await OfferDB.findById(offerId);
     if (!offer) {
-      return res.status(400).json({ success: false, message: "Offer not found" });
+      return sendErrorRes(req, res, HttpStatus.NOT_FOUND, MESSAGES.OFFER_NOT_FOUND)
     }
 
     const newStatus = !offer.listed;
@@ -163,9 +150,7 @@ const changeOfferStatus = async (req, res, next) => {
       );
     }
 
-    return res
-      .status(200)
-      .json({ success: true, message: "Offer status updated successfully", listed: newStatus });
+    sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.OFFER_UPDATED, { listed: newStatus })
   } catch (error) {
     next(error);
   }
@@ -174,15 +159,15 @@ const changeOfferStatus = async (req, res, next) => {
 const loadEditOffer = async (req, res, next) => {
   try {
     const offerId = req.query.offerId;
-    if (!offerId) {
-      return res.status(400).json({ message: "Offer id not found" });
+    if (!isValidObjectId(offerId)) {
+      return res.render("editOffer", { offer: null, message: MESSAGES.INVALID_ID_FORMAT })
     }
 
     const offer = await OfferDB.findById(offerId);
     if (!offer) {
-      return res.status(400).json({ message: "Offer  not found" });
+      return res.render("editOffer", { offer: null, message: MESSAGES.OFFER_NOT_FOUND })
     }
-    res.render("editOffer", { offer });
+    res.render("editOffer", { offer, message: null });
   } catch (error) {
     next(error);
   }
@@ -190,12 +175,7 @@ const loadEditOffer = async (req, res, next) => {
 
 const editOffer = async (req, res, next) => {
   try {
-    const { offerId, offerName, discountPercentage, expiryDate } = req.body;
-
-    // Validate input fields
-    if (!offerId || !offerName || !discountPercentage || !expiryDate) {
-      return res.status(400).json({ message: "Fields cannot be empty" });
-    }
+    const { offerId, offerName, discountPercentage, expiryDate } = req.validatedBody;
 
     // Check for existing offer with the same name
     const regexName = new RegExp(`^${offerName}$`, "i");
@@ -205,9 +185,7 @@ const editOffer = async (req, res, next) => {
     });
 
     if (existingOffer) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Offer name already exists. Please change it." });
+      return sendErrorRes(req, res, HttpStatus.CONFLICT, MESSAGES.DUPLICATE_OFFER)
     }
 
     // Update the offer
@@ -224,7 +202,7 @@ const editOffer = async (req, res, next) => {
     );
 
     if (!updatedOffer) {
-      return res.status(404).json({ message: "Offer not found" });
+      return sendErrorRes(req, res, HttpStatus.NOT_FOUND, MESSAGES.OFFER_NOT_FOUND)
     }
 
     // Update the discount percentage in the variants
@@ -242,24 +220,21 @@ const editOffer = async (req, res, next) => {
     }
 
     if (!updateResult) {
-      return res.status(500).json({ message: "Failed to update variants" });
+      return sendErrorRes(req, res, HttpStatus.INTERNAL_SERVER_ERROR, "Failed to update variants")
     }
-
-    return res.status(200).json({ message: "Offer updated successfully" });
+    sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.OFFER_UPDATED)
   } catch (error) {
     next(error);
   }
 };
 const deleteOffer = async (req, res, next) => {
   try {
-    const { offerId } = req.body;
-    if (!offerId) {
-      return res.status(400).json({ success: false, message: "Offer ID not provided" });
-    }
+    const { id: offerId } = req.body;
+
 
     const offer = await OfferDB.findById(offerId);
     if (!offer) {
-      return res.status(400).json({ success: false, message: "Offer not found" });
+      return sendErrorRes(HttpStatus.NOT_FOUND, MESSAGES.OFFER_NOT_FOUND)
     }
 
     let updateResult;
@@ -279,9 +254,8 @@ const deleteOffer = async (req, res, next) => {
 
     await OfferDB.findByIdAndDelete(offerId);
 
-    return res
-      .status(200)
-      .json({ success: true, message: "Offer deleted successfully", updateResult });
+    sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.OFFER_DELETED, { updateResult })
+
   } catch (error) {
     next(error);
   }
