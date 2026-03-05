@@ -21,7 +21,6 @@ const { applyCouponSchema } = require("../utils/validations/couponSchema");
 const { cancelOrderSchema, returnReqSchema } = require("../utils/validations/orderSchema");
 const { wishListSchema } = require("../utils/validations/wishlistSchema");
 
-
 user_route.use(
   session({
     secret: process.env.USER_SESSION_SECRET,
@@ -46,20 +45,20 @@ const attachUserToViews = (req, res, next) => {
 
 user_route.use(attachUserToViews);
 
-
 // Registration routes
-user_route.get("/register", userAuth.isLogout, userController.registerPage).
-  post("/register", validateBody(userSchema, 'register'), userController.insertUser).
-  get("/auth/google", passport.authenticate("google", { scope: ["email", "profile"] })).
-  get(
+user_route
+  .get("/register", userAuth.isLogout, userController.registerPage)
+  .post("/register", validateBody(userSchema, "register"), userController.insertUser)
+  .get("/auth/google", passport.authenticate("google", { scope: ["email", "profile"] }))
+  .get(
     "/auth/google/callback",
     passport.authenticate("google", {
       successRedirect: "/success",
       failureRedirect: "/failure",
     })
-  ).
-  get("/success", userController.googleAuth).
-  get("/failure", userController.googleFail)
+  )
+  .get("/success", userController.googleAuth)
+  .get("/failure", userController.googleFail)
 
   // OTP routes
   .get("/otpVerification", userAuth.isLogout, userController.otpPage)
@@ -69,20 +68,36 @@ user_route.get("/register", userAuth.isLogout, userController.registerPage).
   //Login routes
 
   .get("/login", userAuth.isLogout, userController.loginPage)
-  .post("/login", validateBody(loginSchema, 'login'), userController.verifyLogin)
+  .post("/login", validateBody(loginSchema, "login"), userController.verifyLogin)
 
   // Logout route
   .get("/logout", userAuth.isLogin, userController.logout)
   .get("/myAccount", userAuth.isLogin, userController.myAccount)
-  .patch("/myAccount/editProfile", userAuth.isLogin, validateBody(profileSchema), userController.editProfile)
-  .post("/myAccount/save-address", userAuth.isLogin, validateBody(addressSchema), userController.saveAddress)
-  .delete(
-    "/deleteAddress/:addressId",
+  .patch(
+    "/myAccount/editProfile",
     userAuth.isLogin,
-    userController.deleteAddress
+    validateBody(profileSchema),
+    userController.editProfile
   )
-  .patch("/edit-Address/:addressId", userAuth.isLogin, validateBody(addressSchema), userController.editAddress)
-  .patch("/change-password", userAuth.isLogin, validateBody(passwordSchema), userController.changePassword)
+  .post(
+    "/myAccount/save-address",
+    userAuth.isLogin,
+    validateBody(addressSchema),
+    userController.saveAddress
+  )
+  .delete("/deleteAddress/:addressId", userAuth.isLogin, userController.deleteAddress)
+  .patch(
+    "/edit-Address/:addressId",
+    userAuth.isLogin,
+    validateBody(addressSchema),
+    userController.editAddress
+  )
+  .patch(
+    "/change-password",
+    userAuth.isLogin,
+    validateBody(passwordSchema),
+    userController.changePassword
+  )
 
   // Other routes
   .get("/", userController.loadHome)
@@ -93,24 +108,54 @@ user_route.get("/register", userAuth.isLogout, userController.registerPage).
   // cart routes
   .get("/cart", userAuth.isLogin, cartController.loadCartPage)
   .patch("/editCart", userAuth.isLogin, validateBody(variantAndQtySchema), cartController.editCart)
-  .post("/addToCart", userAuth.isLogin, validateBody(variantAndSizeSchema), cartController.addToCart)
-  .delete("/deleteCartItem", userAuth.isLogin, validateBody(variantAndSizeSchema), cartController.deleteCartItem)
+  .post(
+    "/addToCart",
+    userAuth.isLogin,
+    validateBody(variantAndSizeSchema),
+    cartController.addToCart
+  )
+  .delete(
+    "/deleteCartItem",
+    userAuth.isLogin,
+    validateBody(variantAndSizeSchema),
+    cartController.deleteCartItem
+  )
 
   // check out routes
   .get("/checkout", userAuth.isLogin, orderController.loadCheckOutPage)
-  .post("/applyCoupon", userAuth.isLogin, validateBody(applyCouponSchema), orderController.applyCoupon)
+  .post(
+    "/applyCoupon",
+    userAuth.isLogin,
+    validateBody(applyCouponSchema),
+    orderController.applyCoupon
+  )
 
   .post("/placeOrder", userAuth.isLogin, validateBody(checkoutSchema), orderController.placeOrder)
   // .post("/verify-payment", userAuth.isLogin, orderController.verifyPayment)
   .post("/rePayment", userAuth.isLogin, validateBody(objectIdSchema), orderController.rePayment)
   .get("/orders", userAuth.isLogin, orderController.loadOrderPage)
-  .post("/orders/cancelOrder", userAuth.isLogin, validateBody(cancelOrderSchema), orderController.cancelOrder)
+  .post(
+    "/orders/cancelOrder",
+    userAuth.isLogin,
+    validateBody(cancelOrderSchema),
+    orderController.cancelOrder
+  )
   .get("/orderTracking", userAuth.isLogin, orderController.loadOrderTrackingPage)
-  .post("/requestReturn", userAuth.isLogin, validateBody(returnReqSchema), orderController.requestReturn)
+  .post(
+    "/requestReturn",
+    userAuth.isLogin,
+    validateBody(returnReqSchema),
+    orderController.requestReturn
+  )
   .get("/downloadInvoice", userAuth.isLogin, orderController.downloadInvoice)
 
   .get("/wishlist", userAuth.isLogin, orderController.loadWishList)
-  .post("/addToWishlist", userAuth.isLogin, validateBody(wishListSchema), orderController.addToWishlist)
+  .post(
+    "/addToWishlist",
+    userAuth.isLogin,
+    validateBody(wishListSchema),
+    orderController.addToWishlist
+  )
   .delete(
     "/removeWishlistItem",
     userAuth.isLogin,
@@ -122,7 +167,6 @@ user_route.get("/register", userAuth.isLogout, userController.registerPage).
   .get("/contact", userController.contactPage)
 
   .get("/wallet", userAuth.isLogin, orderController.loadWalletPage);
-
 
 user_route.use(errorHandlingMiddleware);
 

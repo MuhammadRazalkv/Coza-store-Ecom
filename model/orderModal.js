@@ -21,7 +21,7 @@ const orderSchema = new mongoose.Schema(
         },
         selectedSize: {
           type: String,
-          required: true
+          required: true,
         },
         variantName: {
           type: String,

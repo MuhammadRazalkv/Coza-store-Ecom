@@ -14,7 +14,7 @@ const MESSAGES = require("../../constants/messages");
 const HttpStatus = require("../../constants/statusCode");
 
 function isValidObjectId(id) {
-  return ObjectId.isValid(id)
+  return ObjectId.isValid(id);
 }
 
 const registerPage = async (req, res, next) => {
@@ -73,7 +73,9 @@ const otpPage = async (req, res, next) => {
     const { email } = req.query;
     const pendingUser = await PendingUser.findOne({ email });
     if (!pendingUser) {
-      return res.status(HttpStatus.BAD_REQUEST).render("register", { message: "User not found", old: null });
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .render("register", { message: "User not found", old: null });
     }
     res.render("otp", { email: email });
   } catch (error) {
@@ -165,7 +167,6 @@ const verifyLogin = async (req, res, next) => {
     }
     if (!user.password) {
       return res.status(HttpStatus.BAD_REQUEST).json({ message: MESSAGES.LOGIN_METHOD_MISMATCH });
-
     }
     const passwordMatch = await bcrypt.compare(password.trim(), user.password);
     if (!passwordMatch) {
@@ -280,7 +281,7 @@ const productDetail = async (req, res, next) => {
         path: "variant",
         match: { variantListed: true },
       })
-      .limit(4); 
+      .limit(4);
 
     res.render("product-detail", { variant, product, otherProducts });
   } catch (error) {
@@ -331,13 +332,9 @@ const shopPage = async (req, res, next) => {
 
     // Sorting logic
     if (sortBy === "Price: Low to High") {
-      filteredProducts.sort(
-        (a, b) => a.variant[0].variantPrice - b.variant[0].variantPrice
-      );
+      filteredProducts.sort((a, b) => a.variant[0].variantPrice - b.variant[0].variantPrice);
     } else if (sortBy === "Price: High to Low") {
-      filteredProducts.sort(
-        (a, b) => b.variant[0].variantPrice - a.variant[0].variantPrice
-      );
+      filteredProducts.sort((a, b) => b.variant[0].variantPrice - a.variant[0].variantPrice);
     } else if (sortBy === "A-Z") {
       filteredProducts.sort((a, b) =>
         a.variant[0].variantName.localeCompare(b.variant[0].variantName)
@@ -378,7 +375,7 @@ const myAccount = async (req, res, next) => {
     next(error);
   }
 };
- 
+
 const editProfile = async (req, res, next) => {
   try {
     const userId = req.session.user_id;
@@ -456,13 +453,16 @@ const deleteAddress = async (req, res, next) => {
     const userId = req.session.user_id;
 
     if (!isValidObjectId(addressId)) {
-      return res.status(HttpStatus.BAD_REQUEST).json({ success: false, message: MESSAGES.INVALID_REQUEST })
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ success: false, message: MESSAGES.INVALID_REQUEST });
     }
-
 
     // Check if userId and addressId are provided
     if (!userId || !addressId) {
-      return res.status(HttpStatus.BAD_REQUEST).json({ success: false, message: MESSAGES.INVALID_REQUEST });
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ success: false, message: MESSAGES.INVALID_REQUEST });
     }
 
     // Find the address document by userId and update to pull the address
@@ -473,13 +473,17 @@ const deleteAddress = async (req, res, next) => {
     );
 
     if (!updatedAddress) {
-      return res.status(HttpStatus.NOT_FOUND).json({ success: false, message: MESSAGES.ACCOUNT_NOT_FOUND });
+      return res
+        .status(HttpStatus.NOT_FOUND)
+        .json({ success: false, message: MESSAGES.ACCOUNT_NOT_FOUND });
     }
 
     if (updatedAddress.addresses.length === 0) {
       await User.findByIdAndUpdate(userId, { address: null });
 
-      return res.status(HttpStatus.OK).json({ success: true, message: MESSAGES.LAST_ADDRESS_REMOVED });
+      return res
+        .status(HttpStatus.OK)
+        .json({ success: true, message: MESSAGES.LAST_ADDRESS_REMOVED });
     }
 
     res.status(HttpStatus.OK).json({ success: true, message: MESSAGES.ADDRESS_DELETED });
@@ -524,10 +528,14 @@ const editAddress = async (req, res, next) => {
     );
 
     if (!result) {
-      return res.status(HttpStatus.BAD_REQUEST).json({ success: false, message: MESSAGES.ADDRESS_NOT_FOUND });
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ success: false, message: MESSAGES.ADDRESS_NOT_FOUND });
     }
 
-    res.status(HttpStatus.OK).json({ success: true, message: MESSAGES.ADDRESS_UPDATED, data: result });
+    res
+      .status(HttpStatus.OK)
+      .json({ success: true, message: MESSAGES.ADDRESS_UPDATED, data: result });
   } catch (error) {
     next(error);
   }
@@ -546,12 +554,9 @@ const changePassword = async (req, res, next) => {
       });
     }
 
-    // If user has password 
+    // If user has password
     if (user.password) {
-      const match = await bcrypt.compare(
-        currentPassword.trim(),
-        user.password
-      );
+      const match = await bcrypt.compare(currentPassword.trim(), user.password);
 
       if (!match) {
         return res.status(HttpStatus.BAD_REQUEST).json({
@@ -562,7 +567,7 @@ const changePassword = async (req, res, next) => {
     }
 
     // Hash new password ONLY after verification
-    const hashed = await securePassword(newPassword.trim())
+    const hashed = await securePassword(newPassword.trim());
 
     await User.findByIdAndUpdate(userId, { password: hashed });
 
@@ -574,7 +579,6 @@ const changePassword = async (req, res, next) => {
     next(err);
   }
 };
-
 
 const aboutPage = async (req, res, next) => {
   try {

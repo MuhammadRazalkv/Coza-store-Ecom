@@ -10,13 +10,8 @@ const nocache = require("nocache");
 const userRoute = require("./routes/userRoute");
 const connectDB = require("./config/db");
 
-
-app.post(
-  "/webhook/stripe",
-  express.raw({ type: "application/json" }),
-  webhook
-);
-connectDB()
+app.post("/webhook/stripe", express.raw({ type: "application/json" }), webhook);
+connectDB();
 app.use(nocache());
 
 app.use(
@@ -32,7 +27,6 @@ app.use(express.static(path.join(__dirname, "/public")));
 
 app.set("view engine", "ejs");
 app.set("views", "./view/user");
-
 
 app.use("/", userRoute);
 app.use("/admin", adminRoute);

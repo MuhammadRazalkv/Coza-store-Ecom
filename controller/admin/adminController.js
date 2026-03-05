@@ -25,7 +25,6 @@ const verifyLogin = async (req, res, next) => {
       return res.status(HttpStatus.BAD_REQUEST).json({ message: MESSAGES.INVALID_CREDENTIALS });
     }
 
-
     const passwordMatch = await bcrypt.compare(password, admin.password);
 
     if (!passwordMatch) {
@@ -34,15 +33,13 @@ const verifyLogin = async (req, res, next) => {
 
     if (admin.isAdmin == false) {
       return res.status(HttpStatus.BAD_REQUEST).json({ message: MESSAGES.INVALID_CREDENTIALS });
-
     }
     req.session.admin_id = admin._id;
 
     return res.status(HttpStatus.OK).json({
       success: true,
-      redirect: "/admin/home"
+      redirect: "/admin/home",
     });
-
   } catch (error) {
     next(error);
   }
@@ -225,7 +222,6 @@ const blockUnblock = async (req, res, next) => {
 
     await User.findByIdAndUpdate(id, { isBlocked: updatedStatus });
 
-
     return res.status(HttpStatus.OK).json({
       message: updatedStatus ? "User blocked successfully" : "User unblocked successfully",
       listed: updatedStatus,
@@ -255,14 +251,16 @@ const loadAddCategory = async (req, res, next) => {
 const addCategory = async (req, res, next) => {
   try {
     let { name, description } = req.validatedBody;
-    name = name.toLowerCase()
+    name = name.toLowerCase();
     const categories = await Category.findOne({ name: name });
     if (categories) {
-      return res.status(HttpStatus.BAD_REQUEST).json({ success: false, message: MESSAGES.CATEGORY_EXISTS});
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ success: false, message: MESSAGES.CATEGORY_EXISTS });
     }
     const newCategory = new Category({ name, description });
     await newCategory.save();
-    return res.status(HttpStatus.OK).json({ success: true, messages: MESSAGES.CATEGORY_ADDED })
+    return res.status(HttpStatus.OK).json({ success: true, messages: MESSAGES.CATEGORY_ADDED });
   } catch (error) {
     next(error);
   }
@@ -276,7 +274,7 @@ const loadEditCategory = async (req, res, next) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(HttpStatus.BAD_REQUEST).render("editCategory", {
         error: "Invalid category ID.",
-        categories: null
+        categories: null,
       });
     }
 
@@ -287,10 +285,9 @@ const loadEditCategory = async (req, res, next) => {
     if (!categories) {
       return res.status(404).render("editCategory", {
         error: "Category not found.",
-        categories: null
+        categories: null,
       });
     }
-
 
     res.render("editCategory", { categories, error: null });
   } catch (error) {
@@ -301,8 +298,7 @@ const loadEditCategory = async (req, res, next) => {
 const editCategory = async (req, res, next) => {
   try {
     let { id, name, description } = req.validatedBody;
-    name = name.toLowerCase()
-
+    name = name.toLowerCase();
 
     const existingCategory = await Category.findOne({
       name,
@@ -313,15 +309,12 @@ const editCategory = async (req, res, next) => {
       return res.status(HttpStatus.BAD_REQUEST).json({ message: MESSAGES.CATEGORY_EXISTS });
     }
 
-    await Category.findByIdAndUpdate(
-      id,
-      {
-        $set: {
-          name: name,
-          description: description,
-        },
-      }
-    );
+    await Category.findByIdAndUpdate(id, {
+      $set: {
+        name: name,
+        description: description,
+      },
+    });
     return res.status(HttpStatus.OK).json({ message: MESSAGES.CATEGORY_UPDATED });
   } catch (error) {
     next(error);
@@ -334,10 +327,10 @@ const softDeleteCategory = async (req, res, next) => {
 
     const category = await Category.findById(id);
     if (!category) {
-      return res.status(HttpStatus.BAD_REQUEST).json({ message: MESSAGES.CATEGORY_NOT_FOUND});
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: MESSAGES.CATEGORY_NOT_FOUND });
     }
     const updatedStatus = !category.isListed;
- 
+
     await Category.findByIdAndUpdate(id, { isListed: updatedStatus });
 
     return res.status(HttpStatus.OK).json({

@@ -23,7 +23,6 @@ const { couponSchema, editCouponSchema } = require("../utils/validations/couponS
 const { offerSchema, editOfferSchema } = require("../utils/validations/offerSchema");
 const { orderStatusSchema } = require("../utils/validations/orderSchema");
 
-
 adminRoute.use(express.json());
 adminRoute.use(express.urlencoded({ extended: true }));
 
@@ -41,27 +40,70 @@ adminRoute.use(
 // adminRoute.get('/login',adminController.registerPage)
 adminRoute.use(nocache());
 
-adminRoute.get("/", adminAuth.isLogout, adminController.registerPage)
+adminRoute
+  .get("/", adminAuth.isLogout, adminController.registerPage)
   .post("/", adminAuth.isLogout, validateBody(loginSchema), adminController.verifyLogin)
   .get("/logout", adminAuth.isLogin, adminController.logout)
   .get("/home", adminAuth.isLogin, adminController.loadHome)
   .get("/user-List", adminAuth.isLogin, adminController.userManagement)
-  .patch("/user-block", adminAuth.isLogin, validateBody(objectIdSchema), adminController.blockUnblock)
+  .patch(
+    "/user-block",
+    adminAuth.isLogin,
+    validateBody(objectIdSchema),
+    adminController.blockUnblock
+  )
   .get("/category-list", adminAuth.isLogin, adminController.categoryManagement)
   .get("/categories/add", adminAuth.isLogin, adminController.loadAddCategory)
-  .post("/categories/add", adminAuth.isLogin, validateBody(categorySchema), adminController.addCategory)
+  .post(
+    "/categories/add",
+    adminAuth.isLogin,
+    validateBody(categorySchema),
+    adminController.addCategory
+  )
   .get("/categories/edit", adminAuth.isLogin, adminController.loadEditCategory)
-  .post("/categories/edit", adminAuth.isLogin, validateBody(editCategorySchema), adminController.editCategory)
-  .patch("/categories/delete", adminAuth.isLogin, validateBody(objectIdSchema), adminController.softDeleteCategory)
+  .post(
+    "/categories/edit",
+    adminAuth.isLogin,
+    validateBody(editCategorySchema),
+    adminController.editCategory
+  )
+  .patch(
+    "/categories/delete",
+    adminAuth.isLogin,
+    validateBody(objectIdSchema),
+    adminController.softDeleteCategory
+  )
   .get("/products-list", adminAuth.isLogin, productController.loadProductPage)
   .get("/product/add", adminAuth.isLogin, productController.loadAddProduct)
-  .post("/product/add", adminAuth.isLogin, validateBody(productSchema), productController.addProduct)
+  .post(
+    "/product/add",
+    adminAuth.isLogin,
+    validateBody(productSchema),
+    productController.addProduct
+  )
   .get("/product/details", adminAuth.isLogin, productController.loadProductDetails)
   .get("/product/edit", adminAuth.isLogin, productController.loadEditProduct)
-  .post("/product/edit", adminAuth.isLogin, validateBody(editProductSchema), productController.editProduct)
-  .post("/product/delete", adminAuth.isLogin, validateBody(objectIdSchema), productController.blockProduct)
+  .post(
+    "/product/edit",
+    adminAuth.isLogin,
+    validateBody(editProductSchema),
+    productController.editProduct
+  )
+  .post(
+    "/product/delete",
+    adminAuth.isLogin,
+    validateBody(objectIdSchema),
+    productController.blockProduct
+  )
   .get("/product/addVariant", adminAuth.isLogin, productController.loadAddVariant)
-  .post("/product/addVariant", adminAuth.isLogin, upload, parseSizes, validateBody(variantSchema), productController.addVariant)
+  .post(
+    "/product/addVariant",
+    adminAuth.isLogin,
+    upload,
+    parseSizes,
+    validateBody(variantSchema),
+    productController.addVariant
+  )
   .get("/product/editVariant", adminAuth.isLogin, productController.loadEditVariant)
   .post(
     "/product/editVariant/:id",
@@ -71,7 +113,12 @@ adminRoute.get("/", adminAuth.isLogout, adminController.registerPage)
     validateBody(editVariantSchema),
     productController.editVariant
   )
-  .patch("/product/blockVariant", adminAuth.isLogin, validateBody(objectIdSchema), productController.blockUnblockVariant)
+  .patch(
+    "/product/blockVariant",
+    adminAuth.isLogin,
+    validateBody(objectIdSchema),
+    productController.blockUnblockVariant
+  )
 
   .get("/orderDetails", adminAuth.isLogin, orderController.loadOrderPage)
   .get("/userOrders/:orderId", adminAuth.isLogin, orderController.loadOrderDetailsPage)
@@ -86,19 +133,47 @@ adminRoute.get("/", adminAuth.isLogout, adminController.registerPage)
   .get("/addCoupon", adminAuth.isLogin, couponController.loadAddCoupon)
   .post("/addCoupon", adminAuth.isLogin, validateBody(couponSchema), couponController.addCoupon)
   .get("/editCoupon", adminAuth.isLogin, couponController.loadEditCoupon)
-  .post("/editCoupon", adminAuth.isLogin, validateBody(editCouponSchema), couponController.editCoupon)
-  .patch("/couponstatus", adminAuth.isLogin, validateBody(objectIdSchema), couponController.updateStatus)
-  .delete("/deleteCoupon", adminAuth.isLogin, validateBody(objectIdSchema), couponController.deleteCoupon)
-
+  .post(
+    "/editCoupon",
+    adminAuth.isLogin,
+    validateBody(editCouponSchema),
+    couponController.editCoupon
+  )
+  .patch(
+    "/couponstatus",
+    adminAuth.isLogin,
+    validateBody(objectIdSchema),
+    couponController.updateStatus
+  )
+  .delete(
+    "/deleteCoupon",
+    adminAuth.isLogin,
+    validateBody(objectIdSchema),
+    couponController.deleteCoupon
+  )
 
   .get("/offers", adminAuth.isLogin, offerController.loadOfferPage)
   .get("/addOffer", adminAuth.isLogin, offerController.loadAddOffer)
   .post("/addOffer", adminAuth.isLogin, validateBody(offerSchema), offerController.addOffer)
-  .patch("/offers/changeStatus", adminAuth.isLogin, validateBody(objectIdSchema), offerController.changeOfferStatus)
+  .patch(
+    "/offers/changeStatus",
+    adminAuth.isLogin,
+    validateBody(objectIdSchema),
+    offerController.changeOfferStatus
+  )
   .get("/offers/editOffer", adminAuth.isLogin, offerController.loadEditOffer)
-  .post("/offers/editOffer", adminAuth.isLogin, validateBody(editOfferSchema), offerController.editOffer)
-  .delete("/offers/deleteOffer", adminAuth.isLogin, validateBody(objectIdSchema), offerController.deleteOffer)
-
+  .post(
+    "/offers/editOffer",
+    adminAuth.isLogin,
+    validateBody(editOfferSchema),
+    offerController.editOffer
+  )
+  .delete(
+    "/offers/deleteOffer",
+    adminAuth.isLogin,
+    validateBody(objectIdSchema),
+    offerController.deleteOffer
+  )
 
   .get("/salesReport", adminAuth.isLogin, orderController.loadSalesReport)
   .get("/logout", adminController.logout);
@@ -107,7 +182,6 @@ adminRoute.get("/", adminAuth.isLogout, adminController.registerPage)
 adminRoute.all("*", (req, res) => {
   res.render("error");
 });
-
 
 adminRoute.use(errorHandling);
 

@@ -41,7 +41,7 @@ const addCoupon = async (req, res, next) => {
     });
 
     if (existingCoupon) {
-      return sendErrorRes(req, res, HttpStatus.BAD_REQUEST, MESSAGES.DUPLICATE_COUPON)
+      return sendErrorRes(req, res, HttpStatus.BAD_REQUEST, MESSAGES.DUPLICATE_COUPON);
     }
     const newCoupon = new CouponDB({
       couponName: couponName,
@@ -53,9 +53,7 @@ const addCoupon = async (req, res, next) => {
     });
 
     await newCoupon.save();
-    sendSuccessRes(req, res, HttpStatus.CREATED, MESSAGES.COUPON_ADDED)
-
-
+    sendSuccessRes(req, res, HttpStatus.CREATED, MESSAGES.COUPON_ADDED);
   } catch (error) {
     next(error);
   }
@@ -86,11 +84,10 @@ const editCoupon = async (req, res, next) => {
       expiryDate,
     } = req.validatedBody;
 
-
     const existingCoupon = await CouponDB.findById(couponId);
 
     if (!existingCoupon) {
-      return sendErrorRes(req, res, HttpStatus.NOT_FOUND, MESSAGES.COUPON_NOT_FOUND)
+      return sendErrorRes(req, res, HttpStatus.NOT_FOUND, MESSAGES.COUPON_NOT_FOUND);
     }
     const regexName = new RegExp(couponName, "i");
     const regexCode = new RegExp(couponCode, "i");
@@ -102,7 +99,7 @@ const editCoupon = async (req, res, next) => {
     });
 
     if (duplicateCoupon) {
-      return sendErrorRes(req, res, HttpStatus.BAD_REQUEST, MESSAGES.DUPLICATE_COUPON)
+      return sendErrorRes(req, res, HttpStatus.BAD_REQUEST, MESSAGES.DUPLICATE_COUPON);
     }
     await CouponDB.findByIdAndUpdate(
       couponId,
@@ -118,9 +115,7 @@ const editCoupon = async (req, res, next) => {
       },
       { new: true }
     );
-    sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.COUPON_UPDATED)
-
-
+    sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.COUPON_UPDATED);
   } catch (error) {
     next(error);
   }
@@ -130,14 +125,13 @@ const deleteCoupon = async (req, res, next) => {
   try {
     const { id } = req.validatedBody;
 
-
     const coupon = await CouponDB.findById(id);
     if (!coupon) {
-      return sendErrorRes(req, res, HttpStatus.NOT_FOUND, MESSAGES.COUPON_NOT_FOUND)
+      return sendErrorRes(req, res, HttpStatus.NOT_FOUND, MESSAGES.COUPON_NOT_FOUND);
     }
 
     await CouponDB.findByIdAndDelete(id);
-    sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.COUPON_DELETED)
+    sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.COUPON_DELETED);
   } catch (error) {
     next(error);
   }
@@ -148,7 +142,7 @@ const updateStatus = async (req, res, next) => {
     const { id } = req.validatedBody;
     const coupon = await CouponDB.findById(id);
     if (!coupon) {
-      return sendErrorRes(req, res, HttpStatus.NOT_FOUND, MESSAGES.COUPON_NOT_FOUND)
+      return sendErrorRes(req, res, HttpStatus.NOT_FOUND, MESSAGES.COUPON_NOT_FOUND);
     }
 
     const newStatus = !coupon.listed;
@@ -156,7 +150,7 @@ const updateStatus = async (req, res, next) => {
       listed: newStatus,
     });
 
-    sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.COUPON_UPDATED, { listed: newStatus })
+    sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.COUPON_UPDATED, { listed: newStatus });
   } catch (error) {
     next(error);
   }

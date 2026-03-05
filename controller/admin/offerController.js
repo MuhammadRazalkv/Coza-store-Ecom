@@ -40,14 +40,13 @@ const addOffer = async (req, res, next) => {
     });
 
     if (existingOffer) {
-      return sendErrorRes(req, res, HttpStatus.CONFLICT, MESSAGES.DUPLICATE_OFFER)
+      return sendErrorRes(req, res, HttpStatus.CONFLICT, MESSAGES.DUPLICATE_OFFER);
     }
 
     if (offerType == "Category Offer") {
-
       const categoryOffer = await OfferDB.findOne({ categoryId: categoryId });
       if (categoryOffer) {
-        return sendErrorRes(req, res, HttpStatus.CONFLICT, MESSAGES.DUPLICATE_CATEGORY_OFFER)
+        return sendErrorRes(req, res, HttpStatus.CONFLICT, MESSAGES.DUPLICATE_CATEGORY_OFFER);
       }
 
       const category = await CategoryDB.findOne({ _id: categoryId });
@@ -85,11 +84,11 @@ const addOffer = async (req, res, next) => {
         },
         { upsert: true }
       );
-      return sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.OFFER_ADDED)
+      return sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.OFFER_ADDED);
     } else if (offerType == "Product Offer") {
       const productOffer = await OfferDB.findOne({ productId });
       if (productOffer) {
-        return sendErrorRes(req, res, HttpStatus.CONFLICT, MESSAGES.DUPLICATE_PRODUCT_OFFER)
+        return sendErrorRes(req, res, HttpStatus.CONFLICT, MESSAGES.DUPLICATE_PRODUCT_OFFER);
       }
       const product = await productDB.findById(productId);
 
@@ -116,7 +115,7 @@ const addOffer = async (req, res, next) => {
         { upsert: true }
       );
 
-      return sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.OFFER_ADDED)
+      return sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.OFFER_ADDED);
     }
   } catch (error) {
     next(error);
@@ -127,10 +126,9 @@ const changeOfferStatus = async (req, res, next) => {
   try {
     const { id: offerId } = req.validatedBody;
 
-
     const offer = await OfferDB.findById(offerId);
     if (!offer) {
-      return sendErrorRes(req, res, HttpStatus.NOT_FOUND, MESSAGES.OFFER_NOT_FOUND)
+      return sendErrorRes(req, res, HttpStatus.NOT_FOUND, MESSAGES.OFFER_NOT_FOUND);
     }
 
     const newStatus = !offer.listed;
@@ -150,7 +148,7 @@ const changeOfferStatus = async (req, res, next) => {
       );
     }
 
-    sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.OFFER_UPDATED, { listed: newStatus })
+    sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.OFFER_UPDATED, { listed: newStatus });
   } catch (error) {
     next(error);
   }
@@ -160,12 +158,12 @@ const loadEditOffer = async (req, res, next) => {
   try {
     const offerId = req.query.offerId;
     if (!isValidObjectId(offerId)) {
-      return res.render("editOffer", { offer: null, message: MESSAGES.INVALID_ID_FORMAT })
+      return res.render("editOffer", { offer: null, message: MESSAGES.INVALID_ID_FORMAT });
     }
 
     const offer = await OfferDB.findById(offerId);
     if (!offer) {
-      return res.render("editOffer", { offer: null, message: MESSAGES.OFFER_NOT_FOUND })
+      return res.render("editOffer", { offer: null, message: MESSAGES.OFFER_NOT_FOUND });
     }
     res.render("editOffer", { offer, message: null });
   } catch (error) {
@@ -185,7 +183,7 @@ const editOffer = async (req, res, next) => {
     });
 
     if (existingOffer) {
-      return sendErrorRes(req, res, HttpStatus.CONFLICT, MESSAGES.DUPLICATE_OFFER)
+      return sendErrorRes(req, res, HttpStatus.CONFLICT, MESSAGES.DUPLICATE_OFFER);
     }
 
     // Update the offer
@@ -202,7 +200,7 @@ const editOffer = async (req, res, next) => {
     );
 
     if (!updatedOffer) {
-      return sendErrorRes(req, res, HttpStatus.NOT_FOUND, MESSAGES.OFFER_NOT_FOUND)
+      return sendErrorRes(req, res, HttpStatus.NOT_FOUND, MESSAGES.OFFER_NOT_FOUND);
     }
 
     // Update the discount percentage in the variants
@@ -220,9 +218,9 @@ const editOffer = async (req, res, next) => {
     }
 
     if (!updateResult) {
-      return sendErrorRes(req, res, HttpStatus.INTERNAL_SERVER_ERROR, "Failed to update variants")
+      return sendErrorRes(req, res, HttpStatus.INTERNAL_SERVER_ERROR, "Failed to update variants");
     }
-    sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.OFFER_UPDATED)
+    sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.OFFER_UPDATED);
   } catch (error) {
     next(error);
   }
@@ -231,10 +229,9 @@ const deleteOffer = async (req, res, next) => {
   try {
     const { id: offerId } = req.body;
 
-
     const offer = await OfferDB.findById(offerId);
     if (!offer) {
-      return sendErrorRes(HttpStatus.NOT_FOUND, MESSAGES.OFFER_NOT_FOUND)
+      return sendErrorRes(HttpStatus.NOT_FOUND, MESSAGES.OFFER_NOT_FOUND);
     }
 
     let updateResult;
@@ -254,8 +251,7 @@ const deleteOffer = async (req, res, next) => {
 
     await OfferDB.findByIdAndDelete(offerId);
 
-    sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.OFFER_DELETED, { updateResult })
-
+    sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.OFFER_DELETED, { updateResult });
   } catch (error) {
     next(error);
   }

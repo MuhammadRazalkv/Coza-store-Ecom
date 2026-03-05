@@ -34,8 +34,8 @@ const addressSchema = z.object({
     .regex(/^[1-9][0-9]{5}$/, "Enter a valid 6-digit PIN code."),
 
   addressType: z.enum(["Home", "Work"], {
-    errorMap: () => ({ message: "Please select an address type." })
-  })
+    errorMap: () => ({ message: "Please select an address type." }),
+  }),
 });
 
-module.exports =  addressSchema 
+module.exports = addressSchema;

@@ -90,7 +90,7 @@ const loadEditProduct = async (req, res, next) => {
       return res.status(HttpStatus.BAD_REQUEST).render("editProduct", {
         error: "Invalid product ID.",
         categories: null,
-        product: null
+        product: null,
       });
     }
 
@@ -100,7 +100,7 @@ const loadEditProduct = async (req, res, next) => {
       return res.status(HttpStatus.NOT_FOUND).render("editProduct", {
         error: MESSAGES.PRODUCT_NOT_FOUND,
         categories: null,
-        product: null
+        product: null,
       });
     }
     res.render("editProduct", { categories, product, error: null });
@@ -111,13 +111,8 @@ const loadEditProduct = async (req, res, next) => {
 
 const editProduct = async (req, res, next) => {
   try {
-    const {
-      id,
-      productName,
-      productCategory,
-      productDescription,
-      productBrand,
-    } = req.validatedBody;
+    const { id, productName, productCategory, productDescription, productBrand } =
+      req.validatedBody;
 
     const product = await Products.findById(id).populate("variant");
     if (!product) {
@@ -137,7 +132,7 @@ const editProduct = async (req, res, next) => {
     await Variants.updateMany({ productId: id }, { variantName: productName });
 
     await product.save();
-    res.status(HttpStatus.OK).json({ success: true, redirect: "/admin/products-list" })
+    res.status(HttpStatus.OK).json({ success: true, redirect: "/admin/products-list" });
   } catch (error) {
     next(error);
   }
@@ -148,7 +143,10 @@ const loadProductDetails = async (req, res, next) => {
     const id = req.query.id;
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(HttpStatus.BAD_REQUEST).render("productDetails", {
-        product: null, variant: null, message: undefined, error: 'Invalid product ID'
+        product: null,
+        variant: null,
+        message: undefined,
+        error: "Invalid product ID",
       });
     }
     const product = await Products.findById(id).populate("categoryId");
@@ -156,10 +154,11 @@ const loadProductDetails = async (req, res, next) => {
     if (!product) {
       return res.status(HttpStatus.NOT_FOUND).render("editProduct", {
         error: MESSAGES.PRODUCT_NOT_FOUND,
-        product, variant, message: undefined,
+        product,
+        variant,
+        message: undefined,
       });
     }
-
 
     res.render("productDetails", { product, variant, message: undefined, error: null });
   } catch (error) {
@@ -175,7 +174,7 @@ const loadAddVariant = async (req, res, next) => {
         product: null,
         variant: null,
         message: undefined,
-        error: 'Invalid product ID'
+        error: "Invalid product ID",
       });
     }
 
@@ -184,7 +183,8 @@ const loadAddVariant = async (req, res, next) => {
       return res.status(HttpStatus.NOT_FOUND).render("addVariant", {
         product: null,
         variant: null,
-        message: undefined, error: MESSAGES.PRODUCT_NOT_FOUND
+        message: undefined,
+        error: MESSAGES.PRODUCT_NOT_FOUND,
       });
     }
 
@@ -192,7 +192,7 @@ const loadAddVariant = async (req, res, next) => {
       product,
       variant: product.variant,
       message: undefined,
-      error: null
+      error: null,
     });
   } catch (error) {
     next(error);
@@ -201,12 +201,7 @@ const loadAddVariant = async (req, res, next) => {
 
 const addVariant = async (req, res, next) => {
   try {
-    const {
-      variantColor,
-      variantPrice,
-      productId,
-      sizes
-    } = req.validatedBody;
+    const { variantColor, variantPrice, productId, sizes } = req.validatedBody;
 
     const files = [
       req.files?.variantImg1?.[0],
@@ -221,7 +216,7 @@ const addVariant = async (req, res, next) => {
     const product = await Products.findById(productId).populate("categoryId");
 
     if (!product) {
-      return res.status(HttpStatus.NOT_FOUND).json({ message: MESSAGES.PRODUCT_NOT_FOUND })
+      return res.status(HttpStatus.NOT_FOUND).json({ message: MESSAGES.PRODUCT_NOT_FOUND });
     }
 
     const existingVariant = await Variants.findOne({
@@ -233,10 +228,8 @@ const addVariant = async (req, res, next) => {
       return res.status(HttpStatus.BAD_REQUEST).json({ message: MESSAGES.DUPLICATE_VARIANT });
     }
 
-    const uploads = await Promise.all(
-      files.map(file => uploadToCloudinary(file.buffer))
-    );
-    const imageUrls = uploads.map(u => u.secure_url);
+    const uploads = await Promise.all(files.map((file) => uploadToCloudinary(file.buffer)));
+    const imageUrls = uploads.map((u) => u.secure_url);
 
     const variantName = `${product.productName}`.trim();
 
@@ -246,7 +239,7 @@ const addVariant = async (req, res, next) => {
       variantPrice,
       variantImg: imageUrls,
       productId,
-      sizes
+      sizes,
     });
 
     await Products.findByIdAndUpdate(
@@ -254,7 +247,6 @@ const addVariant = async (req, res, next) => {
       { $push: { variant: variant._id } },
       { new: true, useFindAndModify: false }
     );
-
 
     const offer = await OfferDB.findOne({ categoryId: product.categoryId._id });
     if (offer) {
@@ -290,7 +282,7 @@ const loadEditVariant = async (req, res, next) => {
       return res.status(HttpStatus.BAD_REQUEST).render("editVariant", {
         variant: null,
         message: undefined,
-        error: 'Invalid variant ID'
+        error: "Invalid variant ID",
       });
     }
 
@@ -298,7 +290,7 @@ const loadEditVariant = async (req, res, next) => {
     if (!variant) {
       return res.redirect("/products-list");
     }
-    console.log('Variant ', variant);
+    console.log("Variant ", variant);
 
     res.render("editVariant", { variant, message: undefined, error: null });
   } catch (error) {
@@ -308,20 +300,19 @@ const loadEditVariant = async (req, res, next) => {
 
 const editVariant = async (req, res, next) => {
   try {
-    const { variantColor,
-      variantPrice,
-      sizes,
-      variantId } = req.validatedBody;
+    const { variantColor, variantPrice, sizes, variantId } = req.validatedBody;
 
     const fileEntries = [
       { index: 0, file: req.files?.variantImg1?.[0] },
       { index: 1, file: req.files?.variantImg2?.[0] },
       { index: 2, file: req.files?.variantImg3?.[0] },
-    ].filter(entry => entry.file);
+    ].filter((entry) => entry.file);
 
     const currentVariant = await Variants.findById(variantId);
     if (!currentVariant) {
-      return res.status(HttpStatus.NOT_FOUND).json({ success: false, message: MESSAGES.VARIANT_NOT_FOUND })
+      return res
+        .status(HttpStatus.NOT_FOUND)
+        .json({ success: false, message: MESSAGES.VARIANT_NOT_FOUND });
     }
 
     const productId = currentVariant.productId._id;
@@ -350,7 +341,9 @@ const editVariant = async (req, res, next) => {
       }
     }
 
-    await Variants.findByIdAndUpdate(variantId, { $set: { variantColor, sizes, variantPrice, variantImg: imagePaths } });
+    await Variants.findByIdAndUpdate(variantId, {
+      $set: { variantColor, sizes, variantPrice, variantImg: imagePaths },
+    });
     res.status(HttpStatus.OK).json({ message: MESSAGES.VARIANT_UPDATED });
   } catch (error) {
     next(error);

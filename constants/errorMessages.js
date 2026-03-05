@@ -17,7 +17,7 @@ const ERROR_MSG = Object.freeze({
   INVALID_ID: "Invalid ID.",
   INVALID_ID_FORMAT: "Invalid ID format.",
 
-  SELECT_VALID_SIZE:"Please select a valid size."
+  SELECT_VALID_SIZE: "Please select a valid size.",
 });
 
 module.exports = ERROR_MSG;

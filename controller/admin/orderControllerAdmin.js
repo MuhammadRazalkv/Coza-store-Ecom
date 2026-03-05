@@ -37,7 +37,7 @@ const loadOrderDetailsPage = async (req, res, next) => {
         order: null,
         validStatusTransitions: null,
         message: undefined,
-        error: MESSAGES.INVALID_ID_FORMAT
+        error: MESSAGES.INVALID_ID_FORMAT,
       });
     }
 
@@ -49,7 +49,7 @@ const loadOrderDetailsPage = async (req, res, next) => {
         order: null,
         validStatusTransitions: null,
         message: undefined,
-        error: MESSAGES.ORDER_NOT_FOUND
+        error: MESSAGES.ORDER_NOT_FOUND,
       });
     }
 
@@ -69,7 +69,7 @@ const loadOrderDetailsPage = async (req, res, next) => {
       order,
       validStatusTransitions,
       message: undefined,
-      error: null
+      error: null,
     });
   } catch (error) {
     next(error);
@@ -88,7 +88,7 @@ const changeOrderStatus = async (req, res, next) => {
     const userId = order.userId;
     const variantItem = order.orderItems.find((item) => item.variantId.equals(variantId));
     if (!variantItem) {
-      return sendErrorRes(req, res, HttpStatus.NOT_FOUND, MESSAGES.ITEM_NOT_FOUND_IN_ORDER)
+      return sendErrorRes(req, res, HttpStatus.NOT_FOUND, MESSAGES.ITEM_NOT_FOUND_IN_ORDER);
     }
 
     const variantPrice = parseFloat(variantItem.variantPrice);
@@ -112,10 +112,16 @@ const changeOrderStatus = async (req, res, next) => {
         },
         {
           $inc: { "sizes.$.stock": variantItem.quantity },
-        }, { new: true }
+        },
+        { new: true }
       );
       if (!updatedVariant) {
-        return sendErrorRes(req, res, HttpStatus.INTERNAL_SERVER_ERROR, MESSAGES.SOMETHING_WENT_WRONG)
+        return sendErrorRes(
+          req,
+          res,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+          MESSAGES.SOMETHING_WENT_WRONG
+        );
       }
 
       const newSubTotal = await OrderDB.findOneAndUpdate(
@@ -189,9 +195,14 @@ const changeOrderStatus = async (req, res, next) => {
                 { upsert: true, new: true }
               );
 
-              return sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.ORDER_CANCELLED)
+              return sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.ORDER_CANCELLED);
             } else {
-              return sendErrorRes(req, res, HttpStatus.INTERNAL_SERVER_ERROR, MESSAGES.SOMETHING_WENT_WRONG)
+              return sendErrorRes(
+                req,
+                res,
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                MESSAGES.SOMETHING_WENT_WRONG
+              );
             }
           } else {
             await OrderDB.findOneAndUpdate(
@@ -204,7 +215,7 @@ const changeOrderStatus = async (req, res, next) => {
               },
               { new: true }
             );
-            return sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.ORDER_CANCELLED)
+            return sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.ORDER_CANCELLED);
           }
         } else {
           const discountAmount =
@@ -212,7 +223,7 @@ const changeOrderStatus = async (req, res, next) => {
           const couponDiscount = Math.min(
             discountAmount,
             appliedCoupon.couponDetails.maxDiscountAmount ||
-            appliedCoupon.couponDetails.maxRedeemAmount
+              appliedCoupon.couponDetails.maxRedeemAmount
           );
           const finalGrandTotal = newGrandTotal - couponDiscount - totalOfferDiscount;
 
@@ -317,25 +328,19 @@ const changeOrderStatus = async (req, res, next) => {
           );
 
           if (refund) {
-            return sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.ORDER_CANCELLED_AND_REFUNDED)
+            return sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.ORDER_CANCELLED_AND_REFUNDED);
           }
         } else {
-          return sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.ORDER_CANCELLED)
-
+          return sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.ORDER_CANCELLED);
         }
       }
-
-
-
-
-
     } else if (status === "Delivered") {
       await OrderDB.findOneAndUpdate(
         { _id: orderId, "orderItems.variantId": variantId },
         { $set: { "orderItems.$.orderStatus": status, deliveryDate: Date.now() } }
       );
 
-      return sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.ORDER_STATUS_UPDATED)
+      return sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.ORDER_STATUS_UPDATED);
     } else if (status === "Refunded") {
       const totalVariantPrice = variantQuantity * variantPrice;
       const newSubTotal = await OrderDB.findOneAndUpdate(
@@ -351,7 +356,6 @@ const changeOrderStatus = async (req, res, next) => {
 
       const totalOfferDiscount = order.totalOfferDiscount - offerDiscount;
 
-
       await VariantDB.findOneAndUpdate(
         {
           _id: variantId,
@@ -364,7 +368,9 @@ const changeOrderStatus = async (req, res, next) => {
         },
         {
           $inc: { "sizes.$.stock": variantItem.quantity },
-        }, { new: true })
+        },
+        { new: true }
+      );
 
       const appliedCoupon = await OrderDB.findOne({
         _id: orderId,
@@ -414,9 +420,9 @@ const changeOrderStatus = async (req, res, next) => {
         );
 
         if (refund) {
-          return sendSuccessRes(req, res, HttpStatus.OK, "Refunded successfully")
+          return sendSuccessRes(req, res, HttpStatus.OK, "Refunded successfully");
         } else {
-          return sendErrorRes(req, res, HttpStatus.INTERNAL_SERVER_ERROR, "Refund failed")
+          return sendErrorRes(req, res, HttpStatus.INTERNAL_SERVER_ERROR, "Refund failed");
         }
       } else {
         const amountToRefund = totalVariantPrice - offerDiscount;
@@ -468,7 +474,7 @@ const changeOrderStatus = async (req, res, next) => {
         { $set: { "orderItems.$.orderStatus": status } }
       );
 
-      return sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.ORDER_STATUS_UPDATED)
+      return sendSuccessRes(req, res, HttpStatus.OK, MESSAGES.ORDER_STATUS_UPDATED);
     }
   } catch (error) {
     next(error);
