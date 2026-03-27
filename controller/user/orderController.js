@@ -138,17 +138,6 @@ const placeOrder = async (req, res, next) => {
   const userId = req.session.user_id;
   const { selectedOption, addressId, appliedCoupon } = req.validatedBody;
   try {
-    // const cart = await CartDB.findOne({ userId: userId })
-    //   .populate({
-    //     path: "cartItems.productVariantId",
-    //     populate: {
-    //       path: "productId",
-    //       populate: {
-    //         path: "categoryId",
-    //       },
-    //     },
-    //   })
-    //   .exec();
     const session = await mongoose.startSession();
     session.startTransaction();
     const cart = await CartDB.findOne({ userId }).populate({
@@ -202,49 +191,6 @@ const placeOrder = async (req, res, next) => {
     }
 
     const shippingAddress = address.addresses.find((item) => item._id.toString() === addressId);
-
-    // order array item saving
-    // const orderItems = stock.map((item) => ({
-    //   productId: item.productVariantId.productId._id,
-    //   variantId: item.productVariantId._id,
-    //   variantName: item.productVariantId.variantName,
-    //   variantPrice: item.productVariantId.variantPrice,
-    //   quantity: item.quantity,
-    //   orderStatus: selectedOption === "Online-Payment" ? "Pending" : "Processing",
-    //   offerDiscount: 0,
-    //   categoryName: item.productVariantId.productId.categoryId.name,
-    // }));
-
-    // let offerDiscount = 0;
-
-    // stock.forEach((item) => {
-    //   const originalPrice = parseFloat(item.productVariantId.variantPrice);
-    //   let bestDiscount = 0;
-    //   if (
-    //     item.productVariantId.categoryOffer &&
-    //     item.productVariantId.categoryOffer.listed &&
-    //     item.productVariantId.categoryOffer.discountPercentage
-    //   ) {
-    //     const discountPercentage = parseFloat(
-    //       item.productVariantId.categoryOffer.discountPercentage
-    //     );
-    //     bestDiscount = originalPrice * (discountPercentage / 100) * item.quantity;
-    //   }
-
-    //   if (
-    //     item.productVariantId.productOffer &&
-    //     item.productVariantId.productOffer.listed &&
-    //     item.productVariantId.productOffer.discountPercentage
-    //   ) {
-    //     const discountPercentage = parseFloat(
-    //       item.productVariantId.productOffer.discountPercentage
-    //     );
-    //     let discount = originalPrice * (discountPercentage / 100) * item.quantity;
-    //     bestDiscount = bestDiscount < discount ? discount : bestDiscount
-    //   }
-
-    //   offerDiscount += bestDiscount;
-    // });
 
     let totalOfferDiscount = 0;
 
@@ -655,7 +601,7 @@ const cancelOrder = async (req, res, next) => {
         const couponDiscount = Math.min(
           discountAmount,
           appliedCoupon.couponDetails.maxDiscountAmount ||
-            appliedCoupon.couponDetails.maxRedeemAmount
+          appliedCoupon.couponDetails.maxRedeemAmount
         );
         const finalGrandTotal = parseInt(grandTotal - couponDiscount);
         const amountToRefund = parseInt(
@@ -799,21 +745,39 @@ const loadOrderTrackingPage = async (req, res, next) => {
 const loadWalletPage = async (req, res, next) => {
   try {
     const limit = 5;
-    const page = Math.max(1, parseInt(req.query.page)) || 1;
+    const page = Math.max(1, parseInt(req.query.page) || 1);
     const skip = (page - 1) * limit;
 
     const userId = req.session.user_id;
-    const wallet = await WalletDB.findOne({ userId: userId })
-      .sort({
-        createdAt: -1,
-      })
-      .skip(skip)
-      .limit(limit);
 
-    const count = await WalletDB.countDocuments({ userId: userId });
-    const totalPages = Math.ceil(count / limit);
+    const wallet = await WalletDB.findOne({ userId });
 
-    res.render("wallet", { wallet, message: undefined, page, totalPages });
+    if (!wallet) {
+      return res.render("wallet", {
+        wallet: { transactions: [], balance: 0 },
+        message: "No wallet found",
+        page: 1,
+        totalPages: 1,
+      });
+    }
+
+    // TOTAL COUNT BEFORE SLICE
+    const totalTransactions = wallet.transactions.length;
+
+    // CORRECT PAGINATION
+    const transactions = wallet.transactions.slice(skip, skip + limit);
+
+    wallet.transactions = transactions;
+
+    const totalPages = Math.ceil(totalTransactions / limit);
+
+    res.render("wallet", {
+      wallet,
+      message: undefined,
+      page,
+      totalPages,
+    });
+
   } catch (error) {
     next(error);
   }

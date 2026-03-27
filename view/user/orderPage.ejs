@@ -77,22 +77,7 @@
       cursor: pointer;
     }
 
-    /* Modal styles */
-    /* Modal styles */
-    /* #returnModal {
-  display: none;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.4);
-  justify-content: center;
-  align-items: center;
-  display: flex;
-} */
+
 
     #returnModal {
       display: none;
@@ -179,19 +164,7 @@
 
             <div class="right-top-bar flex-w h-full">
               <a href="#" class="flex-c-m trans-04 p-lr-25">
-                Help & FAQs
-              </a>
-
-              <a href="#" class="flex-c-m trans-04 p-lr-25">
                 My Account
-              </a>
-
-              <a href="#" class="flex-c-m trans-04 p-lr-25">
-                EN
-              </a>
-
-              <a href="#" class="flex-c-m trans-04 p-lr-25">
-                USD
               </a>
             </div>
           </div>
@@ -217,21 +190,6 @@
                   <a href="/shop_products">Shop</a>
                 </li>
 
-                <li class="label1" data-label1="hot">
-                  <a href="shoping-cart.html">Features</a>
-                </li>
-
-                <li>
-                  <a href="blog.html">Blog</a>
-                </li>
-
-                <li>
-                  <a href="about.html">About</a>
-                </li>
-
-                <li>
-                  <a href="contact.html">Contact</a>
-                </li>
               </ul>
             </div>
 
@@ -327,24 +285,9 @@
           </li>
 
           <li>
-            <a href="product.html">Shop</a>
+            <a href="/shop_products">Shop</a>
           </li>
 
-          <li>
-            <a href="shoping-cart.html" class="label1 rs1" data-label1="hot">Features</a>
-          </li>
-
-          <li>
-            <a href="blog.html">Blog</a>
-          </li>
-
-          <li>
-            <a href="about.html">About</a>
-          </li>
-
-          <li>
-            <a href="contact.html">Contact</a>
-          </li>
         </ul>
       </div>
 
@@ -398,241 +341,219 @@
     </div>
 
 
-    <div class="container">
-      <div class="main-body">
+      <div class="container">
+        <div class="main-body">
 
-        <!--* ----------------------------------------User Profile Start --------------------------------------------  -->
-        <!-- *--------------------------------------------------------------------------------------------------------------           -->
-        <section class="user-profile footer-padding">
-          <div class="container">
-            <div class="user-profile-section">
-            </div>
+          <!--* ----------------------------------------User Profile Start --------------------------------------------  -->
+          <!-- *--------------------------------------------------------------------------------------------------------------           -->
+          <section class="user-profile footer-padding">
+            <div class="container">
 
-            <!-- !------------------------------------- Orders  ---------------------------------------------------------------------  -->
+              <!-- !------------------------------------- Orders  ---------------------------------------------------------------------  -->
 
-            <div class="tab-pane fade show active" id="v-pills-order" role="tabpanel"
-              aria-labelledby="v-pills-order-tab" tabindex="0">
-              <div class="cart-section">
-                <table>
-                  <tbody>
-                    <tr class="table-row table-top-row">
-                      <td class="table-wrapper wrapper-product">
-                        <h5 class="table-heading">PRODUCT</h5>
-                      </td>
-                      <td class="table-wrapper">
-                        <div class="table-wrapper-center">
-                          <h5 class="table-heading">PRICE</h5>
-                        </div>
-                      </td>
-                      <td class="table-wrapper">
-                        <div class="table-wrapper-center">
-                          <h5 class="table-heading">QUANTITY</h5>
-                        </div>
-                      </td>
-                      <td class="table-wrapper wrapper-total">
-                        <div class="table-wrapper-center">
-                          <h5 class="table-heading">TOTAL</h5>
-                        </div>
-                      </td>
-                      <td class="table-wrapper wrapper-total">
-                        <div class="table-wrapper-center">
-                          <h5 class="table-heading">Payment Method</h5>
-                        </div>
-                      </td>
-                      <td class="table-wrapper wrapper-total">
-                        <div class="table-wrapper-center">
-                          <h5 class="table-heading">Status</h5>
-                        </div>
-                      </td>
-                      <td class="table-wrapper">
-                        <div class="table-wrapper-center">
-                          <h5 class="table-heading">ACTION</h5>
-                        </div>
-                      </td>
-                      <td class="table-wrapper">
-                        <div class="table-wrapper-center">
-                          <h5 class="table-heading">View</h5>
-                        </div>
-                      </td>
-                    </tr>
-                    <% if (orders && orders.length> 0) { %>
-                      <% orders.forEach(order=> { %>
-                        <% order.orderItems.forEach(variant=> { %>
-                          <tr class="table-row ticket-row">
-                            <td class="table-wrapper wrapper-product">
-                              <div class="wrapper">
-                                <div class="wrapper-img">
-                                  <% if (variant.variantId && variant.variantId.variantImg &&
-                                    variant.variantId.variantImg.length> 0) { %>
-                                    <img src="<%= variant.variantId.variantImg[0] %>" alt="img">
-                                    <% } else { %>
-                                      <img src="/assets/productImages/default.jpg" alt="img">
-                                      <% } %>
-                                </div>
-                                <div class="wrapper-content">
-                                  <h5 class="heading">
-                                    <%= variant.variantName %>
-                                  </h5>
-                                </div>
-                              </div>
-                            </td>
-                            <td class="table-wrapper">
-                              <div class="table-wrapper-center">
-                                <h5 class="heading">
-                                  <%= variant.variantPrice %>
-                                </h5>
-                              </div>
-                            </td>
-                            <td class="table-wrapper wrapper-total">
-                              <div class="table-wrapper-center">
-                                <h5 class="heading">
-                                  <%= variant.quantity %>
-                                </h5>
-                              </div>
-                            </td>
-                            <td class="table-wrapper wrapper-total">
-                              <div class="table-wrapper-center">
-                                <h5 class="heading">
-                                  <%= (variant.variantPrice * variant.quantity) %>
-                                </h5>
-                              </div>
-                            </td>
-                            <td class="table-wrapper wrapper-total">
-                              <div class="table-wrapper-center">
-                                <h5 class="heading">
-                                  <%= order.paymentMethod %>
-                                </h5>
-                              </div>
-                            </td>
-                            <td class="table-wrapper wrapper-total">
-                              <div class="table-wrapper-center">
-                                <h5 class="heading">
-                                  <%= variant.orderStatus %>
-                                </h5>
-                              </div>
-                            </td>
-                            <td class="table-wrapper">
-                              <div class="table-wrapper-center">
-                                <% if (variant.orderStatus=='Processing' ) { %>
-                                  <button class="btn btn-danger btn-sm"
-                                    onclick="cancelOrderItem('<%= order._id %>', '<%= variant._id %>')">
-                                    <h5 class="heading" style="color: white;">Cancel</h5>
-                                  </button>
-                                  <% } else if (variant.orderStatus=='Delivered' ) { %>
-                                    <button class="btn btn-danger btn-sm"
-                                      onclick="requestReturn('<%= order._id %>', '<%= variant._id %>')">
-                                      Request return
-                                    </button>
-                                    <!-- <button class="btn btn-primary btn-sm" onclick="downloadInvoice('<%= order._id %>')"> -->
-                                    <a href="downloadInvoice?orderId=<%= order._id %>">
-                                      <button class="btn btn-primary btn-sm">
-                                        Download invoice
-                                      </button>
-                                    </a>
-                                    <% } else if (variant.orderStatus=='Pending' ) { %>
-                                      <button class="btn btn-primary btn-sm" onclick="rePayment('<%= order._id %>')">
-                                        Re pay
-                                      </button>
-                                      <% } else { %>
-                                        <span>
-                                          <%= variant.orderStatus %>
-                                        </span>
-                                        <% } %>
-                              </div>
+              <div class="container">
+                <div class="main-body">
+                  <section class="user-profile footer-padding">
+                    <div class="container">
+                      <div class="user-profile-section">
 
-                            </td>
-                            <td>
-                              <a onclick="viewOrderDetails('<%= order._id %>')"><i class="zmdi zmdi-eye"></i>
-                              </a>
+                        
+                        <!-- ===================== ORDERS ===================== -->
+                        <div class="tab-pane fade show active" id="v-pills-order">
+                          <div class="cart-section">
 
-                            </td>
-                          </tr>
-                          <% }) %>
-                            <% }) %>
+                            <!-- ===================== TABLE ===================== -->
+                            <table class="table">
+                              <tbody>
 
-                              <!-- pagination  -->
-
-                              <nav aria-label="Page navigation example" class="d-flex justify-content-end">
-                                <ul class="pagination">
-                                  <% if (page> 1) { %>
-                                    <li class="page-item">
-                                      <a class="page-link" href="/orders?page=<%= page - 1 %>" tabindex="-1"
-                                        aria-label="Previous">
-                                        <span aria-hidden="true"><i class="fas fa-chevron-left"></i></span>
-                                      </a>
-                                    </li>
-                                    <% } else { %>
-                                      <li class="page-item disabled">
-                                        <a class="page-link" href="" tabindex="-1" aria-label="Previous">
-                                          <span aria-hidden="true"><i class="fas fa-chevron-left"></i></span>
-                                        </a>
-                                      </li>
-                                      <% } %>
-
-                                        <% for (let i=1; i <=totalPages; i++) { %>
-                                          <li class="page-item <%= i === page ? 'active' : '' %>">
-                                            <a class="page-link" href="/orders?page=<%= i %>">
-                                              <%= i %>
-                                            </a>
-                                          </li>
-                                          <% } %>
-
-                                            <% if (page < totalPages) { %>
-                                              <li class="page-item">
-                                                <a class="page-link" href="/orders?page=<%= page + 1 %>"
-                                                  aria-label="Next">
-                                                  <span aria-hidden="true"><i class="fas fa-chevron-right"></i></span>
-                                                </a>
-                                              </li>
-                                              <% } else { %>
-                                                <li class="page-item disabled">
-                                                  <a class="page-link" href="" tabindex="-1" aria-label="Next">
-                                                    <span aria-hidden="true"><i class="fas fa-chevron-right"></i></span>
-                                                  </a>
-                                                </li>
-                                                <% } %>
-                                </ul>
-                              </nav>
-
-
-
-
-
-                              <% } else { %>
-                                <tr>
-                                  <td colspan="7">
-                                    <div class="row">
-                                      <div class="col-md-3">
-                                        <h5 class="heading">No orders found</h5>
-                                      </div>
-                                      <div class="col-md-3">
-                                        <img src="/assets/productImages/Noorders.webp" alt="No Orders found">
-                                      </div>
-                                    </div>
-                                  </td>
+                                <!-- TABLE HEADER -->
+                                <tr class="table-row table-top-row">
+                                  <td>PRODUCT</td>
+                                  <td>PRICE</td>
+                                  <td>QUANTITY</td>
+                                  <td>TOTAL</td>
+                                  <td>Payment</td>
+                                  <td>Status</td>
+                                  <td>ACTION</td>
+                                  <td>View</td>
                                 </tr>
-                                <% } %>
-                  </tbody>
-                </table>
 
+                                <% if (orders && orders.length> 0) { %>
+
+                                  <% orders.forEach(order=> { %>
+                                    <% order.orderItems.forEach(variant=> { %>
+
+                                      <tr class="table-row">
+
+                                        <!-- PRODUCT -->
+                                        <td>
+                                          <div class="d-flex align-items-center">
+                                            <div>
+                                              <% if (variant.variantId?.variantImg?.length> 0) { %>
+                                                <img src="<%= variant.variantId.variantImg[0] %>" width="60">
+                                                <% } else { %>
+                                                  <img src="/assets/productImages/default.jpg" width="60">
+                                                  <% } %>
+                                            </div>
+
+                                            <div class="ms-2">
+                                              <%= variant.variantName %>
+                                            </div>
+                                          </div>
+                                        </td>
+
+                                        <!-- PRICE -->
+                                        <td>
+                                          <%= variant.variantPrice %>
+                                        </td>
+
+                                        <!-- QUANTITY -->
+                                        <td>
+                                          <%= variant.quantity %>
+                                        </td>
+
+                                        <!-- TOTAL -->
+                                        <td>
+                                          <%= variant.variantPrice * variant.quantity %>
+                                        </td>
+
+                                        <!-- PAYMENT -->
+                                        <td>
+                                          <%= order.paymentMethod %>
+                                        </td>
+
+                                        <!-- STATUS -->
+                                        <td>
+                                          <%= variant.orderStatus %>
+                                        </td>
+
+                                        <!-- ACTION -->
+                                        <td>
+                                          <% if (variant.orderStatus==='Processing' ) { %>
+
+                                            <button class="btn btn-danger btn-sm"
+                                              onclick="cancelOrderItem('<%= order._id %>', '<%= variant._id %>')">
+                                              Cancel
+                                            </button>
+
+                                            <% } else if (variant.orderStatus==='Delivered' ) { %>
+
+                                              <button class="btn btn-warning btn-sm"
+                                                onclick="requestReturn('<%= order._id %>', '<%= variant._id %>')">
+                                                Return
+                                              </button>
+
+                                              <a href="/downloadInvoice?orderId=<%= order._id %>">
+                                                <button class="btn btn-primary btn-sm mt-1">
+                                                  Invoice
+                                                </button>
+                                              </a>
+
+                                              <% } else if (variant.orderStatus==='Pending' ) { %>
+
+                                                <button class="btn btn-primary btn-sm"
+                                                  onclick="rePayment('<%= order._id %>')">
+                                                  Re-pay
+                                                </button>
+
+                                                <% } else { %>
+
+                                                  <span>
+                                                    <%= variant.orderStatus %>
+                                                  </span>
+
+                                                  <% } %>
+                                        </td>
+
+                                        <!-- VIEW -->
+                                        <td>
+                                          <a onclick="viewOrderDetails('<%= order._id %>')">
+                                            <i class="zmdi zmdi-eye"></i>
+                                          </a>
+                                        </td>
+
+                                      </tr>
+
+                                      <% }) %>
+                                        <% }) %>
+
+                                          <% } else { %>
+
+                                            <!-- EMPTY STATE -->
+                                            <tr>
+                                              <td colspan="8" class="text-center">
+                                                <h5>No orders found</h5>
+                                                <img src="/assets/productImages/Noorders.webp" width="150">
+                                              </td>
+                                            </tr>
+
+                                            <% } %>
+
+                              </tbody>
+                            </table>
+
+                            <!-- ===================== PAGINATION ===================== -->
+                            <nav class="d-flex justify-content-end">
+                              <ul class="pagination">
+
+                                <!-- PREV -->
+                                <% if (page> 1) { %>
+                                  <li class="page-item">
+                                    <a class="page-link" href="/orders?page=<%= page - 1 %>">
+                                      <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                  </li>
+                                  <% } else { %>
+                                    <li class="page-item disabled">
+                                      <span class="page-link">
+                                        <i class="fas fa-chevron-left"></i>
+                                      </span>
+                                    </li>
+                                    <% } %>
+
+                                      <!-- PAGE NUMBERS -->
+                                      <% for (let i=1; i <=totalPages; i++) { %>
+                                        <li class="page-item <%= i === page ? 'active' : '' %>">
+                                          <a class="page-link" href="/orders?page=<%= i %>">
+                                            <%= i %>
+                                          </a>
+                                        </li>
+                                        <% } %>
+
+                                          <!-- NEXT -->
+                                          <% if (page < totalPages) { %>
+                                            <li class="page-item">
+                                              <a class="page-link" href="/orders?page=<%= page + 1 %>">
+                                                <i class="fas fa-chevron-right"></i>
+                                              </a>
+                                            </li>
+                                            <% } else { %>
+                                              <li class="page-item disabled">
+                                                <span class="page-link">
+                                                  <i class="fas fa-chevron-right"></i>
+                                                </span>
+                                              </li>
+                                              <% } %>
+
+                              </ul>
+                            </nav>
+
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  </section>
+                  ```
+
+                </div>
               </div>
+
             </div>
-          </div>
-
+          </section>
+        </div>
       </div>
-    </div>
 
-    </div>
-
-    </div>
-    </div>
-    </div>
-    </div>
-    </div>
-    </div>
-    </section>
-    </div>
-    </div>
 
     <!-- Modal for return request -->
     <div id="returnModal" class="modal">
@@ -657,306 +578,6 @@
         </form>
       </div>
     </div>
-
-
-    <!-- Footer -->
-    <footer class="bg3 p-t-75 p-b-32">
-      <div class="container">
-        <div class="row">
-          <div class="col-sm-6 col-lg-3 p-b-50">
-            <h4 class="stext-301 cl0 p-b-30">Categories</h4>
-
-            <ul>
-              <li class="p-b-10">
-                <a href="#" class="stext-107 cl7 hov-cl1 trans-04"> Women </a>
-              </li>
-
-              <li class="p-b-10">
-                <a href="#" class="stext-107 cl7 hov-cl1 trans-04"> Men </a>
-              </li>
-
-              <li class="p-b-10">
-                <a href="#" class="stext-107 cl7 hov-cl1 trans-04"> Shoes </a>
-              </li>
-
-              <li class="p-b-10">
-                <a href="#" class="stext-107 cl7 hov-cl1 trans-04"> Watches </a>
-              </li>
-            </ul>
-          </div>
-
-          <div class="col-sm-6 col-lg-3 p-b-50">
-            <h4 class="stext-301 cl0 p-b-30">Help</h4>
-
-            <ul>
-              <li class="p-b-10">
-                <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-                  Track Order
-                </a>
-              </li>
-
-              <li class="p-b-10">
-                <a href="#" class="stext-107 cl7 hov-cl1 trans-04"> Returns </a>
-              </li>
-
-              <li class="p-b-10">
-                <a href="#" class="stext-107 cl7 hov-cl1 trans-04"> Shipping </a>
-              </li>
-
-              <li class="p-b-10">
-                <a href="#" class="stext-107 cl7 hov-cl1 trans-04"> FAQs </a>
-              </li>
-            </ul>
-          </div>
-
-          <div class="col-sm-6 col-lg-3 p-b-50">
-            <h4 class="stext-301 cl0 p-b-30">GET IN TOUCH</h4>
-
-            <p class="stext-107 cl7 size-201">
-              Any questions? Let us know in store at 8th floor, 379 Hudson St, New
-              York, NY 10018 or call us on (+1) 96 716 6879
-            </p>
-
-            <div class="p-t-27">
-              <a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
-                <i class="fa fa-facebook"></i>
-              </a>
-
-              <a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
-                <i class="fa fa-instagram"></i>
-              </a>
-
-              <a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
-                <i class="fa fa-pinterest-p"></i>
-              </a>
-            </div>
-          </div>
-
-          <div class="col-sm-6 col-lg-3 p-b-50">
-            <h4 class="stext-301 cl0 p-b-30">Newsletter</h4>
-
-            <form>
-              <div class="wrap-input1 w-full p-b-4">
-                <input class="input1 bg-none plh1 stext-107 cl7" type="text" name="email"
-                  placeholder="email@example.com" />
-                <div class="focus-input1 trans-04"></div>
-              </div>
-
-              <div class="p-t-18">
-                <button class="flex-c-m stext-101 cl0 size-103 bg1 bor1 hov-btn2 p-lr-15 trans-04">
-                  Subscribe
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-
-        <div class="p-t-40">
-          <div class="flex-c-m flex-w p-b-18">
-            <a href="#" class="m-all-1">
-              <img src="images/icons/icon-pay-01.png" alt="ICON-PAY" />
-            </a>
-
-            <a href="#" class="m-all-1">
-              <img src="images/icons/icon-pay-02.png" alt="ICON-PAY" />
-            </a>
-
-            <a href="#" class="m-all-1">
-              <img src="images/icons/icon-pay-03.png" alt="ICON-PAY" />
-            </a>
-
-            <a href="#" class="m-all-1">
-              <img src="images/icons/icon-pay-04.png" alt="ICON-PAY" />
-            </a>
-
-            <a href="#" class="m-all-1">
-              <img src="images/icons/icon-pay-05.png" alt="ICON-PAY" />
-            </a>
-          </div>
-
-          <p class="stext-107 cl6 txt-center">
-            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-            Copyright &copy;
-            <script>
-              document.write(new Date().getFullYear())
-            </script>
-            All rights reserved | Made with
-            <i class="fa fa-heart-o" aria-hidden="true"></i> by
-            <a href="https://colorlib.com" target="_blank">Colorlib</a> &amp;
-            distributed by
-            <a href="https://themewagon.com" target="_blank">ThemeWagon</a>
-            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-          </p>
-        </div>
-      </div>
-    </footer>
-
-    <!-- Back to top -->
-    <div class="btn-back-to-top" id="myBtn">
-      <span class="symbol-btn-back-to-top">
-        <i class="zmdi zmdi-chevron-up"></i>
-      </span>
-    </div>
-
-    <!-- Modal1 -->
-    <div class="wrap-modal1 js-modal1 p-t-60 p-b-20">
-      <div class="overlay-modal1 js-hide-modal1"></div>
-
-      <div class="container">
-        <div class="bg0 p-t-60 p-b-30 p-lr-15-lg how-pos3-parent">
-          <button class="how-pos3 hov3 trans-04 js-hide-modal1">
-            <img src="images/icons/icon-close.png" alt="CLOSE" />
-          </button>
-
-          <div class="row">
-            <div class="col-md-6 col-lg-7 p-b-30">
-              <div class="p-l-25 p-r-30 p-lr-0-lg">
-                <div class="wrap-slick3 flex-sb flex-w">
-                  <div class="wrap-slick3-dots"></div>
-                  <div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
-
-                  <div class="slick3 gallery-lb">
-                    <div class="item-slick3" data-thumb="images/product-detail-01.jpg">
-                      <div class="wrap-pic-w pos-relative">
-                        <img src="images/product-detail-01.jpg" alt="IMG-PRODUCT" />
-
-                        <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04"
-                          href="images/product-detail-01.jpg">
-                          <i class="fa fa-expand"></i>
-                        </a>
-                      </div>
-                    </div>
-
-                    <div class="item-slick3" data-thumb="images/product-detail-02.jpg">
-                      <div class="wrap-pic-w pos-relative">
-                        <img src="images/product-detail-02.jpg" alt="IMG-PRODUCT" />
-
-                        <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04"
-                          href="images/product-detail-02.jpg">
-                          <i class="fa fa-expand"></i>
-                        </a>
-                      </div>
-                    </div>
-
-                    <div class="item-slick3" data-thumb="images/product-detail-03.jpg">
-                      <div class="wrap-pic-w pos-relative">
-                        <img src="images/product-detail-03.jpg" alt="IMG-PRODUCT" />
-
-                        <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04"
-                          href="images/product-detail-03.jpg">
-                          <i class="fa fa-expand"></i>
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-6 col-lg-5 p-b-30">
-              <div class="p-r-50 p-t-5 p-lr-0-lg">
-                <h4 class="mtext-105 cl2 js-name-detail p-b-14">
-                  Lightweight Jacket
-                </h4>
-
-                <span class="mtext-106 cl2"> $58.79 </span>
-
-                <p class="stext-102 cl3 p-t-23">
-                  Nulla eget sem vitae eros pharetra viverra. Nam vitae luctus
-                  ligula. Mauris consequat ornare feugiat.
-                </p>
-
-                <!--  -->
-                <div class="p-t-33">
-                  <div class="flex-w flex-r-m p-b-10">
-                    <div class="size-203 flex-c-m respon6">Size</div>
-
-                    <div class="size-204 respon6-next">
-                      <div class="rs1-select2 bor8 bg0">
-                        <select class="js-select2" name="time">
-                          <option>Choose an option</option>
-                          <option>Size S</option>
-                          <option>Size M</option>
-                          <option>Size L</option>
-                          <option>Size XL</option>
-                        </select>
-                        <div class="dropDownSelect2"></div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="flex-w flex-r-m p-b-10">
-                    <div class="size-203 flex-c-m respon6">Color</div>
-
-                    <div class="size-204 respon6-next">
-                      <div class="rs1-select2 bor8 bg0">
-                        <select class="js-select2" name="time">
-                          <option>Choose an option</option>
-                          <option>Red</option>
-                          <option>Blue</option>
-                          <option>White</option>
-                          <option>Grey</option>
-                        </select>
-                        <div class="dropDownSelect2"></div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="flex-w flex-r-m p-b-10">
-                    <div class="size-204 flex-w flex-m respon6-next">
-                      <div class="wrap-num-product flex-w m-r-20 m-tb-10">
-                        <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
-                          <i class="fs-16 zmdi zmdi-minus"></i>
-                        </div>
-
-                        <input class="mtext-104 cl3 txt-center num-product" type="number" name="num-product"
-                          value="1" />
-
-                        <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
-                          <i class="fs-16 zmdi zmdi-plus"></i>
-                        </div>
-                      </div>
-
-                      <button
-                        class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
-                        Add to cart
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <!--  -->
-                <div class="flex-w flex-m p-l-100 p-t-40 respon7">
-                  <div class="flex-m bor9 p-r-10 m-r-11">
-                    <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 js-addwish-detail tooltip100"
-                      data-tooltip="Add to Wishlist">
-                      <i class="zmdi zmdi-favorite"></i>
-                    </a>
-                  </div>
-
-                  <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100"
-                    data-tooltip="Facebook">
-                    <i class="fa fa-facebook"></i>
-                  </a>
-
-                  <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100"
-                    data-tooltip="Twitter">
-                    <i class="fa fa-twitter"></i>
-                  </a>
-
-                  <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100"
-                    data-tooltip="Google Plus">
-                    <i class="fa fa-google-plus"></i>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.11.1/dist/sweetalert2.all.min.js"></script>
 

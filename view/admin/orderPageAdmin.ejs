@@ -70,7 +70,7 @@
             <table class="product-table">
                 <tbody>
                     <tr>
-                        <th>Order Id</th>
+                        <th>#</th>
                         <th>Order Date</th>
                         <th>User</th>
                         <th>Payment Method</th>
@@ -78,10 +78,10 @@
                         <th>Action</th>
                     </tr>
                     <% if (orders.length> 0) { %>
-                        <% orders.forEach(order=> { %>
+                        <% orders.forEach((order,index)=> { %>
                             <tr>
                                 <td>
-                                    <%= order._id %>
+                                    <%= index + 1 %>
                                 </td>
                                 <td>
                                     <%= order.orderDate.toLocaleDateString('en-US', { weekday: 'short' , month: 'short'

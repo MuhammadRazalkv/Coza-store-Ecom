@@ -282,8 +282,10 @@ const productDetail = async (req, res, next) => {
         match: { variantListed: true },
       })
       .limit(4);
-
-    res.render("product-detail", { variant, product, otherProducts });
+    const filteredProducts = otherProducts.filter(
+      (p) => p.variant.length > 0
+    ).slice(0, 4);
+    res.render("product-detail", { variant, product, otherProducts: filteredProducts });
   } catch (error) {
     next(error);
   }
