@@ -81,7 +81,7 @@
                         <% orders.forEach((order,index)=> { %>
                             <tr>
                                 <td>
-                                    <%= index + 1 %>
+                                    <%= order.orderNumber || '#' %>
                                 </td>
                                 <td>
                                     <%= order.orderDate.toLocaleDateString('en-US', { weekday: 'short' , month: 'short'

@@ -15,6 +15,7 @@ const MESSAGES = require("../../constants/messages");
 const sendSuccessRes = require("../../utils/sendSuccessRes");
 const { default: mongoose } = require("mongoose");
 const Stripe = require("stripe");
+const generateOrderNumber = require("../../utils/orderCounter");
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 function isValidObjectId(id) {
@@ -274,6 +275,7 @@ const placeOrder = async (req, res, next) => {
       shippingAddress: shippingAddress,
       couponDetails: couponDetails,
       totalOfferDiscount,
+      orderNumber:  await generateOrderNumber()
     });
 
     const placedOrder = await OrderData.save();
