@@ -14,6 +14,8 @@ app.post("/webhook/stripe", express.raw({ type: "application/json" }), webhook);
 connectDB();
 app.use(nocache());
 
+app.set("trust proxy", 1);
+
 app.use(
   session({
     resave: false,
